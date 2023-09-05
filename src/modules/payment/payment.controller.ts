@@ -26,25 +26,29 @@ mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_TOKEN);
 
 // export const webhookMP = async (req: WebhookModel, reply: FastifyReply) => {
 export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
-  // export const ipnMP = async (req: FastifyRequest, reply: FastifyReply) => {
   // const merchant_order = null;
+  console.log('ipnMP');
   let payment;
   const { topic, id } = req.query;
-  console.log('ipnMP');
+
   switch (topic) {
     case 'payment':
-      payment = await mercadopago.payment.findById(id);
+      try {
+        payment = await mercadopago.payment.findById(id);
 
-      const ct = await CreditsService.getCreditsTransaction({
-        mp_id_transaction: id,
-      });
-      const statusCT = ct?.status;
-
-      if (payment.response.status === 'approved' && statusCT !== 'approved') {
-        const credits = await CreditsService.updateCreditsTransaction({
+        const ct = await CreditsService.getCreditsTransaction({
           mp_id_transaction: id,
-          status: 'approved',
         });
+        const statusCT = ct?.status;
+
+        if (payment.response.status === 'approved' && statusCT !== 'approved') {
+          const credits = await CreditsService.updateCreditsTransaction({
+            mp_id_transaction: id,
+            status: 'approved',
+          });
+        }
+      } catch (e) {
+        reply.code(200).send(true);
       }
       break;
     // case 'merchant_order':

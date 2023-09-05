@@ -30,7 +30,7 @@ export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
   // const merchant_order = null;
   let payment;
   const { topic, id } = req.query;
-  console.log('foi');
+  console.log('ipnMP');
   switch (topic) {
     case 'payment':
       payment = await mercadopago.payment.findById(id);

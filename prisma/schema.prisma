@@ -1,0 +1,527 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     Int                  @id @unique @default(autoincrement())
+  uuid                   String               @unique @default(cuid())
+  stripe_id              String?
+  customerMP             String?
+  
+  email                  String               @unique
+  phone                  String               @unique
+  optin                  Boolean              @default(true) @map("optin")
+  name                   String
+  slug                   String               @unique
+  indicatedBy            String?
+  mainPortfolio          String?
+  password               String?
+  isActive               Boolean              @default(true) @map("is_active")
+  isPhoneConfirmed       Boolean              @default(false) @map("is_phone_confirmed")
+  isEmailConfirmed       Boolean              @default(false) @map("is_email_confirmed")
+  isCandidate            Boolean              @default(false) @map("is_candidate")
+  isRecruiter            Boolean              @default(false) @map("is_recruiter")
+  isServiceProvider      Boolean              @default(false) @map("is_service_provider")
+  isFreelancer           Boolean              @default(false) @map("is_freelancer")
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @default(now()) @map("updated_at")
+  deletedAt              DateTime?            @map("deleted_at")
+  ResetPasswordToken     ResetPasswordToken[]
+  //
+  candidate             Candidate? 
+  recruiter             Recruiter? 
+  serviceProvider      ServiceProvider? 
+  freelancer            Freelancer? 
+  //
+  createdSubscription    Subscription[]       @relation("CreatedSubscription")
+  updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
+  deletedSubscription    Subscription[]       @relation("DeletedSubscription")
+  //
+  createdJob             Jobs[]               @relation("CreatedJob")
+  updatedJob             Jobs[]               @relation("UpdatedJob")
+  deletedJob             Jobs[]               @relation("DeletedJob")
+  credits Credits[] @relation("UserCredits")
+  creditTransaction CreditTransaction[] @relation("UserCreditTransaction")
+  usage Usage[] @relation("UserUsage")
+  @@map("users")
+}
+
+model Packs {
+  id Int @id @default(autoincrement())
+  type String
+  name String
+  unit_amount Float
+  features String[]
+  phrases String
+  credits Int
+  isActive               Boolean              @default(true) @map("is_active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("packs")
+}
+
+model CostsUsage {
+  id Int @id @default(autoincrement())
+  type String
+  amount Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("costsusage")
+}
+
+model Credits {
+  id Int @id @default(autoincrement())
+  user User @relation("UserCredits", fields: [userId], references: [id])
+  userId Int
+  amount Int
+  status String @default("pending")         
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creditTransactions CreditTransaction[]
+  @@map("credits")
+}
+model Usage {
+  id Int @id @default(autoincrement())
+  user User @relation("UserUsage", fields: [userId], references: [id])
+  userId Int
+  total Int
+  input Int
+  output Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("usage")
+}
+
+model CreditTransaction {
+  id Int @id @default(autoincrement())
+  user User @relation("UserCreditTransaction", fields: [userId], references: [id])
+  userId Int
+  credit   Credits? @relation(fields: [creditId], references: [id])
+  creditId Int? 
+  amount Int
+  transactionType String
+  mp_id_transaction BigInt @default(0)
+  status String @default("pending")                  
+  createdAt DateTime @default(now())
+  @@map("CreditTransaction")
+}
+
+model Subscription {
+  id             Int       @id @default(autoincrement())
+  uuid           String    @default(cuid())
+  type           String
+  priceId        String
+  user_stripe_id String
+  stripe_id      String
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id])
+  updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id])
+  deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id])
+  createdBy      Int?
+  updatedBy      Int?
+  deletedBy      Int?
+
+  @@map("subscription")
+}
+
+enum ProfileType {
+  CANDIDATE
+  RECRUITER
+  JOB
+  SERVICE_PROVIDER
+  FREELANCER
+}
+
+model Category {
+  id        Int                     @id @default(autoincrement())
+  uuid      String                  @default(cuid())
+  type      ProfileType
+  name      String
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @default(now()) @map("updated_at")
+  deletedAt DateTime?               @map("deleted_at")
+  candidate CategoriesOnCandidate[]
+  jobs      CategoriesOnJobs[]
+  recruiter CategoriesOnRecruiter[]
+  serviceProvider CategoriesOnServiceProvider[]
+  freelancer CategoriesOnFreelancer[]
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  @@map("category")
+}
+
+model CategoriesOnCandidate {
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidateId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([candidateId, categoryId])
+}
+
+model CategoriesOnJobs {
+  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobsId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([jobsId, categoryId])
+}
+
+model CategoriesOnRecruiter {
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiterId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([recruiterId, categoryId])
+}
+
+model CategoriesOnServiceProvider {
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProviderId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([serviceProviderId, categoryId])
+}
+
+model CategoriesOnFreelancer {
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancerId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([freelancerId, categoryId])
+}
+
+model Tags {
+  id        Int                     @id @default(autoincrement())
+  uuid      String                  @default(cuid())
+  type      ProfileType
+  name      String
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @default(now()) @map("updated_at")
+  deletedAt DateTime?               @map("deleted_at")
+  candidate TagsOnCandidate[]
+  jobs      TagsOnJobs[]
+  recruiter TagsOnRecruiter[]
+  serviceProvider TagsOnServiceProvider[]
+  freelancer TagsOnFreelancer[]
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  @@map("tags")
+}
+
+model TagsOnCandidate {
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidateId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([candidateId, tagsId])
+}
+
+model TagsOnJobs {
+  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobsId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([jobsId, tagsId])
+}
+model TagsOnServiceProvider {
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProviderId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([serviceProviderId, tagsId])
+}
+model TagsOnFreelancer {
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancerId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([freelancerId, tagsId])
+}
+
+
+model TagsOnRecruiter {
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiterId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([recruiterId, tagsId])
+}
+
+model Areas {
+  id        Int                     @id @default(autoincrement())
+  uuid      String                  @default(cuid())
+  type      ProfileType
+  name      String
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @default(now()) @map("updated_at")
+  deletedAt DateTime?               @map("deleted_at")
+  candidate AreasOnCandidate[]
+  jobs      AreasOnJobs[]
+  recruiter AreasOnRecruiter[]
+  serviceProvider AreasOnServiceProvider[]
+  freelancer AreasOnFreelancer[]
+  createdBy Int?
+  updatedBy Int?
+  deletedBy Int?
+
+  @@map("areas")
+}
+
+model AreasOnCandidate {
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidateId Int
+  areas    Areas  @relation(fields: [areasId], references: [id])
+  areasId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([candidateId, areasId])
+}
+
+model AreasOnJobs {
+  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobsId Int
+  areas    Areas  @relation(fields: [areasId], references: [id])
+  areasId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([jobsId, areasId])
+}
+model AreasOnServiceProvider {
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProviderId Int
+  areas    Areas  @relation(fields: [areasId], references: [id])
+  areasId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([serviceProviderId, areasId])
+}
+model AreasOnFreelancer {
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancerId Int
+  areas    Areas  @relation(fields: [areasId], references: [id])
+  areasId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([freelancerId, areasId])
+}
+
+
+model AreasOnRecruiter {
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiterId Int
+  areas    Areas  @relation(fields: [areasId], references: [id])
+  areasId  Int
+  assignedAt  DateTime  @default(now())
+  @@id([recruiterId, areasId])
+}
+
+
+model Candidate {
+  id           Int                     @id @default(autoincrement())
+  uuid         String                  @default(cuid())
+  description  String?
+  avatar  String?
+  banner  String?
+  link         String?
+  salary       String[]
+  contractMode String[]
+  actualRole   String?
+  categories   CategoriesOnCandidate[]
+  tags         TagsOnCandidate[]
+  areas        AreasOnCandidate[]
+  city         String?
+  state        String?
+  extra        String?
+  workMode     String[]
+  seniority    String[]
+  travel       String[]
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @default(now()) @map("updated_at")
+  deletedAt    DateTime?               @map("deleted_at")
+  user         User                    @relation(fields: [userId], references: [id])
+  userId       Int                     @unique
+  @@map("candidates")
+}
+
+model Jobs {
+  id                  Int      @id @default(autoincrement())
+  title               String
+  company             String?
+  email               String?
+  phone               String?
+  avatar              String?
+  banner              String?
+  experience          String?
+  description         String?
+  descriptionCompany  String?
+  modelOfWork         String?
+  city                String?
+  state               String?
+  salary              String[]
+  categories          CategoriesOnJobs[]
+  tags                TagsOnJobs[]
+  areas               AreasOnJobs[]
+  slug                String   @unique
+  isActive            Boolean  @default(true)
+  isPublished         Boolean  @default(false) @map("is_published")
+  isApproved          Boolean  @default(false) @map("is_approved")
+  sendToAllGroups     Boolean  @default(false) @map("send_to_all_groups")
+  sendToSelectedGroup Boolean  @default(false) @map("send_to_selected_group")
+  extra    String?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id])
+  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id])
+  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id])
+
+  createdBy Int? @map("created_by")
+  updatedBy Int? @map("updated_by")
+  deletedBy Int? @map("deleted_by")
+
+  @@map("jobs")
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid())
+  email     String
+  phone     String
+  page      String?
+  token     String   @unique
+  toLogin   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("token")
+}
+
+model ResetPasswordToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("reset_password_tokens")
+}
+
+model Manage_sessions {
+  id         Int       @id @default(autoincrement())
+  session_id String
+  key        String
+  value      String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@map("manage_sessions")
+}
+
+model Recruiter {
+  id           Int       @id @default(autoincrement())
+  uuid         String    @default(cuid())
+  description  String?
+  avatar  String?
+  banner  String?
+  link         String?
+  salary       String[]
+  contractMode String[]
+  actualRole   String?
+  categories   CategoriesOnRecruiter[]
+  tags         TagsOnRecruiter[]
+  areas        AreasOnRecruiter[]
+  city         String?
+  state        String?
+  extra        String?
+  workMode     String[]
+  seniority    String[]
+  travel       String[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  user         User                    @relation(fields: [userId], references: [id])
+  userId       Int                     @unique
+
+  @@map("recruiters")
+}
+
+model ServiceProvider {
+  id           Int       @id @default(autoincrement())
+  uuid         String    @default(cuid())
+  description  String?
+  avatar  String?
+  banner  String?
+  link         String?
+  salary       String[]
+  contractMode String[]
+  actualRole   String?
+  categories   CategoriesOnServiceProvider[]
+  tags         TagsOnServiceProvider[]
+  areas        AreasOnServiceProvider[]
+  city         String?
+  state        String?
+  extra        String?
+  workMode     String[]
+  seniority    String[]
+  travel       String[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  user         User                    @relation(fields: [userId], references: [id])
+  userId       Int                     @unique
+
+  @@map("serviceproviders")
+}
+
+model Freelancer {
+  id           Int       @id @default(autoincrement())
+  uuid         String    @default(cuid())
+  description  String?
+  avatar  String?
+  banner  String?
+  link         String?
+  salary       String[]
+  contractMode String[]
+  actualRole   String?
+  categories   CategoriesOnFreelancer[]
+  tags         TagsOnFreelancer[]
+  areas        AreasOnFreelancer[]
+  city         String?
+  state        String?
+  extra        String?
+  workMode     String[]
+  seniority    String[]
+  travel       String[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @default(now()) @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+  user         User                    @relation(fields: [userId], references: [id])
+  userId       Int                     @unique
+
+  @@map("freelancers")
+}

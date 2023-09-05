@@ -1,0 +1,3 @@
+test-regex: ((\/|^)(tests?|__tests?__)\/.*|\.(tests?|spec)|^\/?tests?)\.([c]js|[t]sx?)$
+test-ignore: factories
+ts: true

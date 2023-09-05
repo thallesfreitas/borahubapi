@@ -12,12 +12,12 @@ const config = {
       coerceTypes: 'array',
     },
   },
-  http2: true,
-  https: {
-    allowHTTP1: true,
-    key: fs.readFileSync('./server.key'),
-    cert: fs.readFileSync('./server.crt'),
-  },
+  // http2: true,
+  // https: {
+  //   allowHTTP1: true,
+  //   key: fs.readFileSync('./server.key'),
+  //   cert: fs.readFileSync('./server.crt'),
+  // },
   logger: {
     transport: IS_PRODUCTION
       ? undefined

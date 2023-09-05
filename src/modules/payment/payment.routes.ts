@@ -35,7 +35,7 @@ export default async (fastify: FastifyInstance) => {
 
   fastify.get(
     '/ipnMP',
-    { schema: { body: Schema.webhookMP } },
+    // { schema: { body: Schema.webhookMP } },
     Controller.ipnMP
   );
 };

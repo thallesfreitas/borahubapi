@@ -6,7 +6,7 @@ import fastifyWebsocket from '@fastify/websocket';
 import dotenv from 'dotenv';
 import fastify from 'fastify';
 import path from 'path';
-// import * as qs from 'qs';
+import * as qs from 'qs';
 
 import { jwtValidator, routesLoad } from './plugins';
 
@@ -32,47 +32,62 @@ function build(opts = {}) {
   });
 
   app.addContentTypeParser(
-    '*',
-    { parseAs: 'string' },
-    function (req, body, done) {
-      try {
-        const json = JSON.parse(body as string);
-        done(null, json);
-      } catch (err: any) {
-        err.statusCode = 400;
-        done(err, undefined);
-      }
+    'application/jsoff',
+    function (request: any, payload: any) {
+      console.log('linha 37');
+      console.log(payload);
+
+      // jsoffParser(payload, function (err, body) {
+      //   done(err, body);
+      // });
+    }
+  );
+
+  // Handle multiple content types with the same function
+  app.addContentTypeParser(
+    ['text/xml', 'application/xml'],
+    function (request: any, payload: any) {
+      console.log('linha 51');
+      console.log(payload);
+      // xmlParser(payload, function (err, body) {
+
+      //   done(err, body);
+      // });
     }
   );
 
   app.addContentTypeParser(
     'application/x-www-form-urlencoded',
     { parseAs: 'string' },
-    function (req, body, done) {
-      try {
-        const json = JSON.parse(body as string);
-        done(null, json);
-      } catch (err: any) {
-        err.statusCode = 400;
-        done(err, undefined);
+    function (req, payload, done) {
+      console.log(payload);
+      let parsed = qs.parse(payload.toString());
+      // let parsed;
+      // if (isBuffer(payload)) {
+      if (Buffer.isBuffer(payload)) {
+        parsed = qs.parse(payload.toString());
+      } else {
+        parsed = qs.parse(payload);
       }
+      done(null, parsed);
     }
   );
-
-  app.addContentTypeParser(
-    'application/json',
-    { parseAs: 'string' },
-    function (req, body, done) {
-      try {
-        const json = JSON.parse(body as string);
-        done(null, json);
-      } catch (err: any) {
-        err.statusCode = 400;
-        done(err, undefined);
-      }
-    }
-  );
-
+  // app.addContentTypeParser(
+  //   'application/json',
+  //   { parseAs: 'string' },
+  //   function (req, body, done) {
+  //     try {
+  //       const json = JSON.parse(body as string);
+  //       done(null, json);
+  //     } catch (err: any) {
+  //       err.statusCode = 400;
+  //       done(err, undefined);
+  //     }
+  //   }
+  // );
+  app.addContentTypeParser('*', function (request, payload, done) {
+    done(null, request);
+  });
   app.addContentTypeParser(
     ['image/png', 'image/jpeg', 'image/jpg'],
     function (request, payload, done) {

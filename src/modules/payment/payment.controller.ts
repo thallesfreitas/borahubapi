@@ -28,31 +28,31 @@ mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_TOKEN);
 export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
   // export const ipnMP = async (req: FastifyRequest, reply: FastifyReply) => {
   // const merchant_order = null;
-  // let payment;
-  // const { topic, id } = req.query;
+  let payment;
+  const { topic, id } = req.query;
+  console.log('foi');
+  switch (topic) {
+    case 'payment':
+      payment = await mercadopago.payment.findById(id);
 
-  // switch (topic) {
-  //   case 'payment':
-  //     payment = await mercadopago.payment.findById(id);
+      const ct = await CreditsService.getCreditsTransaction({
+        mp_id_transaction: id,
+      });
+      const statusCT = ct?.status;
 
-  //     const ct = await CreditsService.getCreditsTransaction({
-  //       mp_id_transaction: id,
-  //     });
-  //     const statusCT = ct?.status;
-
-  //     if (payment.response.status === 'approved' && statusCT !== 'approved') {
-  //       const credits = await CreditsService.updateCreditsTransaction({
-  //         mp_id_transaction: id,
-  //         status: 'approved',
-  //       });
-  //     }
-  //     break;
-  //   // case 'merchant_order':
-  //   //   merchant_order = await mercadopago.merchant_orders.findById(id);
-  //   //   break;
-  //   default:
-  //     break;
-  // }
+      if (payment.response.status === 'approved' && statusCT !== 'approved') {
+        const credits = await CreditsService.updateCreditsTransaction({
+          mp_id_transaction: id,
+          status: 'approved',
+        });
+      }
+      break;
+    // case 'merchant_order':
+    //   merchant_order = await mercadopago.merchant_orders.findById(id);
+    //   break;
+    default:
+      break;
+  }
 
   // let paid_amount = 0;
   // for (const payment of merchant_order.payments) {
@@ -172,10 +172,10 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
 
   paymentData.transaction_amount = 1.1;
 
-  // console.log('+++++++++++++++++++++++++++++++');
-  // console.log('paymentData');
-  // console.log(paymentData);
-  // console.log('+++++++++++++++++++++++++++++++');
+  console.log('+++++++++++++++++++++++++++++++');
+  console.log('paymentData');
+  console.log(paymentData);
+  console.log('+++++++++++++++++++++++++++++++');
 
   // const payment_data = {
   //   transaction_amount: paymentData.transaction_amount,
@@ -184,6 +184,15 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
   //     email: paymentData.payer.email,
   //   },
   // };
+
+  const payment_data = {
+    installments: 1,
+    payer: { identification: { number: '10268064709', type: 'CPF' } },
+    payment_method_id: 'pix',
+    transaction_amount: 1.1,
+    description:
+      'BoraPremium | Domine o jogo! Acesso total, prioridade e benefícios exclusivos. - Créditos: 1000',
+  };
 
   await mercadopago.payment
     // .save(payment_data)

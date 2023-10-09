@@ -1,27 +1,76 @@
-import bcrypt from 'bcrypt';
-import * as UserRepository from '../users/user.repository';
+import dbClient from '../../lib/dbClient';
+import { Utils } from '../../utils/functions';
+import * as JobsService from '../jobs/jobs.service';
+import * as UserService from '../users/user.service';
 
-export const createUser = async (params: UserRepository.CreateUserArgs) => {
-  const newParams = {
-    ...params,
-    password: params.password ? await bcrypt.hash(params.password, 12) : null,
-  };
+export const getBySlug = async (slug: string, userID: number) => {
+  const user = await UserService.getUserBySlug(slug);
+  let response = null;
 
-  return UserRepository.createUser(newParams);
+  if (user) {
+    response = {
+      type: 'user',
+      data: user,
+    };
+  } else {
+    const job = await JobsService.getJobBySlug(slug);
+    response = {
+      type: 'job',
+      data: job,
+      userID,
+    };
+  }
+
+  return response;
 };
 
-export const getUserByEmail = async (email: string) =>
-  UserRepository.getUserByEmail(email);
+export const verify = async (slug: string) => {
+  const user = await UserService.getUserBySlug(slug);
+  let response = false;
 
-export const getUserBySlug = async (slug: string) =>
-  UserRepository.getUserBySlug(slug);
+  if (user) {
+    response = true;
+  } else {
+    const job = await JobsService.getJobBySlug(slug);
+    if (job) response = true;
+  }
 
-export const getUserByUuid = async (uuid: string) =>
-  UserRepository.getUserByUuid(uuid);
+  return response;
+};
 
-export const getUserById = async (id: number) => UserRepository.getUserById(id);
+export const generate = async (slugSuggest: string) => {
+  let slug = Utils.generateSlug(slugSuggest);
+  let userWithSameSlug = await dbClient.user.findFirst({
+    where: {
+      slug,
+    },
+  });
+  let i = 1;
+  while (userWithSameSlug) {
+    slug = `${Utils.generateSlug(slugSuggest)}-${i}`;
+    // eslint-disable-next-line no-await-in-loop
+    userWithSameSlug = await dbClient.user.findFirst({
+      where: {
+        slug,
+      },
+    });
+    i += 1;
+  }
+  let jobWithSameSlug = await dbClient.jobs.findFirst({
+    where: {
+      slug,
+    },
+  });
+  while (jobWithSameSlug) {
+    slug = `${Utils.generateSlug(slugSuggest)}-${i}`;
+    // eslint-disable-next-line no-await-in-loop
+    jobWithSameSlug = await dbClient.jobs.findFirst({
+      where: {
+        slug,
+      },
+    });
+    i += 1;
+  }
 
-export const updateUser = async (
-  id: number,
-  params: UserRepository.UpdateUserArgs
-) => UserRepository.updateUser(id, params);
+  return slug;
+};

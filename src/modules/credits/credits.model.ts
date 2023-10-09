@@ -9,11 +9,13 @@ export type CreditsHistoryParams = {
 };
 export type GetCreditsHistory = FastifyRequest<CreditsHistoryParams>;
 
+export type VerifyCreditsType = {
+  userId: number;
+  type: string;
+  withRemove?: boolean;
+};
 export type VerifyCreditsParams = {
-  Body: {
-    userId: number;
-    type: string;
-  };
+  Body: VerifyCreditsType;
 };
 export type VerifyCredits = FastifyRequest<VerifyCreditsParams>;
 
@@ -35,8 +37,9 @@ export type CreditsType = {
   userId: number;
   amount: number;
   mp_id_transaction?: bigint;
-  transactionType: string;
+  transactionType?: string;
   status: string;
+  type?: string;
 };
 
 export type AddCreditsTransactionType = {
@@ -44,14 +47,16 @@ export type AddCreditsTransactionType = {
   creditId?: number;
   amount: number;
   mp_id_transaction?: bigint;
-  transactionType: string;
+  transactionType?: string;
   status: string;
+  type?: string;
 };
 
 export type UpdateCreditsTransactionType = {
   creditId?: number;
   mp_id_transaction?: bigint;
   status: string;
+  type?: string;
 };
 export type GetCreditsTransactionType = {
   userId?: number;
@@ -77,6 +82,7 @@ export type AddCredits = FastifyRequest<CreditsBody>;
 export type RemoveCreditsType = {
   userId: number;
   amount: number;
+  type?: string;
 };
 
 export type RemoveCreditsBody = {

@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FastifyReply } from 'fastify';
-import { getCostsUsage } from '../costsusage/costsusage.repository';
+
 import {
   AddCredits,
   GetCredits,
@@ -13,19 +13,8 @@ import * as CreditsService from './credits.service';
 
 export const verify = async (req: VerifyCredits, reply: FastifyReply) => {
   const { userId, type } = req.body;
-
-  const credit = await CreditsService.getCreditsByCreditsId(userId);
-  const amountCredit = credit?.amount as number;
-  const costsusage = await getCostsUsage(type as string);
-  const amountCost = costsusage?.amount as number;
-  if (amountCredit <= amountCost) {
-    return reply.status(200).send(false);
-  }
-  await CreditsService.removeCredits({
-    userId,
-    amount: amountCost,
-  });
-  return reply.status(200).send(true);
+  const verifyStatus = CreditsService.verify({ userId, type });
+  return reply.status(200).send(verifyStatus);
 };
 export const getCredits = async (req: GetCredits, reply: FastifyReply) => {
   const { userId } = req.body;
@@ -60,8 +49,13 @@ export const removeCredits = async (
   req: RemoveCredits,
   reply: FastifyReply
 ) => {
-  const { userId, amount } = req.body;
-  const credit = await CreditsService.removeCredits({ userId, amount });
+  const { userId, amount, type } = req.body;
+  const credit = await CreditsService.removeCredits({
+    userId,
+    amount,
+    type: type as string,
+    status: 'approved',
+  });
 
   return reply.send(credit);
 };

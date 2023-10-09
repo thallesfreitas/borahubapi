@@ -11,7 +11,7 @@ datasource db {
 model User {
   id                     Int                  @id @unique @default(autoincrement())
   uuid                   String               @unique @default(cuid())
-  stripe_id              String?
+  // stripe_id              String?
   customerMP             String?
   
   email                  String               @unique
@@ -43,14 +43,42 @@ model User {
   updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
   deletedSubscription    Subscription[]       @relation("DeletedSubscription")
   //
+  createdJobApplication             JobApplication[]               @relation("CreatedJobApplication")
   createdJob             Jobs[]               @relation("CreatedJob")
   updatedJob             Jobs[]               @relation("UpdatedJob")
   deletedJob             Jobs[]               @relation("DeletedJob")
+  
+  messageApprovalSystem MessageApprovalSystem[] @relation("UserApprovalSystem")
   credits Credits[] @relation("UserCredits")
   creditTransaction CreditTransaction[] @relation("UserCreditTransaction")
   usage Usage[] @relation("UserUsage")
   @@map("users")
 }
+enum AprovalType {
+  WAITING
+  APPROVED
+  DISAPPROVED
+}
+
+model MessageApprovalSystem {
+  id             Int       @id @default(autoincrement())
+  message        String
+  type           String
+  explain        String?
+  user           User      @relation("UserApprovalSystem", fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  idMessage     Int?
+  approved       AprovalType   @default(WAITING)
+  finished        Boolean   @default(false)
+  status         Boolean[]
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  @@map("messageApprovalSystem")
+}
+ 
+
 
 model Packs {
   id Int @id @default(autoincrement())
@@ -77,7 +105,7 @@ model CostsUsage {
 
 model Credits {
   id Int @id @default(autoincrement())
-  user User @relation("UserCredits", fields: [userId], references: [id])
+  user User @relation("UserCredits", fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   amount Int
   status String @default("pending")         
@@ -86,9 +114,10 @@ model Credits {
   creditTransactions CreditTransaction[]
   @@map("credits")
 }
+
 model Usage {
   id Int @id @default(autoincrement())
-  user User @relation("UserUsage", fields: [userId], references: [id])
+  user User @relation("UserUsage", fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   total Int
   input Int
@@ -100,12 +129,13 @@ model Usage {
 
 model CreditTransaction {
   id Int @id @default(autoincrement())
-  user User @relation("UserCreditTransaction", fields: [userId], references: [id])
+  user User @relation("UserCreditTransaction", fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   credit   Credits? @relation(fields: [creditId], references: [id])
   creditId Int? 
   amount Int
-  transactionType String
+  type String?
+  transactionType String?
   mp_id_transaction BigInt @default(0)
   status String @default("pending")                  
   createdAt DateTime @default(now())
@@ -117,14 +147,14 @@ model Subscription {
   uuid           String    @default(cuid())
   type           String
   priceId        String
-  user_stripe_id String
-  stripe_id      String
+  // user_stripe_id String
+  // stripe_id      String
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @default(now()) @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
-  createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id])
-  updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id])
-  deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id])
+  createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id], onDelete: Cascade)
+  updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id], onDelete: Cascade)
+  deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id], onDelete: Cascade)
   createdBy      Int?
   updatedBy      Int?
   deletedBy      Int?
@@ -247,6 +277,7 @@ model TagsOnJobs {
   assignedAt  DateTime  @default(now())
   @@id([jobsId, tagsId])
 }
+
 model TagsOnServiceProvider {
   serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
   serviceProviderId Int
@@ -263,7 +294,6 @@ model TagsOnFreelancer {
   assignedAt  DateTime  @default(now())
   @@id([freelancerId, tagsId])
 }
-
 
 model TagsOnRecruiter {
   recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
@@ -311,6 +341,7 @@ model AreasOnJobs {
   assignedAt  DateTime  @default(now())
   @@id([jobsId, areasId])
 }
+
 model AreasOnServiceProvider {
   serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
   serviceProviderId Int
@@ -319,6 +350,7 @@ model AreasOnServiceProvider {
   assignedAt  DateTime  @default(now())
   @@id([serviceProviderId, areasId])
 }
+
 model AreasOnFreelancer {
   freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
   freelancerId Int
@@ -337,7 +369,6 @@ model AreasOnRecruiter {
   assignedAt  DateTime  @default(now())
   @@id([recruiterId, areasId])
 }
-
 
 model Candidate {
   id           Int                     @id @default(autoincrement())
@@ -361,9 +392,31 @@ model Candidate {
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @default(now()) @map("updated_at")
   deletedAt    DateTime?               @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id])
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int                     @unique
   @@map("candidates")
+}
+
+model JobApplication {
+  id                  Int      @id @default(autoincrement())
+  name               String
+  email               String?
+  phone               String?
+  description         String? 
+  terms         Boolean?  @default(true)
+  
+  feedback  String? 
+  evaluation String? 
+  score Float?
+  
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdById User? @relation(name: "CreatedJobApplication", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdBy Int? @map("created_by")
+  
+  job   Jobs @relation(fields: [jobId], references: [id])
+  jobId Int
+  
+  @@map("jobapplication")
 }
 
 model Jobs {
@@ -375,7 +428,7 @@ model Jobs {
   avatar              String?
   banner              String?
   experience          String?
-  description         String?
+  description         String? 
   descriptionCompany  String?
   modelOfWork         String?
   city                String?
@@ -388,22 +441,23 @@ model Jobs {
   isActive            Boolean  @default(true)
   isPublished         Boolean  @default(false) @map("is_published")
   isApproved          Boolean  @default(false) @map("is_approved")
-  sendToAllGroups     Boolean  @default(false) @map("send_to_all_groups")
-  sendToSelectedGroup Boolean  @default(false) @map("send_to_selected_group")
+  
   extra    String?
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id])
-  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id])
-  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id])
+  createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id], onDelete: Cascade)
+  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
+  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
 
   createdBy Int? @map("created_by")
   updatedBy Int? @map("updated_by")
   deletedBy Int? @map("deleted_by")
-
+  
+  jobApplication JobApplication[]
+  
   @@map("jobs")
 }
 
@@ -425,10 +479,12 @@ model ResetPasswordToken {
   token     String   @unique
   userId    Int      @map("user_id")
   expiresAt DateTime @map("expires_at")
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reset_password_tokens")
 }
+
+
 
 model Manage_sessions {
   id         Int       @id @default(autoincrement())
@@ -492,7 +548,7 @@ model ServiceProvider {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id])
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int                     @unique
 
   @@map("serviceproviders")
@@ -520,7 +576,7 @@ model Freelancer {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id])
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int                     @unique
 
   @@map("freelancers")

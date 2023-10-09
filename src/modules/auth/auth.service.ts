@@ -28,13 +28,9 @@ export const createTokenToValidation = async ({
     user.email
   );
 
-  // const response = await WhatsApi.sendMessageAPI({
-  //   to: user.phone,
-  //   message: 'loginUser',
-  // });
   if (sendEmailOrWhats === 'w') {
     if (!user.isPhoneConfirmed)
-      await WhatsApi.sendMessageUltra({
+      await WhatsApi.sendMessageWithTemplate({
         to: user.phone,
         message: 'createTokenToValidation',
       });
@@ -51,7 +47,7 @@ export const createTokenToValidation = async ({
       });
   } else if (sendEmailOrWhats === 'ew') {
     if (!user.isPhoneConfirmed)
-      await WhatsApi.sendMessageUltra({
+      await WhatsApi.sendMessageWithTemplate({
         to: user.phone,
         message: 'createTokenToValidation',
       });
@@ -113,7 +109,7 @@ export const signinwithWhats = async ({ email }: SigninBodyWithEmail) => {
     true
   );
 
-  await WhatsApi.sendMessageUltra({
+  await WhatsApi.sendMessageWithTemplate({
     to: user.phone,
     message: 'loginUser',
   });
@@ -244,7 +240,7 @@ export const resetPassword = async (token: string, password: string) => {
 };
 
 export const checkToken = async (token: string) => {
-  return await tokenService.checkToken(token);
+  return tokenService.checkToken(token);
 };
 
 // export const checkValidToken = (token: string) => {

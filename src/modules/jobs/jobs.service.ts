@@ -14,12 +14,13 @@ export const getJobsByUserCount = (createdBy: number) =>
 export const getJobsByUserSlugCount = (slug: string) =>
   JobsRepository.getJobsByUserSlugCount(slug);
 
-export const getJobByUserSlug = (
+export const getJobsByUserSlug = (
   slug: string,
   limit: number,
   skip: number,
   isActive: boolean
-) => JobsRepository.getJobByUserSlug(slug, limit, skip, isActive);
+) => JobsRepository.getJobsByUserSlug(slug, limit, skip, isActive);
+
 export const getJobBySlug = (slug: string) => JobsRepository.getJobBySlug(slug);
 
 export const getJobsByUserId = (
@@ -33,3 +34,5 @@ export const updateJob = (params: JobsRepository.UpdateJobArgs) =>
 
 export const deleteJob = (id: number, userId: number) =>
   JobsRepository.deleteJob(id, userId);
+
+export const getJob = (id: number) => JobsRepository.getJob(id);

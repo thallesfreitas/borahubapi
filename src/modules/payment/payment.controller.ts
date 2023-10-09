@@ -32,30 +32,30 @@ export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
   const { topic, id } = req.query;
 
   switch (topic) {
-    case 'payment':
-      try {
-        payment = await mercadopago.payment.findById(id);
+  case 'payment':
+    try {
+      payment = await mercadopago.payment.findById(id);
 
-        const ct = await CreditsService.getCreditsTransaction({
+      const ct = await CreditsService.getCreditsTransaction({
+        mp_id_transaction: id,
+      });
+      const statusCT = ct?.status;
+
+      if (payment.response.status === 'approved' && statusCT !== 'approved') {
+        const credits = await CreditsService.updateCreditsTransaction({
           mp_id_transaction: id,
+          status: 'approved',
         });
-        const statusCT = ct?.status;
-
-        if (payment.response.status === 'approved' && statusCT !== 'approved') {
-          const credits = await CreditsService.updateCreditsTransaction({
-            mp_id_transaction: id,
-            status: 'approved',
-          });
-        }
-      } catch (e) {
-        reply.code(200).send(true);
       }
-      break;
+    } catch (e) {
+      reply.code(200).send(true);
+    }
+    break;
     // case 'merchant_order':
     //   merchant_order = await mercadopago.merchant_orders.findById(id);
     //   break;
-    default:
-      break;
+  default:
+    break;
   }
 
   // let paid_amount = 0;
@@ -220,7 +220,7 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
           type: 'CREDIT_PURCHASED',
         });
 
-        WhatsApi.sendMessageUltra({
+        WhatsApi.sendMessageWithTemplate({
           to: user?.phone as string,
           message: 'CREDIT_PURCHASED',
           payload: [

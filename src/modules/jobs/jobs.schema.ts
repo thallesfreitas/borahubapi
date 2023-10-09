@@ -20,8 +20,6 @@ export const jobBody = {
     email: { type: 'string' },
     userId: { type: 'number' },
     isActive: { type: 'boolean' },
-    sendToAllGroups: { type: 'boolean' },
-    sendToSelectedGroup: { type: 'boolean' },
   },
 };
 export const jobBodyUpdate = {
@@ -31,6 +29,7 @@ export const jobBodyUpdate = {
   properties: {
     id: { type: 'string' },
     title: { type: 'string' },
+    slug: { type: 'string' },
     description: { type: 'string' },
     descriptionCompany: { type: 'string' },
     modelOfWork: { type: 'string' },
@@ -47,8 +46,6 @@ export const jobBodyUpdate = {
     email: { type: 'string' },
     userId: { type: 'number' },
     isActive: { type: 'boolean' },
-    sendToAllGroups: { type: 'boolean' },
-    sendToSelectedGroup: { type: 'boolean' },
   },
 };
 

@@ -1,11 +1,17 @@
+// import { cohere } from 'cohere-ai';
 import { FastifyReply } from 'fastify';
 import OpenAI from 'openai';
 import { addUsage } from '../usage/usage.service';
-import { ChoiceCandidateJobAI, CreateAI } from './ai.model';
+import { ChoiceCandidateJobAI, CreateAI, TesteAI } from './ai.model';
+
+const cohere = require('cohere-ai');
+
+cohere.init(process.env.COHERE_API_KEY_HOMO);
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
 enum CreateImageRequestSizeEnum {
   '256x256' = '256x256',
   '512x512' = '512x512',
@@ -34,20 +40,103 @@ export const completion = async (req: CreateAI, reply: FastifyReply) => {
   // return reply.send(response.choices[0].text);
 };
 
-// export const completionStream = async (req: CreateAI, reply: FastifyReply) => {
-//   const stream = await openai.chat.completions.create({
-//     model: 'gpt-3.5-turbo',
-//     messages: [{ role: 'user', content: req.body.prompt }],
-//     stream: true,
-//   });
-//   for await (const part of stream) {
-//     console.log(part.choices[0].delta);
-//     // return reply.send({ text: `${part.choices[0].delta}` });
-//     return reply.send(part);
-//   }
-// };
+export const test = async (req: TesteAI, reply: FastifyReply) => {
+  const { prompt } = req.body;
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [
+      {
+        role: 'user',
+        content:
+          'qual a população de divinopolis de acordo com o site ibge.com.br',
+      },
+    ],
+    temperature: 0.6,
+    max_tokens: 4000,
+    top_p: 0.5,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+
+  return reply.send({
+    text: `${response.choices[0].message.content}`,
+    total: response?.usage?.total_tokens,
+    input: response?.usage?.prompt_tokens,
+    output: response?.usage?.completion_tokens,
+  });
+};
 
 export const chat = async (req: CreateAI, reply: FastifyReply) => {
+  const {
+    tokens,
+    model,
+    userId,
+    type,
+    prompt,
+    system,
+    assistant,
+    temperature,
+  } = req.body;
+  console.log('req.body');
+  console.log(req.body);
+  // let responseCohere = prompt;
+  // if (prompt.length > 250) {
+  //   responseCohere = await cohere.summarize({
+  //     text: prompt,
+  //     format: 'bullets',
+  //     model: 'command-light',
+  //   });
+  // }
+  // const finalPrompt = `Instruções: - Responda apenas com o texto do descritivo profissional; - Escreva o texto que o usuário possa usar em seu curriculum ou linkedin; - Incluia uma listas de qualificações, habilidades, pontos fortes; - use como base as informações enviadas; - O texto deverá ter no máximo 1500 caracteres: ${prompt}`;
+  console.log(`model: ${model}`);
+
+  const responseAi = await openai.chat.completions.create({
+    // model: 'gpt-4',
+    // model: 'gpt-3.5-turbo',
+    // model: 'gpt-3.5-turbo-16k-0613',
+    model: model || 'gpt-3.5-turbo-16k-0613',
+    temperature: temperature || 0.6,
+    max_tokens: tokens || 1500,
+    messages: [
+      {
+        role: 'assistant',
+        content: 'Responda em português do Brasil.',
+      },
+      // {
+      //   role: 'system',
+      //   content:
+      //     (system as string) ||
+      //     'Você é um especialista de alto nível em recrutamento, publicidade e marketing.',
+      // },
+      // {
+      //   role: 'assistant',
+      //   content:
+      //     (assistant as string) ||
+      //     'Não diga que você é um especialista. Não faça nenhuma introdução ao seu respeito.',
+      // },
+      {
+        role: 'user',
+        content: prompt as string,
+        // content: finalPrompt as string,
+      },
+    ],
+  });
+
+  if (responseAi.usage && userId) {
+    const dataUsage = {
+      userId,
+      total: responseAi.usage.total_tokens,
+      input: responseAi.usage.prompt_tokens,
+      output: responseAi.usage.completion_tokens,
+    };
+    await addUsage(dataUsage);
+  }
+
+  return reply.send({ text: `${responseAi.choices[0].message.content}` });
+};
+
+export const OLDchat = async (req: CreateAI, reply: FastifyReply) => {
   const { userId, type, prompt, system, assistant, temperature } = req.body;
 
   // const credit = await getCreditsByCreditsId(userId);
@@ -59,8 +148,9 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
   // }
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4',
+    // model: 'gpt-4',
     // model: 'gpt-3.5-turbo',
+    model: 'gpt-3.5-turbo-16k-0613',
     temperature: temperature || 0.6,
     max_tokens: 1500,
     messages: [
@@ -75,6 +165,10 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
         content:
           (assistant as string) ||
           'Não diga que você é um especialista. Não faça nenhuma introdução ao seu respeito.',
+      },
+      {
+        role: 'assistant',
+        content: 'Responda em português do Brasil.',
       },
       {
         role: 'user',
@@ -94,6 +188,7 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
   }
 
   return reply.send({ text: `${response.choices[0].message.content}` });
+  // return reply.send({ text: `${response}` });
 };
 
 export const ChoiceCandidateJob = async (

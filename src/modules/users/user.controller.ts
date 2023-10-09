@@ -25,7 +25,7 @@ export const getUserByEmail = async (
 ) => {
   const { email } = req.params;
 
-  const user = await UserService.getUserByEmail(email);
+  const user = await UserService.getUserByEmail(email as string);
 
   return reply.send(user);
 };
@@ -57,6 +57,7 @@ export const updateUser = async (req: UpdateUser, reply: FastifyReply) => {
     id,
     email,
     name,
+    slug,
     phone,
     password,
     optin,
@@ -73,6 +74,7 @@ export const updateUser = async (req: UpdateUser, reply: FastifyReply) => {
     email,
     phone,
     password,
+    slug,
     optin,
     isEmailConfirmed,
     isPhoneConfirmed,

@@ -1,4 +1,8 @@
+/* eslint-disable import/no-cycle */
 import { FastifyReply, FastifyRequest } from 'fastify';
+// import { bot } from '../ai/ai.service";';
+import * as AiService from '../ai/ai.service';
+import { approve, disapprove } from '../approvalSystem/approvalSystem.service';
 import * as tokenService from '../token/token.service';
 import * as UserRepository from '../users/user.repository';
 import * as WhatsService from './whats.service';
@@ -20,7 +24,7 @@ export const webhookAPIpost = async (
       // let to = body.entry[0].changes[0].value.metadata.to;
       const { from } = body.entry[0].changes[0].value.messages[0];
       const message = body.entry[0].changes[0].value.messages[0].text.body;
-      checkActionAPI({ to: from, message });
+      // checkActionAPI({ to: from, message });
     }
     reply.send(200);
   } else {
@@ -65,24 +69,49 @@ export const checkAction = async ({
   to,
   message,
 }: WhatsService.SendMessageAPIArgs) => {
-  let phoneNumber;
+  const phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
   let checkLogin;
+  console.log(message);
+  console.log(message.startsWith('##status091423'));
+
+  if (message.startsWith('##status091423')) {
+    const match = message.split('$$$$');
+    if (match) {
+      const id = parseInt(match[1].split('=')[1], 10);
+      const status = match[2].split('=')[1].trim();
+      const explain = match[3].split('=')[1];
+      let messageToAprove;
+      switch (status) {
+        case 's':
+          messageToAprove = await approve(id as unknown as number, explain);
+          break;
+        case 'n':
+          messageToAprove = await disapprove(id as unknown as number, explain);
+          break;
+
+        default:
+          break;
+      }
+      WhatsService.sendMessageToGroups(
+        messageToAprove?.message as string,
+        messageToAprove?.type as string,
+        messageToAprove?.userId as number,
+        messageToAprove?.idMessage as number,
+        'SEND_JOB_TO_GROUPS'
+      );
+    }
+    return false;
+  }
+
   switch (message) {
     case 'logar':
-      phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
-      checkLogin = await tokenService.getToken({
-        phone: phoneNumber,
-      });
-
+      checkLogin = await tokenService.getToken({ phone: phoneNumber });
       if (checkLogin != null) {
         const user = await UserRepository.getUserByPhone(phoneNumber);
         if (user) {
           await UserRepository.updateUser(user.id, { isPhoneConfirmed: true });
-
-          const changeToLogin = await tokenService.changeToken({
-            phone: phoneNumber,
-          });
-          WhatsService.sendMessageWhats({
+          await tokenService.changeToken({ phone: phoneNumber });
+          WhatsService.sendMessageWithTemplate({
             to,
             message: 'loggedUser',
           });
@@ -93,20 +122,14 @@ export const checkAction = async ({
     case 'confirmar':
     case 'confimar':
     case 'confimo':
-      phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
-      checkLogin = await tokenService.getToken({
-        phone: phoneNumber,
-      });
+      checkLogin = await tokenService.getToken({ phone: phoneNumber });
 
       if (checkLogin != null) {
         const user = await UserRepository.getUserByPhone(phoneNumber);
         if (user) {
           await UserRepository.updateUser(user.id, { isPhoneConfirmed: true });
-
-          const changeToLogin = await tokenService.changeToken({
-            phone: phoneNumber,
-          });
-          WhatsService.sendMessageWhats({
+          await tokenService.changeToken({ phone: phoneNumber });
+          WhatsService.sendMessageWithTemplate({
             to,
             message: 'createdUser',
           });
@@ -117,42 +140,12 @@ export const checkAction = async ({
       break;
 
     default:
-      // WhatsService.sendMessageWhats({
+      // WhatsService.sendMessageWithTemplate({
       //   to: to,
       //   message: 'default',
       // });
+      AiService.bot(to, message);
       break;
   }
   return false;
-};
-
-const checkActionAPI = async ({
-  to,
-  message,
-}: WhatsService.SendMessageAPIArgs) => {
-  //   // const msg = message.toLowerCase();
-  //   // let phoneNumber;
-  //   // switch (msg) {
-  //   //   case 'logar':
-  //   //     phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
-  //   //     const checkLogin = await tokenService.getToken({
-  //   //       phone: phoneNumber,
-  //   //     });
-  //   //     if (checkLogin != null) {
-  //   //       const changeToLogin = await tokenService.changeToken({
-  //   //         phone: to,
-  //   //       });
-  //   //       WhatsService.sendMessageAPI({
-  //   //         to: to,
-  //   //         message: 'loggedUser',
-  //   //       });
-  //   //     }
-  //   //     break;
-  //   //   default:
-  //   //     WhatsService.sendMessageAPI({
-  //   //       to: to,
-  //   //       message: 'default',
-  //   //     });
-  //   //     break;
-  //   // }
 };

@@ -16,7 +16,8 @@ interface SendEmail {
 export const sendEmail: SendEmail = async ({ payload, type }) => {
   try {
     const email = emailTemplates[type];
-
+    console.log('sendEmail');
+    console.log(email);
     if (email.admin.template != '') {
       send({
         payload,
@@ -41,6 +42,8 @@ export const sendEmail: SendEmail = async ({ payload, type }) => {
       });
     }
   } catch (error) {
+    console.log('error');
+    console.log(error);
     if (error instanceof Error) {
       throw new Error(error.message);
     }
@@ -104,6 +107,7 @@ const send = async ({
     } else {
       contactEmail.sendMail(mail, error => {
         if (error) {
+          console.log(error);
           console.log({ status: 'ERROR' });
         } else {
           console.log({ status: 'Message Sent' });

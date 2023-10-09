@@ -1,5 +1,5 @@
 export type SlugFilters = {
-  email: string;
+  email?: string;
   slug: string;
 };
 

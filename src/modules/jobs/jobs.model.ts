@@ -19,8 +19,6 @@ export type JobBody = {
   phone: string;
   email: string;
   isPublished: boolean;
-  sendToAllGroups: boolean;
-  sendToSelectedGroup: boolean;
 };
 
 export type CreateJobRequest = FastifyRequest<{

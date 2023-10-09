@@ -34,8 +34,6 @@ const compressVideoFFMPG = (
         }
       })
       .on('end', () => {
-        console.log('resolve(convertedFilePath)');
-        console.log(convertedFilePath);
         return resolve(convertedFilePath);
       })
       .on('error', (error: any) => {
@@ -114,11 +112,9 @@ export const uploadFile = async (file: any, folder: string = 'temp') => {
         newWidth = 2000;
         newHeight = Math.round((height * newWidth) / width);
       }
-    } else {
-      if (height > 2000) {
-        newHeight = 2000;
-        newWidth = Math.round((width * newHeight) / height);
-      }
+    } else if (height > 2000) {
+      newHeight = 2000;
+      newWidth = Math.round((width * newHeight) / height);
     }
 
     compressedImage = image.resize({ width: newWidth, height: newHeight });

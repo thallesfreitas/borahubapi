@@ -26,6 +26,10 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   },
   {
     type: 'CREATE_JOB',
+    amount: 100,
+  },
+  {
+    type: 'SEND_JOB_TO_GROUPS',
     amount: 1000,
   },
   {

@@ -61,6 +61,7 @@ export const updateUserBody = {
   required: [],
   properties: {
     id: { type: 'number' },
+    slug: { type: 'string' },
     optin: { type: 'boolean' },
     indicatedBy: { type: 'string' },
     email: { type: 'string' },

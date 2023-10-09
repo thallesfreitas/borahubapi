@@ -8,6 +8,49 @@ import * as Serializer from './slug.serializer';
 export default async (fastify: FastifyInstance) => {
   // fastify.addHook('onRequest', fastify.authenticate);
 
+  fastify.post<Model.SlugParams>(
+    '/generate/:slug',
+    {
+      onSend,
+      schema: {
+        params: Schema.verifySlugParams,
+      },
+      preSerialization: Serializer.generateSlug,
+    },
+    Controller.generate
+  );
+
+  // fastify.post<{ Params: Model.SlugFilters }>(
+  //   '/generate/:slug',
+  //   {
+  //     schema: { params: Schema.verifySlugParams },
+  //     onSend,
+  //   },
+  //   Controller.generate
+  // );
+
+  // fastify.get<Model.SlugParams>(
+  //   '/generate/:slug',
+  //   {
+  //     onSend,
+  //     schema: {
+  //       params: Schema.verifySlugParams,
+  //     },
+  //   },
+  //   Controller.generate
+  // );
+
+  fastify.get<Model.SlugParams>(
+    '/verify/:slug',
+    {
+      onSend,
+      schema: {
+        params: Schema.verifySlugParams,
+      },
+    },
+    Controller.verify
+  );
+
   fastify.get<Model.SlugParams>(
     '/:slug',
     {

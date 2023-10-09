@@ -1,9 +1,13 @@
+/* eslint-disable consistent-return */
+/* eslint-disable security/detect-object-injection */
 /* eslint-disable global-require */
 /* eslint-disable new-cap */
-import axios from 'axios';
 // eslint-disable-next-line import/no-cycle
+// import * as SentToGroupsService from '../modules/senttogroups/senttogroups.service';
+import * as ApprovalSystem from '../modules/approvalSystem/approvalSystem.service';
 import { checkAction } from '../modules/whats/webhook.service';
 import { WhatsType, whatsTemplates } from '../utils/texts/whats';
+import * as Queue from './queue';
 
 const fs = require('fs');
 const wppconnect = require('@wppconnect-team/wppconnect');
@@ -17,30 +21,76 @@ const {
   TOKEN_FB_TEST,
 } = process.env;
 
-const groupsWhatsTeste = '5511945483326-1593553509@g.us';
-const groupsWhats =
-  '5511945483326-1597956259@g.us ,' +
-  '5521996164999-1487957874@g.us ,' +
-  '5511945483326-1594043289@g.us ,' +
-  '5511945483326-1594239437@g.us ,' +
-  '5511945483326-1596121854@g.us ,' +
-  '5511945483326-1592758441@g.us ,' +
-  '5511945483326-1595020621@g.us ,' +
-  '5511945483326-1557146656@g.us ,' +
-  '5511945483326-1610655401@g.us ,' +
-  '5511945483326-1597086022@g.us ,' +
-  '5511945483326-1615038466@g.us ,' +
-  '5511945483326-1588441584@g.us ,' +
-  '5511945483326-1621859631@g.us ,' +
-  '5511945483326-1611927899@g.us ,' +
-  '5511945483326-1580909099@g.us ,' +
-  '5511945483326-1593553509@g.us ,' +
-  '5511945483326-1591718176@g.us ,' +
-  '120363045581553829@g.us ,' +
-  '5511945483326-1596633225@g.us ,' +
-  '5511945483326-1591185970@g.us ,' +
-  '5511945483326-1598451853@g.us ,' +
-  '120363045425946745@g.us';
+const jobsample = `
+ATENDIMENTO OFFLINE - PLENO OU SÊNIOR
+
+EMPRESA
+Agência Doc.Sync
+
+DATA E LOCAL
+06/09, São Paulo 
+
+ATIVIDADES
+- Fluxo entre a agência e as incorporadoras.
+- Acompanhamento de fornecedores.
+- Auxílio no desenvolvimento de campanhas offline.
+- Acompanhamento da produção de materiais gráficos.
+- Acompanhamento da comunicação visual de stands e terrenos.
+- Verificação in loco da instalação de placas, adesivos, e painéis.
+- Compra e verificação de mídia offline.
+- Ativações, eventos e promoção de rua.
+- Prestação de contas e controle de budget do job.
+- Serviço de produção (cotações de fornecedores e serviços).
+
+REQUISITOS
+- Experiência no mercado imobiliário (agências, incorporadoras, construtoras e/ou grandes imobiliárias).
+- Experiência comprovada em fluxo de aprovação de KV, montagem de stand e campanhas offline.
+- Perfil analítico, pró ativo e curioso. Bom relacionamento interpessoal e facilidade em trabalhar no regime home office.
+
+DETALHES DA POSIÇÃO
+- Contratação PJ.
+- Home office (com exceção de reuniões pontuais com o cliente e visitas técnicas).
+- Nossos clientes estão em São Paulo e é preciso ter fácil acesso.
+
+CV COM PRETENSÃO SALARIAL
+Enviar para Marcela Matos (Head de Atendimento) no e-mail m.matos@docsync.com.br
+`;
+
+// const groupsWhatsTeste = '5511945483326-1593553509@g.us';
+// const groupsWhatsTeste = '120363047748135271@g.us';
+export const groupsWhatsStatusTeste = [false, false, false, false, false];
+export const groupsWhatsTeste = [
+  { name: '#1BoraAjudar.work-teste', idWhats: '120363047748135271@g.us' },
+  { name: '#2BoraAjudar.work-teste', idWhats: '120363170446337370@g.us' },
+  { name: '#3BoraAjudar.work-teste', idWhats: '120363170098349977@g.us' },
+  { name: '#4BoraAjudar.work-teste', idWhats: '120363170837080195@g.us' },
+  { name: '#5BoraAjudar.work-teste', idWhats: '120363152796875195@g.us' },
+];
+
+const groupsWhats = [
+  { name: '1#BoraAjudar.Work', idWhats: '5521996164999-1487957874@g.us' },
+  { name: '2#BoraAjudar.Work', idWhats: '120363045425946745@g.us' },
+  { name: '3#BoraAjudar.Work', idWhats: '5511945483326-1580909099@g.us' },
+  { name: '4#BoraAjudar.Work', idWhats: '5511945483326-1557146656@g.us' },
+  { name: '5#BoraAjudar.Work', idWhats: '5511945483326-1588441584@g.us' },
+  { name: '6#BoraAjudar.Work', idWhats: '5511945483326-1591185970@g.us' },
+  { name: '7#BoraAjudar.Work', idWhats: '5511945483326-1611927899@g.us' },
+  { name: '8#BoraAjudar.Work', idWhats: '5511945483326-1592758441@g.us' },
+  { name: '9#BoraAjudar.Work', idWhats: '5511945483326-1593553509@g.us' },
+  { name: '10#BoraAjudar.Work', idWhats: '5511945483326-1594043289@g.us' },
+  { name: '11#BoraAjudar.Work', idWhats: '5511945483326-1594239437@g.us' },
+  { name: '12#BoraAjudar.Work', idWhats: '5511945483326-1595020621@g.us' },
+  { name: '13#BoraAjudar.Work', idWhats: '5511945483326-1596121854@g.us' },
+  { name: '14#BoraAjudar.Work', idWhats: '5511945483326-1596633225@g.us' },
+  { name: '15#BoraAjudar.Work', idWhats: '5511945483326-1597086022@g.us' },
+  { name: '16#BoraAjudar.Work', idWhats: '5511945483326-1597956259@g.us' },
+  { name: '17#BoraAjudar.Work', idWhats: '5511945483326-1598451853@g.us' },
+  { name: '18#BoraAjudar.work', idWhats: '5511945483326-1610655401@g.us' },
+  { name: '19#BoraAjudar.Work', idWhats: '5511945483326-1591718176@g.us' },
+  { name: '20#BoraAjudar.Work', idWhats: '5511945483326-1615038466@g.us' },
+  { name: '21#BoraAjudar.work', idWhats: '5511945483326-1621859631@g.us' },
+  { name: '22#BoraAjudar.work', idWhats: '120363045581553829@g.us' },
+];
 
 interface Participant {
   id: string;
@@ -88,143 +138,99 @@ interface SendText {
 }
 
 let clientWP: WP;
-let bot: WP;
 
 function config(client: WP) {
   clientWP = client;
-
-  console.log(clientWP);
-}
-function configBot(client: WP) {
-  bot = client;
-
-  console.log(bot);
 }
 
-// function start(client: {
-//   onMessage: (arg0: (message: any) => void) => void;
-//   sendText: (arg0: string, arg1: string) => Promise<any>;
-// }) {
-//   console.log('start');
-//   console.log(clientWP);
-//   clientWP = client;
 function start() {
-  console.log(
-    '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-  );
-  console.log('start');
-  console.log(
-    '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-  );
   clientWP.onMessage((message: { [x: string]: string; body: string }) => {
-    console.log('onMessage');
-
     const to = message.from;
-    console.log('to');
-    console.log(to);
-    // const message = message.body;
     const textMessage = message.body.toLowerCase();
     if (to.includes('@c.us')) {
       if (message) {
         checkAction({ to, message: textMessage });
       }
     }
-
-    // if (message.body === 'Hello') {
-    //   // .sendText('5511945483326-1593553509@g.us', 'teste 1233')
-
-    //   clientWP
-    //     .sendText(message.from, 'teste 4')
-    //     .then((result: any) => {
-    //       console.log('Result: ', result); // return object success
-    //     })
-    //     .catch((erro: any) => {
-    //       console.error('Error when sending: ', erro); // return object error
-    //     });
-    // }
   });
 }
-function startBOT() {
-  console.log('startBOT');
-  bot.onMessage((message: { [x: string]: string; body: string }) => {
-    console.log('onMessage');
 
-    const to = message.from;
-    console.log('to');
-    console.log(to);
-    // const message = message.body;
-    bot.sendText('5511945483326-1593553509@g.us', 'teste 1233');
-    const textMessage = message.body.toLowerCase();
-    if (to.includes('@c.us')) {
-      if (message) {
-        checkAction({ to, message: textMessage });
-      }
+export async function startTyping(to: string) {
+  const phone = to.toString().replace('+', '');
+  clientWP.startTyping(phone);
+}
+
+export async function sendProcess(action: string) {
+  const data = action.split('&&&@@@');
+  const phone = data[0];
+  const message = data[1];
+  clientWP.startTyping(phone);
+  // try {
+  const t = await clientWP.sendText(phone, message, {});
+  clientWP.stopTyping(phone);
+  try {
+    if (data.length === 3) {
+      const group = data[2].split('#########');
+      const id = parseInt(group[0], 10);
+      const groupId = parseInt(group[1], 10);
+      ApprovalSystem.update({
+        id,
+        groupId,
+        status: true,
+      });
     }
-
-    // if (message.body === 'Hello') {
-    //   // .sendText('5511945483326-1593553509@g.us', 'teste 1233')
-
-    //   clientWP
-    //     .sendText(message.from, 'teste 4')
-    //     .then((result: any) => {
-    //       console.log('Result: ', result); // return object success
-    //     })
-    //     .catch((erro: any) => {
-    //       console.error('Error when sending: ', erro); // return object error
-    //     });
-    // }
-  });
+    return true;
+  } catch (e) {
+    console.error('Error when sending: ', e); // return object error
+    clientWP.stopTyping(phone);
+    if (data.length === 3) {
+      console.log('MENSAGEM ENVIADA PARA GRUPO DEU ERRO!');
+      const group = data[2].split('#########');
+      const id = parseInt(group[0], 10);
+      const groupId = parseInt(group[1], 10);
+      ApprovalSystem.update({
+        id,
+        groupId,
+        status: false,
+      });
+    }
+    return false;
+  }
 }
-async function send({ to, message }: SendText) {
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
-  console.log('+++++++++++++++++++++++++++++++++++++');
 
+export async function sendToGroups(message: string, approvalSystemId: number) {
+  let groupId = 0;
+  const interval: NodeJS.Timeout = setInterval(async () => {
+    const groupPhone = groupsWhatsTeste[groupId].idWhats;
+    // const groupPhone = groupsWhats[groupId].idWhats;
+    let phone = groupPhone.toString().replace('+', '');
+    if (!phone.includes('@')) phone = `${phone}@g.us`;
+    clientWP.startTyping(phone);
+    const messageFinal = `${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
+    Queue.sendMessageToQueue('queueSendWhats', messageFinal);
+
+    if (groupId === groupsWhatsTeste.length - 1) {
+      // if (groupId === groupsWhats.length - 1) {
+      clearInterval(interval);
+    }
+    groupId += 1;
+  }, 5000);
+
+  return true;
+}
+
+export async function send({ to, message }: SendText) {
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
-
   clientWP.startTyping(phone);
-
-  // clientWP
-  //   .sendText(phone, message)
-  // const buttons = {
-  //   title: 'Title',
-  //   footer: 'Footer',
-  //   isDynamicReplyButtonsMsg: true,
-  //   dynamicReplyButtons: [
-  //     {
-  //       buttonId: '1',
-  //       buttonText: {
-  //         displayText: 'Lorem ipsum',
-  //       },
-  //       type: 1,
-  //     },
-  //   ],
-  // };
-  console.log('ENVIOU ');
-
-  clientWP
-    .sendText(phone, message, {})
-    .then((result: any) => {
-      console.log('Result: ', result); // return object success
-      clientWP.stopTyping(phone);
-    })
-    .catch((erro: any) => {
-      console.error('Error when sending: ', erro); // return object error
-      clientWP.stopTyping(phone);
-    });
+  const messageFinal = `${phone}&&&@@@${message}`;
+  Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 }
-// clientWP.sendText('5511945483326@c.us', 'WPPConnect message with buttons', );
+
 export const connectWP = async () => {
   wppconnect
     .create({
-      session: 'Bora', // Pass the name of the client you want to start the bot
+      session: 'Bora',
       catchQR: (
         base64Qrimg: any,
         asciiQR: any,
@@ -232,9 +238,9 @@ export const connectWP = async () => {
         urlCode: any
       ) => {
         console.log('Number of attempts to read the qrcode: ', attempts);
-        console.log('Terminal qrcode: ', asciiQR);
-        console.log('base64 image string qrcode: ', base64Qrimg);
-        console.log('urlCode (data-ref): ', urlCode);
+        // console.log('Terminal qrcode: ', asciiQR);
+        // console.log('base64 image string qrcode: ', base64Qrimg);
+        // console.log('urlCode (data-ref): ', urlCode);
       },
       statusFind: (statusSession: any, session: any) => {
         // return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
@@ -311,66 +317,11 @@ export const connectWP = async () => {
       start();
     })
     .catch((error: any) => console.log(error));
-
-  // wppconnect.create({ session: 'BOT' }).then(() => startBOT());
-
-  // wppconnect
-  //   .create({
-  //     session: 'bora3',
-  //     puppeteerOptions: {
-  //       userDataDir: './tokens/bora3',
-  //     },
-  //     statusFind: (statusSession: any, session: any) => {
-  //       // return: isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
-  //       console.log('Status Session: ', statusSession);
-  //       // create session wss return "serverClose" case server for close
-  //       console.log('Session name: ', session);
-  //     },
-
-  //     catchQR: (base64Qr: string, asciiQR: any) => {
-  //       console.log(asciiQR); // Optional to log the QR in the terminal
-  //       const matches = base64Qr.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-  //       const response = {
-  //         type: '',
-  //         data: Buffer.from('', 'base64') as Buffer,
-  //       };
-
-  //       if (matches?.length !== 3) {
-  //         return new Error('Invalid input string');
-  //       }
-  //       // eslint-disable-next-line prefer-destructuring
-  //       response.type = matches[1];
-  //       // response.data = new Buffer.from(matches[2], 'base64') as Buffer;
-  //       response.data = Buffer.from(matches[2], 'base64') as Buffer;
-
-  //       const imageBuffer = response;
-  //       require('fs').writeFile(
-  //         'out.png',
-  //         imageBuffer.data,
-  //         'binary',
-  //         function (err: null) {
-  //           if (err != null) {
-  //             console.log(err);
-  //           }
-  //         }
-  //       );
-  //     },
-  //     logQR: false,
-  //   })
-  //   .then((client: any) => {
-  //     console.log('client');
-
-  //     config(client);
-  //     start();
-  //   })
-  //   .catch((error: any) => console.log(error));
 };
 
 export const getGroups = async () => {
   const data = await clientWP.listChats({ onlyGroups: true });
 
-  // console.log(chats);
-  // return chats;
   const linkRegex = /https:\/\/chat\.whatsapp\.com\/[^\s]+/;
   // ULTRA
   // const url = `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/groups?token=${WHATS_API_TOKEN}`;
@@ -381,16 +332,21 @@ export const getGroups = async () => {
   // });
   // const { data } = response;
   const filteredData = data
-    .filter((item: Item) => item.name.toLowerCase().includes('boraajudar.work'))
+    // .filter(
+    //   (item: Item) => !item.name.toLowerCase().includes('boraajudar.work')
+    // )
+    .filter(
+      (item: Item) => item.name.toLowerCase().includes('boraajudar.work-teste')
+      // item.name.toLowerCase().includes('boraajudar.work')
+    )
     .map(
       (item: {
         groupMetadata: { desc: string; participants: string | any[] };
         id: any;
         name: any;
       }) => {
-        const linkMatch = item.groupMetadata.desc.match(linkRegex);
+        const linkMatch = item.groupMetadata?.desc?.match(linkRegex);
         const link = linkMatch ? linkMatch[0] : null;
-
         return {
           id: item.id,
           name: item.name,
@@ -398,63 +354,39 @@ export const getGroups = async () => {
           link,
         };
       }
-    );
+    )
+    .sort((a: { name: string }, b: { name: string }) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+
+      const getNameParts = (name: string) => {
+        const num = name.match(/\d+/)?.[0];
+        const text = num ? name.replace(num, '') : '';
+        return [num, text];
+      };
+
+      const [aNum, aText] = getNameParts(a.name);
+      const [bNum, bText] = getNameParts(b.name);
+      if (aNum && bNum && aText && bText) {
+        if (aNum > bNum) return 1;
+        if (aNum < bNum) return -1;
+
+        if (aText > bText) return 1;
+        if (aText < bText) return -1;
+      }
+
+      return 0;
+    });
 
   return filteredData;
 };
 
-export const sendMessageToGroups = async (message: string) => {
-  const dataSetting = JSON.stringify({
-    token: WHATS_API_TOKEN,
-    sendDelay: DELAY_MESSAGE_GROUPS,
-    webhook_url: ULTRA_END_POINT,
-    webhook_message_received: true,
-    webhook_message_create: true,
-    webhook_message_ack: '',
-    webhook_message_download_media: '',
-  });
-
-  const configSetting = {
-    method: 'post',
-    url: `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/instance/settings`,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: dataSetting,
-  };
-  const responseSetting = await axios(configSetting);
-
-  const url = `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/messages/chat`;
-  const data = JSON.stringify({
-    token: WHATS_API_TOKEN,
-    to: groupsWhats,
-    body: message,
-    referenceId: 'sentFromSite',
-  });
-
-  const config = {
-    method: 'post',
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data,
-  };
-
-  const response = await axios(config);
-
-  return response.data;
-};
-
-export const sendMessageUltra = async ({
+export const sendMessageWithTemplate = async ({
   message,
   to,
   payload,
   payloadVar,
 }: SendMessageArgs) => {
-  console.log('______________________________________________');
-  console.log('clientWP');
-  console.log(clientWP);
   try {
     let messageFinal = '';
     let toFinal = '';
@@ -468,11 +400,7 @@ export const sendMessageUltra = async ({
       messageFinal = message;
     }
     if (payload && payloadVar) {
-      console.log('payload.length');
-      console.log(payload.length);
       for (let i = 0; i < payload.length; i += 1) {
-        console.log('payloadVar[i], payload[i]');
-        console.log(payloadVar[i], payload[i]);
         messageFinal = messageFinal.replace(payloadVar[i], payload[i]);
       }
     }
@@ -482,99 +410,8 @@ export const sendMessageUltra = async ({
       toFinal = to;
     }
 
-    const url = `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/messages/chat`;
-    const data = JSON.stringify({
-      token: WHATS_API_TOKEN,
-      to: toFinal,
-      body: messageFinal,
-      referenceId: 'sentFromSite',
-      sendDelay: DELAY_MESSAGE_GROUPS,
-      webhook_url: ULTRA_END_POINT,
-      webhook_message_received: true,
-      webhook_message_create: true,
-      webhook_message_ack: '',
-      webhook_message_download_media: '',
-    });
-
-    const config = {
-      method: 'post',
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data,
-    };
-    console.log('toFinal');
-    console.log(toFinal);
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // VERIFICAR PQ NAO TA ENVINADO A RESPOSTA DPS DE LOGAA
-    // clientWP
-    //   // .sendText(toFinal, 'teste 5')
-    //   .sendText('5511945483326-1593553509@g.us', 'teste 5')
-    //   .then((result: any) => {
-    //     console.log('Result: ', result); // return object success
-    //   })
-    //   .catch((erro: any) => {
-    //     console.error('Error when sending: ', erro); // return object error
-    //   });
-
     send({ to: toFinal, message: messageFinal });
-
-    axios(config)
-      .then(function (response) {
-        return response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-        return error;
-      });
   } catch (e) {
     return e;
-  }
-};
-export const sendMessageAPI = async ({ to, message }: SendMessageAPIArgs) => {
-  try {
-    const token = TOKEN_FB_TEST;
-
-    let messageFinal = '';
-    if (
-      (typeof message === 'string' && message in whatsTemplates) ||
-      typeof message !== 'string'
-    ) {
-      const messagePre = whatsTemplates[message as WhatsType];
-      messageFinal = messagePre.message;
-    } else {
-      messageFinal = message;
-    }
-    console.log('VAI ENVIAR');
-    const response = await axios({
-      method: 'POST', // Required, HTTP method, a string, e.g. POST, GET
-      url: `https://graph.facebook.com/v12.0/${process.env.PHONE_ID_FB}/messages?access_token=${token}`,
-      data: {
-        messaging_product: 'whatsapp',
-        to,
-        text: { body: messageFinal },
-      },
-      headers: { 'Content-Type': 'application/json' },
-    });
-    console.log('ENVIADO');
-    return response.data;
-  } catch (e) {
-    return false;
   }
 };

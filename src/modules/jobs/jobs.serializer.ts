@@ -70,6 +70,7 @@ export const getJobs = async (
     salary: jobs.salary,
     experience: jobs.experience,
     categories: jobs.categories,
+    areas: jobs.areas,
     tags: jobs.tags,
     extra: jobs.extra,
     createdAt: jobs.createdAt,
@@ -78,10 +79,9 @@ export const getJobs = async (
     phone: jobs.phone,
     isActive: jobs.isActive,
     email: jobs.email,
-    sendToAllGroups: jobs.sendToAllGroups,
-    sendToSelectedGroup: jobs.sendToSelectedGroup,
-    createdBy: jobs.createdById.name,
-    updatedBy: jobs.updatedById.name,
+    jobApplication: jobs.jobApplication,
+    createdBy: jobs.createdById,
+    updatedBy: jobs.updatedById,
   }));
 
   return {
@@ -109,9 +109,9 @@ export const getJob = async (
     experience: jobs.experience,
     tags: jobs.tags,
     categories: jobs.categories,
+    jobApplication: jobs.jobApplication,
+    areas: jobs.areas,
     extra: jobs.extra,
-    sendToAllGroups: jobs.sendToAllGroups,
-    sendToSelectedGroup: jobs.sendToSelectedGroup,
     phone: jobs.phone,
     email: jobs.email,
     company: jobs.company,
@@ -119,8 +119,8 @@ export const getJob = async (
     isActive: jobs.isActive,
     createdAt: jobs.createdAt,
     updatedAt: jobs.updatedAt,
-    createdBy: jobs.createdById.name,
-    updatedBy: jobs.updatedById.name,
+    createdBy: jobs.createdById,
+    updatedBy: jobs.updatedById,
   };
 
   return newPayload;

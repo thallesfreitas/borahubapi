@@ -1,10 +1,19 @@
 /* eslint-disable no-await-in-loop */
-import { Areas, Category, Jobs, Prisma, Tags, User } from '@prisma/client';
+import {
+  Areas,
+  Category,
+  JobApplication,
+  Jobs,
+  Prisma,
+  Tags,
+} from '@prisma/client';
 import dbClient from '../../lib/dbClient';
 import { Utils } from '../../utils/functions';
 import { updateAreasOnJobs } from '../areas/areas.service';
 import { updateCategoryOnJobs } from '../category/category.service';
 import { updateTagsOnJobs } from '../tags/tags.service';
+// eslint-disable-next-line import/no-cycle
+import { UserCandidate } from '../users/user.repository';
 
 export interface CreateJobArgs {
   title: string;
@@ -24,8 +33,6 @@ export interface CreateJobArgs {
   company: string;
   phone: string;
   email: string;
-  sendToAllGroups: boolean;
-  sendToSelectedGroup: boolean;
 }
 
 export const createJob = async ({ userId, ...rest }: CreateJobArgs) => {
@@ -137,15 +144,21 @@ export const updateJob = async ({ id, userId, ...rest }: UpdateJobArgs) => {
     data: rest.areas,
     jobsId: id,
   });
-  console.log('updateJob');
-  console.log('data');
-  console.log(data);
   return dbClient.jobs.update({
     where: {
       id,
     },
     data,
   });
+};
+
+export const getJob = async (id: number) => {
+  const job = await dbClient.jobs.findFirst({
+    where: {
+      id,
+    },
+  });
+  return job;
 };
 
 export const deleteJob = async (id: number, userId: number) => {
@@ -159,14 +172,17 @@ export const deleteJob = async (id: number, userId: number) => {
     },
   });
 };
-
+export interface JobApplicationWithUser extends JobApplication {
+  createdById: UserCandidate;
+}
 export interface JobComplete extends Jobs {
+  jobApplication: JobApplicationWithUser[];
   categories: Category;
   tags: Tags;
   areas: Areas;
-  createdById: User;
-  updatedById: User;
-  deletedById: User;
+  createdById: UserCandidate;
+  updatedById: UserCandidate;
+  deletedById: UserCandidate;
 }
 
 export const getJobs = async (limit: number, skip: number) => {
@@ -177,6 +193,7 @@ export const getJobs = async (limit: number, skip: number) => {
     include: {
       createdById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -184,6 +201,7 @@ export const getJobs = async (limit: number, skip: number) => {
       },
       updatedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -191,6 +209,7 @@ export const getJobs = async (limit: number, skip: number) => {
       },
       deletedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -274,9 +293,13 @@ export const getJobBySlug = async (slug: string) =>
       slug,
       deletedAt: null,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
     include: {
       createdById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -284,6 +307,7 @@ export const getJobBySlug = async (slug: string) =>
       },
       updatedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -291,9 +315,76 @@ export const getJobBySlug = async (slug: string) =>
       },
       deletedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
+        },
+      },
+      jobApplication: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          description: true,
+          createdBy: true,
+          createdById: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              slug: true,
+              candidate: {
+                select: {
+                  description: true,
+                  avatar: true,
+                  banner: true,
+                  link: true,
+                  salary: true,
+                  contractMode: true,
+                  actualRole: true,
+                  categories: {
+                    select: {
+                      category: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  tags: {
+                    select: {
+                      tags: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  areas: {
+                    select: {
+                      areas: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  city: true,
+                  state: true,
+                  extra: true,
+                  workMode: true,
+                  seniority: true,
+                  travel: true,
+                },
+              },
+            },
+          },
         },
       },
       categories: {
@@ -344,6 +435,7 @@ export const getJobsByUserId = async (
     include: {
       createdById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -351,6 +443,7 @@ export const getJobsByUserId = async (
       },
       updatedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
@@ -358,9 +451,106 @@ export const getJobsByUserId = async (
       },
       deletedById: {
         select: {
+          id: true,
           uuid: true,
           name: true,
           email: true,
+        },
+      },
+      jobApplication: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          description: true,
+          createdBy: true,
+          createdById: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phone: true,
+              slug: true,
+              candidate: {
+                select: {
+                  description: true,
+                  avatar: true,
+                  banner: true,
+                  link: true,
+                  salary: true,
+                  contractMode: true,
+                  actualRole: true,
+                  categories: {
+                    select: {
+                      category: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  tags: {
+                    select: {
+                      tags: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  areas: {
+                    select: {
+                      areas: {
+                        select: {
+                          type: true,
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                  city: true,
+                  state: true,
+                  extra: true,
+                  workMode: true,
+                  seniority: true,
+                  travel: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      categories: {
+        select: {
+          category: {
+            select: {
+              type: true,
+              name: true,
+            },
+          },
+        },
+      },
+      tags: {
+        select: {
+          tags: {
+            select: {
+              type: true,
+              name: true,
+            },
+          },
+        },
+      },
+      areas: {
+        select: {
+          areas: {
+            select: {
+              type: true,
+              name: true,
+            },
+          },
         },
       },
     },
@@ -372,7 +562,7 @@ export const getJobsByUserId = async (
   });
 };
 
-export const getJobByUserSlug = async (
+export const getJobsByUserSlug = async (
   slug: string,
   limit: number,
   skip: number,

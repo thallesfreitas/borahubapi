@@ -1,10 +1,11 @@
+import * as CostsUsageRepository from '../costsusage/costsusage.repository';
 import {
   CreditsHistoryType,
   CreditsType,
   GetCreditsTransactionType,
-  RemoveCreditsType,
   UpdateCreditsTransactionType,
   UpdateCreditsType,
+  VerifyCreditsType,
 } from './credits.model';
 import * as CreditsRepository from './credits.repository';
 
@@ -38,6 +39,32 @@ export const updateCredits = async (data: UpdateCreditsType) => {
   return CreditsRepository.updateCredits(data);
 };
 
-export const removeCredits = async (data: RemoveCreditsType) => {
+export const removeCredits = async (data: CreditsType) => {
   return CreditsRepository.removeCredits(data);
+};
+
+export const verify = async ({
+  userId,
+  type,
+  withRemove = true,
+}: VerifyCreditsType) => {
+  const credit = await getCreditsByCreditsId(userId);
+  const amountCredit = credit?.amount as number;
+  const costsusage = await CostsUsageRepository.getCostsUsage(type as string);
+  const amountCost = costsusage?.amount as number;
+
+  if (amountCredit <= amountCost) {
+    return false;
+  }
+  if (withRemove) {
+    await CreditsRepository.removeCredits({
+      userId,
+      amount: amountCost,
+      transactionType: 'REMOVE_CREDITS',
+      status: 'approved',
+      type: costsusage?.type,
+    });
+  }
+
+  return true;
 };

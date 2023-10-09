@@ -16,9 +16,14 @@ export const getOrCreateCustomer = async (email: string) => {
   let customer = await mercadopago.customers.search({
     qs: client,
   });
+  console.log('customer');
+  console.log(customer);
   if (customer.body.results.length === 0) {
+    console.log('customer.body.results.length');
+    console.log(customer.body.results.length);
     customer = await mercadopago.customers.create(customer);
   }
+  console.log(customer);
 
   return customer.id;
 };

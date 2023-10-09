@@ -50,14 +50,14 @@ export const getJobsByUserId = async (
   });
 };
 
-export const getJobByUserSlug = async (
+export const getJobsByUserSlug = async (
   request: GetJobsByUserSlugRequest,
   reply: FastifyReply
 ) => {
   const { slug, limit, skip, isActive } = request.query;
 
   const [jobs, jobsCount] = await Promise.all([
-    JobsService.getJobByUserSlug(slug, limit, skip, isActive),
+    JobsService.getJobsByUserSlug(slug, limit, skip, isActive),
     JobsService.getJobsByUserSlugCount(slug),
   ]);
 

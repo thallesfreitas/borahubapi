@@ -7,15 +7,11 @@ export const getUserByEmail = async (
   reply: FastifyReply,
   payload: unknown
 ) => {
-  console.log('getUserByEmail');
-  console.log('payload');
-  console.log(payload);
-  console.log('+++++++++++++++++++++++++++++++++++++++++++');
   const user = payload as UserWithProfiles;
 
   return {
     id: user?.id,
-    stripe_id: user?.stripe_id,
+    // stripe_id: user?.stripe_id,
     optin: user?.optin,
     email: user?.email,
     name: user?.name,
@@ -38,16 +34,11 @@ export const getUserBySlug = async (
   reply: FastifyReply,
   payload: unknown
 ) => {
-  console.log('getUserBySlug');
-  console.log('payload');
-  console.log(payload);
-  console.log('+++++++++++++++++++++++++++++++++++++++++++ 1');
   const user = payload as UserWithProfiles;
-  console.log(payload);
-  console.log('+++++++++++++++++++++++++++++++++++++++++++ 3');
+
   return {
     id: user?.id,
-    stripe_id: user?.stripe_id,
+    // stripe_id: user?.stripe_id,
     optin: user?.optin,
     email: user?.email,
     name: user?.name,
@@ -65,16 +56,12 @@ export const getUserById = async (
   reply: FastifyReply,
   payload: unknown
 ) => {
-  console.log('getUserById');
-  console.log('payload');
-  console.log(payload);
-  console.log('+++++++++++++++++++++++++++++++++++++++++++');
   const user = payload as UserWithProfiles;
 
   return {
     id: user?.id,
     uuid: user?.uuid,
-    stripe_id: user?.stripe_id,
+    // stripe_id: user?.stripe_id,
     optin: user?.optin,
     email: user?.email,
     name: user?.name,

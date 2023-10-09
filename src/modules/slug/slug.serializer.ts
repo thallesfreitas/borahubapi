@@ -9,11 +9,27 @@ interface UserComplete extends User {
   freelancer: Freelancer;
 }
 
+interface PayloadGenerate {
+  slug: string;
+}
+
 interface PayloadType extends User {
   type: string;
   data: UserComplete | JobComplete;
+  userID?: number;
 }
 
+export const generateSlug = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+  payload: unknown
+) => {
+  const payloadSlug = payload as PayloadGenerate;
+  const response = {
+    slug: payloadSlug.slug,
+  };
+  return response;
+};
 export const getBySlug = async (
   request: FastifyRequest,
   reply: FastifyReply,
@@ -22,13 +38,14 @@ export const getBySlug = async (
   const payloadType = payload as PayloadType;
   let response;
   let data;
+
   switch (payloadType.type) {
     case 'user':
       data = payloadType.data as UserComplete;
       response = {
         type: payloadType.type,
         id: data?.id,
-        stripe_id: data?.stripe_id,
+        // stripe_id: data?.stripe_id,
         optin: data?.optin,
         email: data?.email,
         name: data?.name,
@@ -45,6 +62,14 @@ export const getBySlug = async (
       break;
     case 'job':
       data = payloadType.data as JobComplete;
+
+      const owner = payloadType.userID == data.updatedById?.id;
+      let jobApplied = false;
+      if (data.jobApplication.length > 0) {
+        jobApplied =
+          data.jobApplication.find(app => app.id === payloadType.userID) ===
+          undefined;
+      }
       response = {
         type: payloadType.type,
         id: data.id,
@@ -57,10 +82,9 @@ export const getBySlug = async (
         salary: data.salary,
         tags: data.tags,
         categories: data.categories,
+        jobApplication: data.jobApplication,
         areas: data.areas,
         extra: data.extra,
-        sendToAllGroups: data.sendToAllGroups,
-        sendToSelectedGroup: data.sendToSelectedGroup,
         phone: data.phone,
         email: data.email,
         isActive: data?.isActive,
@@ -70,8 +94,10 @@ export const getBySlug = async (
         banner: data.banner,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
-        createdBy: data.createdById.name,
-        updatedBy: data.updatedById.name,
+        createdBy: data.createdById,
+        updatedBy: data.updatedById,
+        owner,
+        jobApplied,
       };
       break;
 

@@ -6,7 +6,18 @@ export const getBySlugParams = {
     slug: {
       type: 'string',
     },
-    type: {
+    userID: {
+      type: 'number',
+    },
+  },
+};
+
+export const verifySlugParams = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['slug'],
+  properties: {
+    slug: {
       type: 'string',
     },
   },

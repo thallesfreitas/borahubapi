@@ -51,7 +51,7 @@ export const routesLoad = async (
   const folders = await readdir(options.dir);
   const foldersToRead = folders.filter(folder => !folder.includes('.'));
   const filesToRegister = await getFiles(foldersToRead, options);
-  
+
   await register(filesToRegister, fastify);
 
   done();

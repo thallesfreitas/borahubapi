@@ -6,7 +6,6 @@ import {
   CreditsHistoryType,
   CreditsType,
   GetCreditsTransactionType,
-  RemoveCreditsType,
   UpdateCreditsTransactionType,
   UpdateCreditsType,
 } from './credits.model';
@@ -119,6 +118,7 @@ export const addCredits = async (data: CreditsType) => {
     mp_id_transaction = 0,
     transactionType,
     status,
+    type,
   } = data;
 
   let userCredits = await db.credits.findFirst({
@@ -141,9 +141,10 @@ export const addCredits = async (data: CreditsType) => {
     userId,
     creditId: userCredits.id,
     amount,
-    transactionType,
+    transactionType: transactionType as string,
     mp_id_transaction: mp_id_transaction as bigint,
     status,
+    type: type as string,
   };
   const newTransaction = addCreditsTransaction(transaction);
 
@@ -163,8 +164,16 @@ export const addCredits = async (data: CreditsType) => {
   };
 };
 
-export const removeCredits = async (data: RemoveCreditsType) => {
-  const { userId, amount } = data;
+export const removeCredits = async (data: CreditsType) => {
+  // const { userId, amount } = data;
+  const {
+    userId,
+    amount,
+    mp_id_transaction = 0,
+    transactionType = 'REMOVE_CREDIT',
+    status,
+    type,
+  } = data;
   // const transactionType = 'REMOVE_CREDIT';
   const userCredits = await db.credits.findFirst({
     where: {
@@ -176,15 +185,6 @@ export const removeCredits = async (data: RemoveCreditsType) => {
     throw new Error('Usuário não encontrado');
   }
   const amountUser = userCredits?.amount;
-  // const transaction = {
-  //   creditId: userCredits?.id,
-  //   amount,
-  //   transactionType,
-  // };
-
-  // const newTransaction = await db.creditTransaction.create({
-  //   data: transaction,
-  // });
 
   const updatedCredits = await db.credits.update({
     where: {
@@ -195,8 +195,20 @@ export const removeCredits = async (data: RemoveCreditsType) => {
     },
   });
 
+  const transaction = {
+    userId,
+    creditId: userCredits.id,
+    amount,
+    transactionType,
+    mp_id_transaction: mp_id_transaction as bigint,
+    status,
+    type,
+  };
+
+  const newTransaction = addCreditsTransaction(transaction);
+
   return {
-    // transaction: newTransaction,
+    transaction: newTransaction,
     credits: updatedCredits,
   };
 };

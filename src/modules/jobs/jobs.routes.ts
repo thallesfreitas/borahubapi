@@ -42,7 +42,7 @@ export default async (fastify: FastifyInstance) => {
       preSerialization: [Serializer.insertPagination, Serializer.getJobs],
       onSend,
     },
-    Controller.getJobByUserSlug
+    Controller.getJobsByUserSlug
   );
 
   fastify.get<{ Params: Model.GetJobBySlugParams }>(

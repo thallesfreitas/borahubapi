@@ -34,9 +34,6 @@ function build(opts = {}) {
   app.addContentTypeParser(
     'application/jsoff',
     function (request: any, payload: any) {
-      console.log('linha 37');
-      console.log(payload);
-
       // jsoffParser(payload, function (err, body) {
       //   done(err, body);
       // });
@@ -47,10 +44,7 @@ function build(opts = {}) {
   app.addContentTypeParser(
     ['text/xml', 'application/xml'],
     function (request: any, payload: any) {
-      console.log('linha 51');
-      console.log(payload);
       // xmlParser(payload, function (err, body) {
-
       //   done(err, body);
       // });
     }
@@ -60,7 +54,6 @@ function build(opts = {}) {
     'application/x-www-form-urlencoded',
     { parseAs: 'string' },
     function (req, payload, done) {
-      console.log(payload);
       let parsed = qs.parse(payload.toString());
       // let parsed;
       // if (isBuffer(payload)) {

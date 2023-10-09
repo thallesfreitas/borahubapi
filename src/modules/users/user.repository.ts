@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Prisma, User } from '@prisma/client';
+import { Candidate, Prisma, User } from '@prisma/client';
 // import { dbClient } from '../../lib';
 import dbClient from '../../lib/dbClient';
 import * as emailService from '../../lib/email';
@@ -8,7 +8,6 @@ import * as WhatsApi from '../../lib/whats';
 import { Utils } from '../../utils/functions';
 import * as CreditsService from '../credits/credits.service';
 import { getOrCreateCustomer } from '../payment/payment.service';
-import { createUserStripe } from '../stripe/stripe.service';
 import * as tokenService from '../token/token.service';
 // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -81,9 +80,12 @@ export const createUser: CreateUser = async ({
     // }
 
     // const stripe_id = customer.id;
-    const stripe_id = await createUserStripe(email, name);
+    // const stripe_id = await createUserStripe(email, name);
     const customerMP = await getOrCreateCustomer(email);
+    console.log('customerMP');
+    console.log(customerMP);
     const password = Utils.generatePassword();
+
     const newUser = await dbClient.user.create({
       data: {
         name,
@@ -93,7 +95,6 @@ export const createUser: CreateUser = async ({
         password,
         optin,
         slug,
-        stripe_id,
         customerMP,
       },
     });
@@ -142,7 +143,7 @@ export const createUser: CreateUser = async ({
       type: 'newUser',
     });
 
-    WhatsApi.sendMessageUltra({
+    WhatsApi.sendMessageWithTemplate({
       to: phone,
       message: 'newUser',
     });
@@ -158,14 +159,11 @@ export const createUser: CreateUser = async ({
   }
 };
 
-interface UserWithProfiles extends User {
-  // candidate: Candidate;
-  // createdRecruiter: Recruiter[];
-  // createdServiceProvider: ServiceProvider[];
-  // createdFreelancer: Freelancer[];
+export interface UserCandidate extends User {
+  candidate: Candidate;
 }
 interface GetUserBy {
-  (variableWhere: object): Promise<UserWithProfiles | null>;
+  (variableWhere: object): Promise<User | null>;
 }
 
 export const getUserBy: GetUserBy = async variableWhere => {
@@ -289,15 +287,16 @@ export const getUserByEmail: GetUserByEmail = async email => {
 };
 
 interface GetUserBySlug {
-  (slug: string): Promise<UserWithProfiles | null>;
+  (slug: string): Promise<User | null>;
 }
+
 export const getUserBySlug: GetUserBySlug = async slug => {
   const user = getUserBy({ slug });
   return user;
 };
 
 interface GetUserByUuid {
-  (uuid: string): Promise<UserWithProfiles | null>;
+  (uuid: string): Promise<User | null>;
 }
 export const getUserByUuid: GetUserByUuid = async uuid => {
   const user = getUserBy({ uuid });
@@ -305,7 +304,7 @@ export const getUserByUuid: GetUserByUuid = async uuid => {
 };
 
 interface GetUserById {
-  (id: number): Promise<UserWithProfiles | null>;
+  (id: number): Promise<User | null>;
 }
 export const getUserById: GetUserById = async id => {
   const user = getUserBy({ id });
@@ -313,7 +312,7 @@ export const getUserById: GetUserById = async id => {
 };
 
 interface GetUserByPhone {
-  (phone: string): Promise<UserWithProfiles | null>;
+  (phone: string): Promise<User | null>;
 }
 
 export const getUserByPhone: GetUserByPhone = async phone => {
@@ -339,7 +338,7 @@ export const updateUserByMail = async (
 
 export interface UpdateUserArgs extends Partial<User> {}
 export const updateUser = async (id: number, params: UpdateUserArgs) => {
-  return dbClient.user.update({
+  const user = await dbClient.user.update({
     where: {
       id,
     },
@@ -347,6 +346,10 @@ export const updateUser = async (id: number, params: UpdateUserArgs) => {
       ...params,
     },
   });
+
+  const tokenUser = await tokenService.getToken({ email: params.email });
+  // user.token = tokenUser;
+  return { user, tokenUser };
 };
 
 export const updatePhoneConfirm = async (id: number) => {

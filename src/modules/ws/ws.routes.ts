@@ -40,7 +40,7 @@ export default async (fastify: FastifyInstance) => {
           select: {
             id: true,
             uuid: true,
-            stripe_id: true,
+            // stripe_id: true,
             email: true,
             phone: true,
             optin: true,

@@ -21,7 +21,9 @@ export type EmailType =
   | 'loginUser'
   | 'createTokenToValidation'
   | 'newOrderClient'
-  | 'CREDIT_PURCHASED';
+  | 'CREDIT_PURCHASED'
+  | 'createAssessmentCandidate'
+  | 'createAssessmentRecruiter';
 
 export const emailTemplates: Record<EmailType, Email> = {
   forgetPassword: {
@@ -33,7 +35,7 @@ export const emailTemplates: Record<EmailType, Email> = {
     },
     client: {
       template: '../../src/utils/templates/forget-password.handlebars',
-      subject: 'Reset de senha BoraAjudar.Work',
+      subject: 'Reset de senha BoraHub',
     },
   },
   newOrder: {
@@ -66,7 +68,7 @@ export const emailTemplates: Record<EmailType, Email> = {
       template: '../../src/utils/templates/new-contact.handlebars',
       subject: 'Um cliente solicitou contato',
       to: process.env.CONTACT_EMAIL_TO || '',
-      name: 'BoraAjudar.Work - Contato',
+      name: 'BoraHub - Contato',
     },
     client: {
       template: '../../src/utils/templates/new-contact-client.handlebars',
@@ -78,11 +80,11 @@ export const emailTemplates: Record<EmailType, Email> = {
       template: '../../src/utils/templates/new-user.handlebars',
       subject: 'Novo usuário adicionado',
       to: process.env.NOREPLY_EMAIL_TO || '',
-      name: 'BoraAjudar.Work',
+      name: 'BoraHub',
     },
     client: {
       template: '../../src/utils/templates/new-user-client.handlebars',
-      subject: 'Bem-vindo(a) ao #BoraAjudar.Work!',
+      subject: 'Bem-vindo(a) ao #BoraHub!',
     },
   },
   loginUser: {
@@ -90,7 +92,7 @@ export const emailTemplates: Record<EmailType, Email> = {
       template: '',
       subject: '',
       to: process.env.NOREPLY_EMAIL_TO || '',
-      name: 'BoraAjudar.Work',
+      name: 'BoraHub',
     },
     client: {
       template: '../../src/utils/templates/new-loginUser-client.handlebars',
@@ -102,7 +104,7 @@ export const emailTemplates: Record<EmailType, Email> = {
       template: '',
       subject: '',
       to: process.env.NOREPLY_EMAIL_TO || '',
-      name: 'BoraAjudar.Work',
+      name: 'BoraHub',
     },
     client: {
       template:
@@ -115,11 +117,38 @@ export const emailTemplates: Record<EmailType, Email> = {
       template: '../../src/utils/templates/credit_purchased.handlebars',
       subject: 'Um usuário comprou créditos',
       to: process.env.NOREPLY_EMAIL_TO || '',
-      name: 'BoraAjudar.Work',
+      name: 'BoraHub',
     },
     client: {
       template: '../../src/utils/templates/credit_purchased-client.handlebars',
       subject: 'Parabéns!! Seus créditos foram adicionados com sucesso!',
+    },
+  },
+  createAssessmentCandidate: {
+    admin: {
+      template: '',
+      subject: '',
+      to: process.env.NOREPLY_EMAIL_TO || '',
+      name: 'BoraHub',
+    },
+    client: {
+      template:
+        '../../src/utils/templates/createAssessmentCandidate.handlebars',
+      subject: 'Avaliamos sua aplicação. Boa sorte!',
+    },
+  },
+  createAssessmentRecruiter: {
+    admin: {
+      template: '',
+      subject: '',
+      to: process.env.NOREPLY_EMAIL_TO || '',
+      name: 'BoraHub',
+    },
+    client: {
+      template:
+        '../../src/utils/templates/createAssessmentRecruiter.handlebars',
+      subject:
+        'Sua vaga teve uma aplicação. Veja os detalhes e nossa avaliação. Boa Sorte!',
     },
   },
 };

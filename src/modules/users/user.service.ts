@@ -17,6 +17,9 @@ export const getUserByEmail = async (email: string) =>
 export const getUserBySlug = async (slug: string) =>
   UserRepository.getUserBySlug(slug);
 
+export const getUserByPhone = async (phone: string) =>
+  UserRepository.getUserByPhone(phone);
+
 export const getUserByUuid = async (uuid: string) =>
   UserRepository.getUserByUuid(uuid);
 

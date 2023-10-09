@@ -1,27 +1,21 @@
 import { FastifyReply } from 'fastify';
-import * as JobsService from '../jobs/jobs.service';
 import { GetUserBySlug, UserQuery } from '../users/user.model';
-import * as UserService from '../users/user.service';
+import * as SlugService from './slug.service';
 
 export const getBySlug = async (req: GetUserBySlug, reply: FastifyReply) => {
   const { slug } = req.params;
-  const { type } = req.query as UserQuery;
-
-  const user = await UserService.getUserBySlug(slug);
-  let response = null;
-
-  if (user) {
-    response = {
-      type: 'user',
-      data: user,
-    };
-  } else {
-    const job = await JobsService.getJobBySlug(slug);
-    response = {
-      type: 'job',
-      data: job,
-    };
-  }
-
+  const { userID } = req.query as UserQuery;
+  const response = await SlugService.getBySlug(slug, userID as number);
   return reply.send(response);
+};
+
+export const verify = async (req: GetUserBySlug, reply: FastifyReply) => {
+  const { slug } = req.params;
+  const response = await SlugService.verify(slug);
+  return reply.send(response);
+};
+export const generate = async (req: GetUserBySlug, reply: FastifyReply) => {
+  const { slug } = req.params;
+  const response = await SlugService.generate(slug);
+  return reply.send({ slug: response });
 };

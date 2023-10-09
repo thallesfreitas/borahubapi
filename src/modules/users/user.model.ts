@@ -1,14 +1,14 @@
 import { FastifyRequest } from 'fastify';
 
 export type UserFilters = {
-  email: string;
+  email?: string;
   slug: string;
 };
 
 export type UserQuery = {
   isActive: string;
   limit: string;
-  type?: string;
+  userID?: number;
 };
 
 export type UserParams = {
@@ -43,6 +43,7 @@ export type UserUpdate = {
   name: string;
   email: string;
   phone: string;
+  slug: string;
   password: string;
   optin: boolean;
   isEmailConfirmed: boolean;

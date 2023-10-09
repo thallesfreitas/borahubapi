@@ -37,7 +37,7 @@ export default async (fastify: FastifyInstance) => {
   );
 
   fastify.post(
-    '/sendMessageToGroup',
+    '/sendMessageWithTemplate',
     {
       schema: {
         body: WhatsSchema.sendMessage,
@@ -45,7 +45,25 @@ export default async (fastify: FastifyInstance) => {
       onSend,
       preSerialization: [Serializer.message],
     },
-    WhatsController.sendMessageWhats
+    WhatsController.sendMessageWithTemplate
+  );
+
+  // fastify.post(
+  //   '/TESTEsendMessageToGroup',
+  //   {
+  //     schema: {
+  //       body: WhatsSchema.sendMessageToGroups,
+  //     },
+  //     onSend,
+  //     preSerialization: [Serializer.message],
+  //   },
+  //   WhatsController.sendMessageToGroups
+  // );
+
+  fastify.post(
+    '/sendMessageToGroup',
+    { schema: { body: WhatsSchema.sendMessageToGroups } },
+    WhatsController.sendMessageToGroups
   );
 
   // WPP CONNECT

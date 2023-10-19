@@ -9,361 +9,319 @@ datasource db {
 }
 
 model User {
-  id                     Int                  @id @unique @default(autoincrement())
-  uuid                   String               @unique @default(cuid())
-  // stripe_id              String?
-  customerMP             String?
-  
-  email                  String               @unique
-  phone                  String               @unique
-  optin                  Boolean              @default(true) @map("optin")
-  name                   String
-  slug                   String               @unique
-  indicatedBy            String?
-  mainPortfolio          String?
-  password               String?
-  isActive               Boolean              @default(false) @map("is_active")
-  isPhoneConfirmed        Boolean              @default(false) @map("is_phone_confirmed")
-  isEmailConfirmed        Boolean              @default(false) @map("is_email_confirmed")
-  
-  createdAt              DateTime             @default(now()) @map("created_at")
-  updatedAt              DateTime             @default(now()) @map("updated_at")
-  deletedAt              DateTime?            @map("deleted_at")
-  ResetPasswordToken     ResetPasswordToken[]
-  //
-  candidate             Candidate? 
-  recruiter             Recruiter? 
-  serviceProvider      ServiceProvider? 
-  freelancer            Freelancer? 
-  //
-  // createdSubscription    Subscription[]       @relation("CreatedSubscription")
-  // updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
-  // deletedSubscription    Subscription[]       @relation("DeletedSubscription")
-  //
-  createdJobApplication             JobApplication[]               @relation("CreatedJobApplication")
-  createdJob             Jobs[]               @relation("CreatedJob")
-  updatedJob             Jobs[]               @relation("UpdatedJob")
-  deletedJob             Jobs[]               @relation("DeletedJob")
-  
-  messageApprovalSystem MessageApprovalSystem[] @relation("UserApprovalSystem")
-  credits Credits[] @relation("UserCredits")
-  creditTransaction CreditTransaction[] @relation("UserCreditTransaction")
-  usage Usage[] @relation("UserUsage")
+  id                                         Int                  @id @unique @default(autoincrement())
+  uuid                                       String               @unique @default(cuid())
+  stripe_id                                  String?
+  email                                      String               @unique
+  phone                                      String               @unique
+  optin                                      Boolean              @default(true) @map("optin")
+  name                                       String
+  slug                                       String               @unique
+  indicatedBy                                String?
+  password                                   String?
+  isActive                                   Boolean              @default(true) @map("is_active")
+  createdAt                                  DateTime             @default(now()) @map("created_at")
+  updatedAt                                  DateTime             @default(now()) @map("updated_at")
+  deletedAt                                  DateTime?            @map("deleted_at")
+  isEmailConfirmed                           Boolean              @default(false) @map("is_email_confirmed")
+  isPhoneConfirmed                           Boolean              @default(false) @map("is_phone_confirmed")
+  is_candidate                               Boolean              @default(false)
+  is_freelancer                              Boolean              @default(false)
+  is_recruiter                               Boolean              @default(false)
+  is_service_provider                        Boolean              @default(false)
+  mainPortfolio                              String?
+  customerMP                                 String?
+  creditTransaction                          CreditTransaction[]  @relation("UserCreditTransaction")
+  candidate                                  Candidate?
+  credits                                    Credits[]            @relation("UserCredits")
+  freelancer                                 Freelancer?
+  createdJob                                 Jobs[]               @relation("CreatedJob")
+  deletedJob                                 Jobs[]               @relation("DeletedJob")
+  updatedJob                                 Jobs[]               @relation("UpdatedJob")
+  recruiter                                  Recruiter?
+  ResetPasswordToken                         ResetPasswordToken[]
+  serviceProvider                            ServiceProvider?
+  subscription_subscription_createdByTousers subscription[]       @relation("subscription_createdByTousers")
+  subscription_subscription_deletedByTousers subscription[]       @relation("subscription_deletedByTousers")
+  subscription_subscription_updatedByTousers subscription[]       @relation("subscription_updatedByTousers")
+  usage                                      Usage[]              @relation("UserUsage")
+
   @@map("users")
 }
-enum AprovalType {
-  WAITING
-  APPROVED
-  DISAPPROVED
-}
-
-model MessageApprovalSystem {
-  id             Int       @id @default(autoincrement())
-  message        String
-  type           String
-  explain        String?
-  user           User      @relation("UserApprovalSystem", fields: [userId], references: [id], onDelete: Cascade)
-  userId         Int
-  idMessage     Int?
-  approved       AprovalType   @default(WAITING)
-  finished        Boolean   @default(false)
-  status         Boolean[]
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
-
-  @@map("messageApprovalSystem")
-}
- 
-
 
 model Packs {
-  id Int @id @default(autoincrement())
-  type String @unique
-  name String
+  id          Int      @id @default(autoincrement())
+  type        String
+  name        String
+  features    String[]
+  phrases     String
+  credits     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   unit_amount Float
-  features String[]
-  phrases String
-  credits Int
-  isActive               Boolean              @default(true) @map("is_active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive    Boolean  @default(true) @map("is_active")
+
   @@map("packs")
 }
 
 model CostsUsage {
-  id Int @id @default(autoincrement())
-  type String @unique
-  amount Int
+  id        Int      @id @default(autoincrement())
+  type      String
+  amount    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("costsusage")
 }
 
 model Credits {
-  id Int @id @default(autoincrement())
-  user User @relation("UserCredits", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  amount Int
-  status String @default("pending")         
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  amount             Int
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  status             String              @default("pending")
   creditTransactions CreditTransaction[]
+  user               User                @relation("UserCredits", fields: [userId], references: [id])
+
   @@map("credits")
 }
 
 model Usage {
-  id Int @id @default(autoincrement())
-  user User @relation("UserUsage", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  total Int
-  input Int
-  output Int
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  total     Int
+  input     Int
+  output    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation("UserUsage", fields: [userId], references: [id])
+
   @@map("usage")
 }
 
 model CreditTransaction {
-  id Int @id @default(autoincrement())
-  user User @relation("UserCreditTransaction", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  credit   Credits? @relation(fields: [creditId], references: [id], onDelete: Cascade)
-  creditId Int? 
-  amount Int
-  type String?
-  transactionType String?
-  mp_id_transaction BigInt @default(0)
-  status String @default("pending")                  
-  createdAt DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  creditId          Int?
+  amount            Int
+  createdAt         DateTime @default(now())
+  transactionType   String
+  status            String   @default("pending")
+  userId            Int
+  mp_id_transaction BigInt   @default(0)
+  credit            Credits? @relation(fields: [creditId], references: [id])
+  user              User     @relation("UserCreditTransaction", fields: [userId], references: [id])
+
   @@map("CreditTransaction")
 }
 
-// model Subscription {
-//   id             Int       @id @default(autoincrement())
-//   uuid           String    @default(cuid())
-//   type           String
-//   priceId        String
-//   // user_stripe_id String
-//   // stripe_id      String
-//   createdAt      DateTime  @default(now()) @map("created_at")
-//   updatedAt      DateTime  @default(now()) @map("updated_at")
-//   deletedAt      DateTime? @map("deleted_at")
-//   createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id], onDelete: Cascade)
-//   updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id], onDelete: Cascade)
-//   deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id], onDelete: Cascade)
-//   createdBy      Int?
-//   updatedBy      Int?
-//   deletedBy      Int?
-
-//   @@map("subscription")
-// }
-
-enum ProfileType {
-  CANDIDATE
-  RECRUITER
-  JOB
-  SERVICE_PROVIDER
-  FREELANCER
-}
-
 model Category {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  candidate CategoriesOnCandidate[]
-  jobs      CategoriesOnJobs[]
-  recruiter CategoriesOnRecruiter[]
+  id              Int                           @id @default(autoincrement())
+  uuid            String                        @default(cuid())
+  name            String
+  createdAt       DateTime                      @default(now()) @map("created_at")
+  updatedAt       DateTime                      @default(now()) @map("updated_at")
+  deletedAt       DateTime?                     @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  type            ProfileType
+  candidate       CategoriesOnCandidate[]
+  freelancer      CategoriesOnFreelancer[]
+  jobs            CategoriesOnJobs[]
+  recruiter       CategoriesOnRecruiter[]
   serviceProvider CategoriesOnServiceProvider[]
-  freelancer CategoriesOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("category")
 }
 
 model CategoriesOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   assignedAt  DateTime  @default(now())
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
 
   @@id([candidateId, categoryId])
 }
 
 model CategoriesOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  categoryId Int
+  assignedAt DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id])
+  jobs       Jobs     @relation(fields: [jobsId], references: [id])
 
   @@id([jobsId, categoryId])
 }
 
 model CategoriesOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   assignedAt  DateTime  @default(now())
+  category    Category  @relation(fields: [categoryId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
 
   @@id([recruiterId, categoryId])
 }
 
 model CategoriesOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  categoryId        Int
+  assignedAt        DateTime        @default(now())
+  category          Category        @relation(fields: [categoryId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
 
   @@id([serviceProviderId, categoryId])
 }
 
 model CategoriesOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  categoryId   Int
+  assignedAt   DateTime   @default(now())
+  category     Category   @relation(fields: [categoryId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
 
   @@id([freelancerId, categoryId])
 }
 
 model Tags {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  candidate TagsOnCandidate[]
-  jobs      TagsOnJobs[]
-  recruiter TagsOnRecruiter[]
+  id              Int                     @id @default(autoincrement())
+  uuid            String                  @default(cuid())
+  type            ProfileType
+  name            String
+  createdAt       DateTime                @default(now()) @map("created_at")
+  updatedAt       DateTime                @default(now()) @map("updated_at")
+  deletedAt       DateTime?               @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  candidate       TagsOnCandidate[]
+  freelancer      TagsOnFreelancer[]
+  jobs            TagsOnJobs[]
+  recruiter       TagsOnRecruiter[]
   serviceProvider TagsOnServiceProvider[]
-  freelancer TagsOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("tags")
 }
 
 model TagsOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
+  tagsId      Int
   assignedAt  DateTime  @default(now())
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  tags        Tags      @relation(fields: [tagsId], references: [id])
+
   @@id([candidateId, tagsId])
 }
 
 model TagsOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  tagsId     Int
+  assignedAt DateTime @default(now())
+  jobs       Jobs     @relation(fields: [jobsId], references: [id])
+  tags       Tags     @relation(fields: [tagsId], references: [id])
+
   @@id([jobsId, tagsId])
 }
 
 model TagsOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  tagsId            Int
+  assignedAt        DateTime        @default(now())
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  tags              Tags            @relation(fields: [tagsId], references: [id])
+
   @@id([serviceProviderId, tagsId])
 }
+
 model TagsOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  tagsId       Int
+  assignedAt   DateTime   @default(now())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  tags         Tags       @relation(fields: [tagsId], references: [id])
+
   @@id([freelancerId, tagsId])
 }
 
 model TagsOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
+  tagsId      Int
   assignedAt  DateTime  @default(now())
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  tags        Tags      @relation(fields: [tagsId], references: [id])
+
   @@id([recruiterId, tagsId])
 }
 
 model Areas {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  candidate AreasOnCandidate[]
-  jobs      AreasOnJobs[]
-  recruiter AreasOnRecruiter[]
+  id              Int                      @id @default(autoincrement())
+  uuid            String                   @default(cuid())
+  type            ProfileType
+  name            String
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @default(now()) @map("updated_at")
+  deletedAt       DateTime?                @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  candidate       AreasOnCandidate[]
+  freelancer      AreasOnFreelancer[]
+  jobs            AreasOnJobs[]
+  recruiter       AreasOnRecruiter[]
   serviceProvider AreasOnServiceProvider[]
-  freelancer AreasOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("areas")
 }
 
 model AreasOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
+  areasId     Int
   assignedAt  DateTime  @default(now())
+  areas       Areas     @relation(fields: [areasId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+
   @@id([candidateId, areasId])
 }
 
 model AreasOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  areasId    Int
+  assignedAt DateTime @default(now())
+  areas      Areas    @relation(fields: [areasId], references: [id])
+  jobs       Jobs     @relation(fields: [jobsId], references: [id])
+
   @@id([jobsId, areasId])
 }
 
 model AreasOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  areasId           Int
+  assignedAt        DateTime        @default(now())
+  areas             Areas           @relation(fields: [areasId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+
   @@id([serviceProviderId, areasId])
 }
 
 model AreasOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  areasId      Int
+  assignedAt   DateTime   @default(now())
+  areas        Areas      @relation(fields: [areasId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+
   @@id([freelancerId, areasId])
 }
 
-
 model AreasOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
+  areasId     Int
   assignedAt  DateTime  @default(now())
+  areas       Areas     @relation(fields: [areasId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+
   @@id([recruiterId, areasId])
 }
 
@@ -371,103 +329,77 @@ model Candidate {
   id           Int                     @id @default(autoincrement())
   uuid         String                  @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnCandidate[]
-  tags         TagsOnCandidate[]
-  areas        AreasOnCandidate[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
-  travel       String[]
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @default(now()) @map("updated_at")
   deletedAt    DateTime?               @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  travel       String[]
   userId       Int                     @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnCandidate[]
+  categories   CategoriesOnCandidate[]
+  tags         TagsOnCandidate[]
+  user         User                    @relation(fields: [userId], references: [id])
+
   @@map("candidates")
 }
 
-model JobApplication {
-  id                  Int      @id @default(autoincrement())
-  name               String
-  email               String?
-  phone               String?
-  description         String? 
-  terms         Boolean?  @default(true)
-  
-  feedback  String? 
-  feedbackrecruiter  String? 
-  evaluation String? 
-  score Float?
-  
-  createdAt DateTime  @default(now()) @map("created_at")
-  createdById User? @relation(name: "CreatedJobApplication", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
-  
-  job   Jobs @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  jobId Int
-  
-  @@map("jobapplication")
-}
-
 model Jobs {
-  id                  Int      @id @default(autoincrement())
-  title               String
-  company             String?
-  email               String?
-  phone               String?
-  avatar              String?
-  banner              String?
-  experience          String?
-  description         String? 
-  descriptionCompany  String?
-  modelOfWork         String?
-  city                String?
-  state               String?
-  salary              String[]
-  categories          CategoriesOnJobs[]
-  tags                TagsOnJobs[]
-  areas               AreasOnJobs[]
-  slug                String   @unique
-  isActive            Boolean  @default(true)
-  isPublished         Boolean  @default(false) @map("is_published")
-  isApproved          Boolean  @default(false) @map("is_approved")
-  
-  extra    String?
+  id                     Int                @id @default(autoincrement())
+  title                  String
+  company                String?
+  email                  String?
+  phone                  String?
+  description            String?
+  slug                   String             @unique
+  isPublished            Boolean            @default(false) @map("is_published")
+  isApproved             Boolean            @default(false) @map("is_approved")
+  createdAt              DateTime           @default(now()) @map("created_at")
+  updatedAt              DateTime           @default(now()) @map("updated_at")
+  deletedAt              DateTime?          @map("deleted_at")
+  createdBy              Int?               @map("created_by")
+  updatedBy              Int?               @map("updated_by")
+  deletedBy              Int?               @map("deleted_by")
+  descriptionCompany     String?
+  modelOfWork            String?
+  send_to_all_groups     Boolean            @default(false)
+  send_to_selected_group Boolean            @default(false)
+  salary                 String[]
+  city                   String?
+  state                  String?
+  isActive               Boolean            @default(true)
+  extra                  String?
+  avatar                 String?
+  banner                 String?
+  experience             String?
+  areas                  AreasOnJobs[]
+  categories             CategoriesOnJobs[]
+  tags                   TagsOnJobs[]
+  createdById            User?              @relation("CreatedJob", fields: [createdBy], references: [id])
+  deletedById            User?              @relation("DeletedJob", fields: [deletedBy], references: [id])
+  updatedById            User?              @relation("UpdatedJob", fields: [updatedBy], references: [id])
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id], onDelete: Cascade)
-  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
-  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
-
-  createdBy Int? @map("created_by")
-  updatedBy Int? @map("updated_by")
-  deletedBy Int? @map("deleted_by")
-  
-  jobApplication JobApplication[]
-  
   @@map("jobs")
 }
 
 model Token {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @default(cuid())
   email     String
   phone     String
-  page      String?
   token     String   @unique
   toLogin   Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid())
   createdAt DateTime @default(now()) @map("created_at")
+  page      String?
 
   @@map("token")
 }
@@ -477,12 +409,10 @@ model ResetPasswordToken {
   token     String   @unique
   userId    Int      @map("user_id")
   expiresAt DateTime @map("expires_at")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("reset_password_tokens")
 }
-
-
 
 model Manage_sessions {
   id         Int       @id @default(autoincrement())
@@ -497,85 +427,111 @@ model Manage_sessions {
 }
 
 model Recruiter {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
+  id           Int                     @id @default(autoincrement())
+  uuid         String                  @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnRecruiter[]
-  tags         TagsOnRecruiter[]
-  areas        AreasOnRecruiter[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @default(now()) @map("updated_at")
+  deletedAt    DateTime?               @map("deleted_at")
   userId       Int                     @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnRecruiter[]
+  categories   CategoriesOnRecruiter[]
+  tags         TagsOnRecruiter[]
+  user         User                    @relation(fields: [userId], references: [id])
 
   @@map("recruiters")
 }
 
 model ServiceProvider {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
+  id           Int                           @id @default(autoincrement())
+  uuid         String                        @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnServiceProvider[]
-  tags         TagsOnServiceProvider[]
-  areas        AreasOnServiceProvider[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       Int                     @unique
+  createdAt    DateTime                      @default(now()) @map("created_at")
+  updatedAt    DateTime                      @default(now()) @map("updated_at")
+  deletedAt    DateTime?                     @map("deleted_at")
+  userId       Int                           @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnServiceProvider[]
+  categories   CategoriesOnServiceProvider[]
+  tags         TagsOnServiceProvider[]
+  user         User                          @relation(fields: [userId], references: [id])
 
   @@map("serviceproviders")
 }
 
 model Freelancer {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
+  id           Int                      @id @default(autoincrement())
+  uuid         String                   @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnFreelancer[]
-  tags         TagsOnFreelancer[]
-  areas        AreasOnFreelancer[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       Int                     @unique
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  updatedAt    DateTime                 @default(now()) @map("updated_at")
+  deletedAt    DateTime?                @map("deleted_at")
+  userId       Int                      @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnFreelancer[]
+  categories   CategoriesOnFreelancer[]
+  tags         TagsOnFreelancer[]
+  user         User                     @relation(fields: [userId], references: [id])
 
   @@map("freelancers")
+}
+
+model subscription {
+  id                                  Int       @id @default(autoincrement())
+  uuid                                String
+  type                                String
+  stripe_id                           String
+  created_at                          DateTime  @default(now())
+  updated_at                          DateTime  @default(now())
+  deleted_at                          DateTime?
+  createdBy                           Int?
+  updatedBy                           Int?
+  deletedBy                           Int?
+  user_stripe_id                      String
+  priceId                             String
+  users_subscription_createdByTousers User?     @relation("subscription_createdByTousers", fields: [createdBy], references: [id])
+  users_subscription_deletedByTousers User?     @relation("subscription_deletedByTousers", fields: [deletedBy], references: [id])
+  users_subscription_updatedByTousers User?     @relation("subscription_updatedByTousers", fields: [updatedBy], references: [id])
+}
+
+enum ProfileType {
+  CANDIDATE
+  RECRUITER
+  JOB
+  SERVICE_PROVIDER
+  FREELANCER
 }

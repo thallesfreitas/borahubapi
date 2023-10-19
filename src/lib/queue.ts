@@ -5,10 +5,10 @@ const amqp = require('amqplib/callback_api');
 export function sendMessageToQueue(queueName: any, messageToSend: string) {
   // 'amqp://user:password@localhost',
   console.log(
-    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:5672`
+    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:${process.env.RABBITMQ_PORT}`
   );
   amqp.connect(
-    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:5672`,
+    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:${process.env.RABBITMQ_PORT}`,
     (
       error: { message: any },
       connection: {

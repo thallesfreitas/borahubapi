@@ -4,7 +4,8 @@ const amqp = require('amqplib/callback_api');
 
 export function sendMessageToQueue(queueName: any, messageToSend: string) {
   amqp.connect(
-    'amqp://user:password@localhost',
+    // 'amqp://user:password@localhost',
+    `amqp://${process.env.RABBIT_USER}:${process.env.RABBIT_PASS}@${process.env.RABBIT_HOST}`,
     (
       error: { message: any },
       connection: {

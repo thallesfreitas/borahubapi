@@ -52,6 +52,10 @@ export interface SendMessageAPIArgs {
   message: string;
 }
 
+export interface StartBoraBotArgs {
+  to: number;
+}
+
 export interface SendMessageArgs {
   to: string;
   message: string;
@@ -73,6 +77,20 @@ export interface SendMessageToGroupsArgs {
 export const connectWP = async () => {
   try {
     const response = await WhatsApi.connectWP();
+    return response;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+export const startBoraBot = async (to: string) => {
+  try {
+    // const response = await WhatsApi.sendMessageWithTemplate(params);
+    const response = await sendMessageWithTemplate({
+      to,
+      message: 'loggedUser',
+    });
     return response;
   } catch (error) {
     console.error(error);

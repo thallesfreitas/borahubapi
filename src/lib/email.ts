@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import handlebars from 'handlebars';
-import { Recipient, Sender } from 'mailersend';
 import { readFile } from 'node:fs/promises';
 import nodemailer from 'nodemailer';
 import path from 'path';
@@ -74,8 +73,8 @@ const send = async ({
     encoding: 'utf-8',
   });
   const compiledTemplate = handlebars.compile(source);
-  const sentFrom = new Sender(email.to as string, email.name as string);
-  const recipients = [new Recipient(toReceive, nameReceive)];
+  // const sentFrom = new Sender(email.to as string, email.name as string);
+  // const recipients = [new Recipient(toReceive, nameReceive)];
 
   // const emailParams = new EmailParams()
   //   .setFrom(sentFrom)
@@ -90,6 +89,50 @@ const send = async ({
     to: `${nameReceive} <${toReceive}>`,
     subject,
     html: compiledTemplate(payload),
+  };
+  const contactEmail = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
+  contactEmail.verify(error => {
+    if (error) {
+      console.log(error);
+    } else {
+      contactEmail.sendMail(mail, error => {
+        if (error) {
+          console.log(error);
+          console.log({ status: 'ERROR' });
+        } else {
+          console.log({ status: 'Message Sent' });
+        }
+      });
+    }
+  });
+};
+export const sendWhatsConection = async () => {
+  const template = '../../src/utils/templates/sendWhatsConection.handlebars';
+  const subject = 'Conectar whats';
+  const source = await readFile(path.join(__dirname, template), {
+    encoding: 'utf-8',
+  });
+  const compiledTemplate = handlebars.compile(source);
+  const mail = {
+    from: `contato@boraajudar.work`,
+    to: `thallesfreitas@yahoo.com.br`,
+    subject,
+    html: compiledTemplate({}),
+    attachments: [
+      {
+        filename: 'out.png',
+        path: './out.png',
+      },
+    ],
   };
   const contactEmail = nodemailer.createTransport({
     host: process.env.MAIL_HOST,

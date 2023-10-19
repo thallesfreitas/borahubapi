@@ -134,6 +134,23 @@ export const uploadFile = async (file: any, folder: string = 'temp') => {
   return s3Return;
 };
 
+export const uploadQr = async (file: any, folder: string = 'temp') => {
+  const image = await sharp(file.data);
+
+  const compressedImage = image.resize({ width: 1000, height: 1000 });
+  const fileUPLOAD = compressedImage.webp({ quality: 80 });
+
+  const params = {
+    Bucket: process.env.AWS_S3_BUCKET_NAME as string,
+    Key: `${folder}/qr.png`,
+    Body: fileUPLOAD,
+    ACL: 'public-read',
+  };
+  const s3Return = await s3.upload(params).promise();
+
+  return s3Return;
+};
+
 export const getFile = async (key: string) => {
   console.log(key);
   const params = {

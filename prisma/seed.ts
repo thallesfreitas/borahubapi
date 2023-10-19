@@ -1,22 +1,25 @@
 import { PrismaClient } from '@prisma/client';
 
-import { defaultCosts } from './seeds';
+import { defaultCosts, defaultPacks } from './seeds';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // create default user
-  // await prisma.user.create({
-  //   data: defaultUser,
-  // });
+  for (const cost of defaultCosts) {
+    await prisma.costsUsage.upsert({
+      where: { type: cost.type },
+      update: { amount: cost.amount },
+      create: cost,
+    });
+  }
 
-  await prisma.costsUsage.createMany({
-    data: defaultCosts,
-  });
-
-  // await prisma.plans.create({
-  //   data: defaultPlans,
-  // });
+  for (const packs of defaultPacks) {
+    await prisma.packs.upsert({
+      where: { type: packs.type },
+      update: { unit_amount: packs.unit_amount },
+      create: packs,
+    });
+  }
 }
 
 main()

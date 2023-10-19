@@ -1572,10 +1572,7 @@ export const search = async (data: SearchQuery) => {
     isActive: boolean;
     isPhoneConfirmed: boolean;
     isEmailConfirmed: boolean;
-    isCandidate: boolean;
-    isRecruiter: boolean;
-    isServiceProvider: boolean;
-    isFreelancer: boolean;
+
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
@@ -1621,10 +1618,6 @@ export const search = async (data: SearchQuery) => {
     isActive: boolean;
     isPhoneConfirmed: boolean;
     isEmailConfirmed: boolean;
-    isCandidate: boolean;
-    isRecruiter: boolean;
-    isServiceProvider: boolean;
-    isFreelancer: boolean;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;
@@ -1670,10 +1663,6 @@ export const search = async (data: SearchQuery) => {
     isActive: boolean;
     isPhoneConfirmed: boolean;
     isEmailConfirmed: boolean;
-    isCandidate: boolean;
-    isRecruiter: boolean;
-    isServiceProvider: boolean;
-    isFreelancer: boolean;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date | null;

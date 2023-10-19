@@ -1,3 +1,21 @@
+export const createFeedbackRecruiterBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: [],
+  properties: {
+    id: { type: 'string' },
+    feedbackrecruiter: { type: 'string' },
+  },
+};
+export const getAssessmentBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['userslug', 'jobslug'],
+  properties: {
+    userslug: { type: 'string' },
+    jobslug: { type: 'string' },
+  },
+};
 export const createAssessmentJobApplicationBody = {
   type: 'object',
   additionalProperties: false,

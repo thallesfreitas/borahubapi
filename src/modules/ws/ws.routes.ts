@@ -50,30 +50,16 @@ export default async (fastify: FastifyInstance) => {
             isActive: true,
             isPhoneConfirmed: true,
             isEmailConfirmed: true,
-            isCandidate: true,
-            isRecruiter: true,
-            isServiceProvider: true,
-            isFreelancer: true,
             createdAt: true,
             updatedAt: true,
             deletedAt: true,
             candidate: true,
             // recruiter: true,
-
             createdJob: true,
             updatedJob: true,
             deletedJob: true,
           },
         });
-        console.log('---------------------------');
-        console.log('---------------------------');
-        console.log('---------------------------');
-        console.log('---------------------------');
-        console.log(user);
-        console.log('---------------------------');
-        console.log('---------------------------');
-        console.log('---------------------------');
-        console.log('---------------------------');
         const userPhone = user?.phone;
         if (userPhone) {
           const token = await tokenService.getToken({ email });

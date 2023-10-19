@@ -125,6 +125,7 @@ export const signinOauth = async (
         return await reply.status(403).send(invalid);
       }
       await UserRepository.updateUserByMail(email, {
+        isActive: true,
         isEmailConfirmed: true,
       });
       const user = await UserService.getUserByEmail(email);

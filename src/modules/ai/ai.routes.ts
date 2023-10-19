@@ -17,16 +17,6 @@ export default async (fastify: FastifyInstance) => {
   );
 
   fastify.post(
-    '/test',
-    {
-      schema: {
-        params: Schema.aiBody,
-      },
-    },
-    Controller.test
-  );
-
-  fastify.post(
     '/completion',
     {
       schema: {

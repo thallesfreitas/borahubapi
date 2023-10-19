@@ -25,6 +25,23 @@ export interface CreateAssessmentJobApplicationArgs {
   terms: boolean;
 }
 
+export interface CreateFeedbackRecruiterArgs {
+  id: string;
+  feedbackrecruiter: string;
+}
+
+export interface GetAssessmentArgs {
+  userslug: string;
+  jobslug: string;
+}
+
+export type CreateFeedbackRecruiterRequest = FastifyRequest<{
+  Body: CreateFeedbackRecruiterArgs;
+}>;
+
+export type GetAssessmentRequest = FastifyRequest<{
+  Body: GetAssessmentArgs;
+}>;
 export type CreateAssessmentJobApplicationRequest = FastifyRequest<{
   Body: CreateAssessmentJobApplicationArgs;
 }>;

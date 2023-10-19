@@ -2,6 +2,20 @@ import { FastifyReply } from 'fastify';
 import { GetUserBySlug, UserQuery } from '../users/user.model';
 import * as SlugService from './slug.service';
 
+export const getBySlugApplication = async (
+  req: GetUserBySlug,
+  reply: FastifyReply
+) => {
+  const { slug } = req.params;
+  const { skip, limit } = req.query as UserQuery;
+  const response = await SlugService.getBySlugApplication(
+    slug,
+    skip as unknown as number,
+    limit as unknown as number
+  );
+  return reply.send(response);
+};
+
 export const getBySlug = async (req: GetUserBySlug, reply: FastifyReply) => {
   const { slug } = req.params;
   const { userID } = req.query as UserQuery;

@@ -1,9 +1,17 @@
 import {
   CreateAssessmentJobApplicationArgs,
+  CreateFeedbackRecruiterArgs,
   CreateJobApplicationArgs,
+  GetAssessmentArgs,
   UpdateJobApplicationArgs,
 } from './jobApplication.model';
 import * as JobsRepository from './jobApplication.repository';
+
+export const getFeedbackAssessment = (params: GetAssessmentArgs) =>
+  JobsRepository.getFeedbackAssessment(params);
+
+export const createFeedbackRecruiter = (params: CreateFeedbackRecruiterArgs) =>
+  JobsRepository.createFeedbackRecruiter(params);
 
 export const createAssessment = (params: CreateAssessmentJobApplicationArgs) =>
   JobsRepository.createAssessment(params);

@@ -24,6 +24,18 @@ export type PaymentModelParams = {
   };
 };
 
+export type CreateCardTokenModelParams = {
+  Body: {
+    cardNumber: string;
+    cardholderName: string;
+    cardExpirationMonth: string;
+    cardExpirationYear: string;
+    securityCode: string;
+    identificationType: string;
+    identificationNumber: string;
+  };
+};
+
 export type GetPaymentModelParams = {
   Body: {
     id: number;
@@ -66,5 +78,6 @@ export type IpnModel = FastifyRequest<IpnModelParams>;
 export type WebhookModel = FastifyRequest<WebhookModelParams>;
 export type GetPaymentModel = FastifyRequest<GetPaymentModelParams>;
 export type GetPaymentStatusModel = FastifyRequest<GetPaymentStatusParams>;
+export type CreateCardTokenModel = FastifyRequest<CreateCardTokenModelParams>;
 export type PaymentModel = FastifyRequest<PaymentModelParams>;
 export type CustomerModel = FastifyRequest<CustomerModelParams>;

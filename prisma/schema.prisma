@@ -22,13 +22,10 @@ model User {
   indicatedBy            String?
   mainPortfolio          String?
   password               String?
-  isActive               Boolean              @default(true) @map("is_active")
-  isPhoneConfirmed       Boolean              @default(false) @map("is_phone_confirmed")
-  isEmailConfirmed       Boolean              @default(false) @map("is_email_confirmed")
-  isCandidate            Boolean              @default(false) @map("is_candidate")
-  isRecruiter            Boolean              @default(false) @map("is_recruiter")
-  isServiceProvider      Boolean              @default(false) @map("is_service_provider")
-  isFreelancer           Boolean              @default(false) @map("is_freelancer")
+  isActive               Boolean              @default(false) @map("is_active")
+  isPhoneConfirmed        Boolean              @default(false) @map("is_phone_confirmed")
+  isEmailConfirmed        Boolean              @default(false) @map("is_email_confirmed")
+  
   createdAt              DateTime             @default(now()) @map("created_at")
   updatedAt              DateTime             @default(now()) @map("updated_at")
   deletedAt              DateTime?            @map("deleted_at")
@@ -39,9 +36,9 @@ model User {
   serviceProvider      ServiceProvider? 
   freelancer            Freelancer? 
   //
-  createdSubscription    Subscription[]       @relation("CreatedSubscription")
-  updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
-  deletedSubscription    Subscription[]       @relation("DeletedSubscription")
+  // createdSubscription    Subscription[]       @relation("CreatedSubscription")
+  // updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
+  // deletedSubscription    Subscription[]       @relation("DeletedSubscription")
   //
   createdJobApplication             JobApplication[]               @relation("CreatedJobApplication")
   createdJob             Jobs[]               @relation("CreatedJob")
@@ -82,7 +79,7 @@ model MessageApprovalSystem {
 
 model Packs {
   id Int @id @default(autoincrement())
-  type String
+  type String @unique
   name String
   unit_amount Float
   features String[]
@@ -96,7 +93,7 @@ model Packs {
 
 model CostsUsage {
   id Int @id @default(autoincrement())
-  type String
+  type String @unique
   amount Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,7 +128,7 @@ model CreditTransaction {
   id Int @id @default(autoincrement())
   user User @relation("UserCreditTransaction", fields: [userId], references: [id], onDelete: Cascade)
   userId Int
-  credit   Credits? @relation(fields: [creditId], references: [id])
+  credit   Credits? @relation(fields: [creditId], references: [id], onDelete: Cascade)
   creditId Int? 
   amount Int
   type String?
@@ -142,25 +139,25 @@ model CreditTransaction {
   @@map("CreditTransaction")
 }
 
-model Subscription {
-  id             Int       @id @default(autoincrement())
-  uuid           String    @default(cuid())
-  type           String
-  priceId        String
-  // user_stripe_id String
-  // stripe_id      String
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
-  createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id], onDelete: Cascade)
-  updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id], onDelete: Cascade)
-  deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id], onDelete: Cascade)
-  createdBy      Int?
-  updatedBy      Int?
-  deletedBy      Int?
+// model Subscription {
+//   id             Int       @id @default(autoincrement())
+//   uuid           String    @default(cuid())
+//   type           String
+//   priceId        String
+//   // user_stripe_id String
+//   // stripe_id      String
+//   createdAt      DateTime  @default(now()) @map("created_at")
+//   updatedAt      DateTime  @default(now()) @map("updated_at")
+//   deletedAt      DateTime? @map("deleted_at")
+//   createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id], onDelete: Cascade)
+//   updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id], onDelete: Cascade)
+//   deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id], onDelete: Cascade)
+//   createdBy      Int?
+//   updatedBy      Int?
+//   deletedBy      Int?
 
-  @@map("subscription")
-}
+//   @@map("subscription")
+// }
 
 enum ProfileType {
   CANDIDATE
@@ -191,7 +188,7 @@ model Category {
 }
 
 model CategoriesOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -201,7 +198,7 @@ model CategoriesOnCandidate {
 }
 
 model CategoriesOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
   jobsId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -211,7 +208,7 @@ model CategoriesOnJobs {
 }
 
 model CategoriesOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -221,7 +218,7 @@ model CategoriesOnRecruiter {
 }
 
 model CategoriesOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -231,7 +228,7 @@ model CategoriesOnServiceProvider {
 }
 
 model CategoriesOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
@@ -261,7 +258,7 @@ model Tags {
 }
 
 model TagsOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
   tags    Tags  @relation(fields: [tagsId], references: [id])
   tagsId  Int
@@ -270,7 +267,7 @@ model TagsOnCandidate {
 }
 
 model TagsOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
   jobsId Int
   tags    Tags  @relation(fields: [tagsId], references: [id])
   tagsId  Int
@@ -279,7 +276,7 @@ model TagsOnJobs {
 }
 
 model TagsOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
   tags    Tags  @relation(fields: [tagsId], references: [id])
   tagsId  Int
@@ -287,7 +284,7 @@ model TagsOnServiceProvider {
   @@id([serviceProviderId, tagsId])
 }
 model TagsOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
   tags    Tags  @relation(fields: [tagsId], references: [id])
   tagsId  Int
@@ -296,7 +293,7 @@ model TagsOnFreelancer {
 }
 
 model TagsOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
   tags    Tags  @relation(fields: [tagsId], references: [id])
   tagsId  Int
@@ -325,36 +322,36 @@ model Areas {
 }
 
 model AreasOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  areas    Areas  @relation(fields: [areasId], references: [id])
+  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
   areasId  Int
   assignedAt  DateTime  @default(now())
   @@id([candidateId, areasId])
 }
 
 model AreasOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id])
+  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
   jobsId Int
-  areas    Areas  @relation(fields: [areasId], references: [id])
+  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
   areasId  Int
   assignedAt  DateTime  @default(now())
   @@id([jobsId, areasId])
 }
 
 model AreasOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  areas    Areas  @relation(fields: [areasId], references: [id])
+  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
   areasId  Int
   assignedAt  DateTime  @default(now())
   @@id([serviceProviderId, areasId])
 }
 
 model AreasOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  areas    Areas  @relation(fields: [areasId], references: [id])
+  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
   areasId  Int
   assignedAt  DateTime  @default(now())
   @@id([freelancerId, areasId])
@@ -362,9 +359,9 @@ model AreasOnFreelancer {
 
 
 model AreasOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  areas    Areas  @relation(fields: [areasId], references: [id])
+  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
   areasId  Int
   assignedAt  DateTime  @default(now())
   @@id([recruiterId, areasId])
@@ -406,6 +403,7 @@ model JobApplication {
   terms         Boolean?  @default(true)
   
   feedback  String? 
+  feedbackrecruiter  String? 
   evaluation String? 
   score Float?
   
@@ -413,7 +411,7 @@ model JobApplication {
   createdById User? @relation(name: "CreatedJobApplication", fields: [createdBy], references: [id], onDelete: Cascade)
   createdBy Int? @map("created_by")
   
-  job   Jobs @relation(fields: [jobId], references: [id])
+  job   Jobs @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId Int
   
   @@map("jobapplication")
@@ -520,7 +518,7 @@ model Recruiter {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @map("updated_at")
   deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id])
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int                     @unique
 
   @@map("recruiters")

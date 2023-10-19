@@ -9,6 +9,16 @@ export default async (fastify: FastifyInstance) => {
   // fastify.addHook('onRequest', fastify.authenticate);
 
   fastify.post(
+    '/validUserContact',
+    {
+      schema: {
+        body: Schema.validUserContactBody,
+      },
+    },
+    Controller.validUserContact
+  );
+
+  fastify.post(
     '/create',
     {
       schema: {
@@ -51,6 +61,7 @@ export default async (fastify: FastifyInstance) => {
     },
     Controller.getUserByEmail
   );
+
   fastify.get<Model.UserParams>(
     '/getBySlug/:slug',
     {
@@ -62,4 +73,6 @@ export default async (fastify: FastifyInstance) => {
     },
     Controller.getUserBySlug
   );
+
+  fastify.delete<{ Params: { id: number } }>('/:id', Controller.deleteUser);
 };

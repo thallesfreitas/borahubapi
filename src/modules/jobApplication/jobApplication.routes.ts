@@ -22,4 +22,22 @@ export default async (fastify: FastifyInstance) => {
     },
     Controller.createAssessment
   );
+
+  fastify.post<{ Body: Model.CreateFeedbackRecruiterArgs }>(
+    '/createFeedbackRecruiter',
+    {
+      schema: { body: Schema.createFeedbackRecruiterBody },
+      onSend,
+    },
+    Controller.createFeedbackRecruiter
+  );
+
+  fastify.post<{ Body: Model.GetAssessmentArgs }>(
+    '/getFeedbackAssessment',
+    {
+      schema: { body: Schema.getAssessmentBody },
+      onSend,
+    },
+    Controller.getFeedbackAssessment
+  );
 };

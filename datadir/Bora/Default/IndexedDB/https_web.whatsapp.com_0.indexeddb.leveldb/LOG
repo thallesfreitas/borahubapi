@@ -1,0 +1,10 @@
+2023/10/19-12:50:12.569 9603 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2023/10/19-12:50:12.618 9603 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/10/19-12:50:13.748 9603 Level-0 table #5: started
+2023/10/19-12:50:13.759 9603 Level-0 table #5: 7376 bytes OK
+2023/10/19-12:50:13.767 9603 Delete type=0 #3
+2023/10/19-12:50:13.768 9603 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
+2023/10/19-12:50:14.159 6f03 Level-0 table #7: started
+2023/10/19-12:50:14.165 6f03 Level-0 table #7: 14506 bytes OK
+2023/10/19-12:50:14.176 6f03 Delete type=0 #4
+2023/10/19-12:50:14.176 6f03 Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)

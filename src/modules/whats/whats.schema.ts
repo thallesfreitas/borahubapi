@@ -1,3 +1,14 @@
+export const startBoraBot = {
+  type: 'object',
+  additionalProperties: false,
+  required: [],
+  properties: {
+    to: {
+      type: 'string',
+    },
+  },
+};
+
 export const sendMessage = {
   type: 'object',
   additionalProperties: false,

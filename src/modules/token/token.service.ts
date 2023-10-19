@@ -12,7 +12,8 @@ export const makeToken = (
   email: string,
   login: boolean = false
 ) => {
-  const expiresIn = login ? '1d' : '10m';
+  // const expiresIn = login ? '5m' : '1d';
+  const expiresIn = '1d';
   const token = jwt.sign(
     {
       uuid,

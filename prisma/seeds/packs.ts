@@ -1,10 +1,10 @@
 import { Prisma } from '@prisma/client';
 
-export const defaultCosts: Prisma.PacksCreateInput[] = [
+export const defaultPacks: Prisma.PacksCreateInput[] = [
   {
     type: 'borastart',
     name: 'BoraStart',
-    unit_amount: 39.9,
+    unit_amount: 3990,
     features: [
       'Máximo valor.',
       'Acesso total.',
@@ -17,7 +17,7 @@ export const defaultCosts: Prisma.PacksCreateInput[] = [
   {
     type: 'boragrow',
     name: 'BoraGrow',
-    unit_amount: 79.9,
+    unit_amount: 7990,
     features: [
       'Máximo valor.',
       'Acesso total.',
@@ -30,7 +30,7 @@ export const defaultCosts: Prisma.PacksCreateInput[] = [
   {
     type: 'borapremium',
     name: 'BoraPremium',
-    unit_amount: 99.9,
+    unit_amount: 9990,
     features: [
       'Máximo valor.',
       'Acesso total.',
@@ -38,6 +38,6 @@ export const defaultCosts: Prisma.PacksCreateInput[] = [
       'Benefícios exclusivos.',
     ],
     phrases: 'Domine o jogo! Acesso total, prioridade e benefícios exclusivos.',
-    credits: 8000,
+    credits: 1000,
   },
 ];

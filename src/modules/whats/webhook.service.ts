@@ -109,7 +109,10 @@ export const checkAction = async ({
       if (checkLogin != null) {
         const user = await UserRepository.getUserByPhone(phoneNumber);
         if (user) {
-          await UserRepository.updateUser(user.id, { isPhoneConfirmed: true });
+          await UserRepository.updateUser(user.id, {
+            isActive: true,
+            isPhoneConfirmed: true,
+          });
           await tokenService.changeToken({ phone: phoneNumber });
           WhatsService.sendMessageWithTemplate({
             to,
@@ -127,7 +130,10 @@ export const checkAction = async ({
       if (checkLogin != null) {
         const user = await UserRepository.getUserByPhone(phoneNumber);
         if (user) {
-          await UserRepository.updateUser(user.id, { isPhoneConfirmed: true });
+          await UserRepository.updateUser(user.id, {
+            isActive: true,
+            isPhoneConfirmed: true,
+          });
           await tokenService.changeToken({ phone: phoneNumber });
           WhatsService.sendMessageWithTemplate({
             to,

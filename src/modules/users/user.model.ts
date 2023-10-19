@@ -6,9 +6,10 @@ export type UserFilters = {
 };
 
 export type UserQuery = {
-  isActive: string;
-  limit: string;
+  isActive?: string;
+  limit?: string;
   userID?: number;
+  skip?: string;
 };
 
 export type UserParams = {
@@ -46,17 +47,23 @@ export type UserUpdate = {
   slug: string;
   password: string;
   optin: boolean;
+  isActive: boolean;
   isEmailConfirmed: boolean;
   isPhoneConfirmed: boolean;
-  isCandidate: boolean;
-  isRecruiter: boolean;
-  isServiceProvider: boolean;
-  isFreelancer: boolean;
+};
+export type ValidUserContactType = {
+  email?: object;
+  phone?: object;
+  slug?: object;
 };
 
 export type UserBody = {
   Body: User;
 };
+export type ValidUserContactBody = {
+  Body: ValidUserContactType;
+};
+export type ValidUserContact = FastifyRequest<ValidUserContactBody>;
 export type CreateUser = FastifyRequest<UserBody>;
 
 export type UserUpdateBody = {
@@ -64,3 +71,9 @@ export type UserUpdateBody = {
 };
 
 export type UpdateUser = FastifyRequest<UserUpdateBody>;
+
+export type DeleteUserRequest = FastifyRequest<{
+  Params: {
+    id: number;
+  };
+}>;

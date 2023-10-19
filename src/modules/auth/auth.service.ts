@@ -17,7 +17,7 @@ export const createTokenToValidation = async ({
   const ERROR_MESSAGE = 'Email is incorrect';
 
   const user = await UserService.getUserByEmail(email);
-  if (!user) {
+  if (!user || !user.isActive) {
     // throw new Error(ERROR_MESSAGE);
     return false;
   }

@@ -19,6 +19,20 @@ export const getGroups = async (
   return reply.send(groups);
 };
 
+export const startBoraBot = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { to } = request.body as { to: string };
+  const data = {
+    to,
+    message: 'START_BORABOT',
+  };
+  const sendMessage = await WhatsService.sendMessageWithTemplate(data);
+
+  return reply.send(sendMessage);
+};
+
 export const sendMessageWithTemplate = async (
   request: FastifyRequest,
   reply: FastifyReply

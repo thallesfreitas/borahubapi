@@ -1,6 +1,12 @@
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
 import { send, startTyping } from '../../lib/whats';
+import { verify } from '../credits/credits.service';
+import {
+  createSession,
+  getSession,
+} from '../manageSessions/manageSessions.service';
+import { getUserByPhone } from '../users/user.repository';
 
 const cohere = require('cohere-ai');
 
@@ -11,34 +17,79 @@ const openai = new OpenAI({
 });
 
 export const bot = async (to: string, prompt: string) => {
-  // const user = await getUserByPhone(to);
+  const userPhone = `+${to.split('@')[0]}`;
+  const user = await getUserByPhone(userPhone);
+  const credits = verify({ userId: user?.id as number, type: 'MESSAGE_BOT' });
+  let contentSystem =
+    'Você é um especialista em recrutamento, marketing, publicidade, tecnologia. PHD em administração. Você trabalha no BoraHub e é muito feliz de trabalhar lá. Você só pode responder assuntos referentes ao mercado de trabalho, recrutamento, boas práticas para procurar emprego, marketing, marketing pessoal.';
+  let contentassistant =
+    'Caso não seja desses tema, responda apenas - `Eu sou a inteligência artificial desenvolvida para o BoraHub e esse assunto não está na minha base de conhecimento.` Se o usuário insistir, diga quais temas são do seu conhecimento e peça-o para direcionar suas perguntas a eles. Enquanto ele estiver insistindo em falar em algo que não seja sobre os temas acima retorno a mesma resposta e diga sobre quais assuntos vc sabe responder. Caso seja de algum tema indicado, me de a resposta mais coerente e divertida possivel. ';
+
+  const history = await getSession(to);
+  let historyIndex = 0;
+  if (prompt.startsWith('/')) {
+    const command = prompt.split(' ')[0];
+    switch (command) {
+      case '/especialista':
+        contentSystem = `Você é um especialista em ${
+          prompt.split(' ')[1]
+        }. PHD em ${
+          prompt.split(' ')[1]
+        }. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
+        contentassistant =
+          'Retorne que entendeu sua nova especialidade e estará feliz em ajudar.';
+
+        createSession({
+          session_id: to,
+          key: 'contentSystem',
+          value: contentSystem,
+        });
+
+        historyIndex = 1;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  if (history) {
+    console.log('history.session.length');
+    console.log(history.session.length);
+    history.session.forEach(element => {
+      if (element.key === 'contentSystem') contentSystem = element.value;
+      contentassistant = 'HISTORICO: ';
+      if (element.key === 'history') contentassistant += element.value;
+      contentassistant = ' - RESPONDA EM PORTUGUÊS! ';
+    });
+  }
+  console.log(history);
+  console.log(contentSystem);
+  console.log(contentassistant);
   startTyping(to);
+  if (!credits) {
+    send({
+      to,
+      message: 'CREDITS_LIMIT',
+    });
+    return false;
+  }
+
   const response = await openai.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-3.5-turbo',
+    model: 'gpt-4',
+    // model: 'gpt-3.5-turbo',
     temperature: 0.6,
     max_tokens: 500,
     messages: [
       {
         role: 'system',
-        content:
-          'Você é um especialista em recrutamento, marketing, publicidade, tecnologia. PHD em administração. Você trabalha no BoraHub e é muito feliz de trabalhar lá.',
+        content: contentSystem,
       },
       {
         role: 'assistant',
-        content:
-          'Você só pode responder assuntos referentes ao mercado de trabalho, recrutamento, boas práticas para procurar emprego, marketing, marketing pessoal.',
+        content: contentassistant,
       },
-      {
-        role: 'assistant',
-        content:
-          'Caso não seja desses tema, responda apenas - `Eu sou a inteligência artificial desenvolvida para o BoraHub e esse assunto não está na minha base de conhecimento.` Se o usuário insistir, diga quais temas são do seu conhecimento e peça-o para direcionar suas perguntas a eles. Enquanto ele estiver insistindo em falar em algo que não seja sobre os temas acima retorno a mesma resposta e diga sobre quais assuntos vc sabe responder.',
-      },
-      {
-        role: 'assistant',
-        content:
-          'Caso seja de algum tema indicado, me de a resposta mais coerente e divertida possivel. ',
-      },
+
       {
         role: 'user',
         content: prompt as string,
@@ -56,6 +107,23 @@ export const bot = async (to: string, prompt: string) => {
   //   await addUsage(dataUsage);
   // }
 
+  // let dataUserCohere = response.choices[0].message.content as string;
+  if ((response.choices[0].message.content as string).length > 250) {
+    const dataUserCohere = await cohere.summarize({
+      text: `resuma o texto: ${response.choices[0].message.content as string}`,
+      format: 'bullets',
+      model: 'command-light',
+    });
+    if (historyIndex === 0) {
+      createSession({
+        session_id: to,
+        key: 'history',
+        value: dataUserCohere.body.summary,
+      });
+    }
+    console.log('dataUserCohere');
+    console.log(dataUserCohere);
+  }
   send({
     to,
     message: response.choices[0].message.content as string,

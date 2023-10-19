@@ -40,7 +40,8 @@ const start = async () => {
     // connectWP();
   } catch (err) {
     server.log.error(err);
-    process.exit(1);
+    start();
+    // process.exit(1);
   }
 };
 

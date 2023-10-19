@@ -1,3 +1,18 @@
+export const createCardTokenBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: [],
+  properties: {
+    cardNumber: { type: 'string' },
+    cardholderName: { type: 'string' },
+    cardExpirationMonth: { type: 'string' },
+    cardExpirationYear: { type: 'string' },
+    securityCode: { type: 'string' },
+    identificationType: { type: 'string' },
+    identificationNumber: { type: 'string' },
+  },
+};
+
 export const paymentBody = {
   type: 'object',
   additionalProperties: false,

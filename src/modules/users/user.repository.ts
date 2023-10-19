@@ -104,22 +104,6 @@ export const createUser: CreateUser = async ({
         user: { connect: { id: newUser.id } },
       },
     });
-    // await dbClient.serviceProvider.create({
-    //   data: {
-    //     user: { connect: { id: newUser.id } },
-    //   },
-    // });
-    // await dbClient.freelancer.create({
-    //   data: {
-    //     user: { connect: { id: newUser.id } },
-    //   },
-    // });
-    // const recruiter = await dbClient.recuiter.create({
-    //   data: {
-    //     createdById: { connect: { id: newUser.id } },
-    //     updatedById: { connect: { id: newUser.id } },
-    //   },
-    // });
 
     await CreditsService.addCredits({
       userId: newUser.id,
@@ -159,17 +143,51 @@ export const createUser: CreateUser = async ({
   }
 };
 
+export interface ApplicationData {
+  application: boolean;
+  skip: number;
+  limit: number;
+}
+
 export interface UserCandidate extends User {
   candidate: Candidate;
 }
 interface GetUserBy {
-  (variableWhere: object): Promise<User | null>;
+  (
+    variableWhere: object,
+    withApplication: ApplicationData
+  ): Promise<User | null>;
 }
 
-export const getUserBy: GetUserBy = async variableWhere => {
+export const deleteUser = async (id: number) => {
+  console.log(`deleteUser: ${id}`);
+  return dbClient.user.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+export const getUserBy: GetUserBy = async (
+  variableWhere,
+  withApplication = {
+    application: false,
+    skip: 0,
+    limit: 0,
+  }
+) => {
   const user = await dbClient.user.findFirst({
     where: variableWhere,
     include: {
+      createdJobApplication: {
+        select: {
+          id: true,
+          score: withApplication.application,
+          job: withApplication.application,
+        },
+        skip: Number(withApplication.skip),
+        take: Number(withApplication.limit),
+      },
       candidate: {
         include: {
           categories: {
@@ -281,17 +299,86 @@ export const getUserBy: GetUserBy = async variableWhere => {
 interface GetUserByEmail {
   (email: string): Promise<User | null>;
 }
+interface UserValid {
+  id: number;
+  email: string;
+  isActive: boolean;
+  isPhoneConfirmed: boolean;
+  isEmailConfirmed: boolean;
+}
+interface ValidUserContact {
+  (email: object, slug: object, phone: object): Promise<UserValid | null>;
+}
+export const validUserContact: ValidUserContact = async (
+  email,
+  slug,
+  phone
+): Promise<UserValid | null> => {
+  const user = await dbClient.user.findFirst({
+    where: {
+      email,
+      slug,
+      phone,
+    },
+    select: {
+      id: true,
+      email: true,
+      isActive: true,
+      isPhoneConfirmed: true,
+      isEmailConfirmed: true,
+    },
+  });
+  if (user) {
+    return user as UserValid;
+  }
+  return null;
+};
+
 export const getUserByEmail: GetUserByEmail = async email => {
-  const user = getUserBy({ email });
+  const user = getUserBy(
+    { email },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
   return user;
 };
 
 interface GetUserBySlug {
   (slug: string): Promise<User | null>;
+  skip?: number;
+  limit?: number;
 }
 
+interface GetUserBySlugApplication {
+  (slug: string, skip: number, limit: number): Promise<User | null>;
+}
+export const getUserBySlugApplication: GetUserBySlugApplication = async (
+  slug: string,
+  skip: number,
+  limit: number
+) => {
+  const user = getUserBy(
+    { slug },
+    {
+      application: true,
+      skip,
+      limit,
+    }
+  );
+  return user;
+};
 export const getUserBySlug: GetUserBySlug = async slug => {
-  const user = getUserBy({ slug });
+  const user = getUserBy(
+    { slug },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
   return user;
 };
 
@@ -299,7 +386,14 @@ interface GetUserByUuid {
   (uuid: string): Promise<User | null>;
 }
 export const getUserByUuid: GetUserByUuid = async uuid => {
-  const user = getUserBy({ uuid });
+  const user = getUserBy(
+    { uuid },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
   return user;
 };
 
@@ -307,7 +401,14 @@ interface GetUserById {
   (id: number): Promise<User | null>;
 }
 export const getUserById: GetUserById = async id => {
-  const user = getUserBy({ id });
+  const user = getUserBy(
+    { id },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
   return user;
 };
 
@@ -315,8 +416,15 @@ interface GetUserByPhone {
   (phone: string): Promise<User | null>;
 }
 
-export const getUserByPhone: GetUserByPhone = async phone => {
-  const user = getUserBy({ phone });
+export const getUserByPhone: GetUserByPhone = async to => {
+  const user = await getUserBy(
+    { phone: to },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
   return user;
 };
 
@@ -352,26 +460,28 @@ export const updateUser = async (id: number, params: UpdateUserArgs) => {
   return { user, tokenUser };
 };
 
-export const updatePhoneConfirm = async (id: number) => {
-  return dbClient.user.update({
-    where: {
-      id,
-    },
-    data: {
-      isPhoneConfirmed: true,
-    },
-  });
-};
-export const updateEmailConfirm = async (id: number) => {
-  return dbClient.user.update({
-    where: {
-      id,
-    },
-    data: {
-      isEmailConfirmed: true,
-    },
-  });
-};
+// export const updatePhoneConfirm = async (id: number) => {
+//   return dbClient.user.update({
+//     where: {
+//       id,
+//     },
+//     data: {
+//       isActive: true,
+//       isPhoneConfirmed: true,
+//     },
+//   });
+// };
+// export const updateEmailConfirm = async (id: number) => {
+//   return dbClient.user.update({
+//     where: {
+//       id,
+//     },
+//     data: {
+//       isActive: true,
+//       isEmailConfirmed: true,
+//     },
+//   });
+// };
 
 interface ChangePasswordArgs {
   userId: number;

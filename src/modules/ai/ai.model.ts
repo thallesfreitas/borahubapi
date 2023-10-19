@@ -22,21 +22,6 @@ export type CreateAIBody = {
   Body: CreateAiModel;
 };
 
-export type TesteModel = {
-  tokens?: number;
-  model?: string;
-
-  prompt: string;
-  temperature?: number;
-  system?: string;
-  assistant?: string;
-};
-
-export type TesteBody = {
-  Body: TesteModel;
-};
-
-export type TesteAI = FastifyRequest<TesteBody>;
 export type CreateAI = FastifyRequest<CreateAIBody>;
 // export type ChatBotModel = FastifyRequest<ChatBotModelBody>;
 

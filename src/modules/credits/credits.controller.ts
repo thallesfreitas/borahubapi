@@ -13,8 +13,9 @@ import * as CreditsService from './credits.service';
 
 export const verify = async (req: VerifyCredits, reply: FastifyReply) => {
   const { userId, type } = req.body;
-  const verifyStatus = CreditsService.verify({ userId, type });
-  return reply.status(200).send(verifyStatus);
+  const verifyStatus = await CreditsService.verify({ userId, type });
+
+  return reply.status(200).send({ status: verifyStatus });
 };
 export const getCredits = async (req: GetCredits, reply: FastifyReply) => {
   const { userId } = req.body;

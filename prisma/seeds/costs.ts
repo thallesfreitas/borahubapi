@@ -1,12 +1,5 @@
 import { Prisma } from '@prisma/client';
 
-// export const defaultUser: Prisma.UserCreateInput = {
-//   email: 'john@doe.com',
-//   name: 'John Doe',
-//   password: '123456',
-//   phone: '11945483326',
-// };
-
 export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   {
     type: 'CREATE_PROFILE_CANDIDATE',
@@ -26,7 +19,7 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   },
   {
     type: 'CREATE_JOB',
-    amount: 100,
+    amount: 75,
   },
   {
     type: 'SEND_JOB_TO_GROUPS',
@@ -35,5 +28,25 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   {
     type: 'MESSAGE_BOT',
     amount: 25,
+  },
+  {
+    type: 'COMPARE_JOB_CANDIDATE',
+    amount: 50,
+  },
+  {
+    type: 'CREATE_MINIBIO',
+    amount: 50,
+  },
+  {
+    type: 'CREATE_DESCRIPTION_CANDIDATE',
+    amount: 50,
+  },
+  {
+    type: 'FREELA_CALCULATOR',
+    amount: 50,
+  },
+  {
+    type: 'DEFAULT_AI',
+    amount: 50,
   },
 ];

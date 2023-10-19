@@ -53,7 +53,7 @@ export const verify = async ({
   const costsusage = await CostsUsageRepository.getCostsUsage(type as string);
   const amountCost = costsusage?.amount as number;
 
-  if (amountCredit <= amountCost) {
+  if (amountCredit < amountCost) {
     return false;
   }
   if (withRemove) {
@@ -65,6 +65,5 @@ export const verify = async ({
       type: costsusage?.type,
     });
   }
-
   return true;
 };

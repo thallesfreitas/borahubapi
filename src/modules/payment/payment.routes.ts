@@ -10,6 +10,12 @@ export default async (fastify: FastifyInstance) => {
   );
 
   fastify.post(
+    '/createCardToken',
+    { schema: { body: Schema.createCardTokenBody } },
+    Controller.createCardToken
+  );
+
+  fastify.post(
     '/getCustomer',
     { schema: { body: Schema.paymentBody } },
     Controller.getCustomer

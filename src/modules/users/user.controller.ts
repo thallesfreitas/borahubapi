@@ -1,10 +1,12 @@
 import { FastifyReply } from 'fastify';
 import {
   CreateUser,
+  DeleteUserRequest,
   GetUserByEmail,
   GetUserById,
   GetUserBySlug,
   UpdateUser,
+  ValidUserContact,
 } from './user.model';
 import * as UserService from './user.service';
 
@@ -38,6 +40,19 @@ export const getUserById = async (req: GetUserById, reply: FastifyReply) => {
   return reply.send(user);
 };
 
+export const validUserContact = async (
+  req: ValidUserContact,
+  reply: FastifyReply
+) => {
+  // const { email, phone, slug } = req.body;
+  const email = req.body.email ? req.body.email : {};
+  const slug = req.body.slug ? req.body.slug : {};
+  const phone = req.body.phone ? req.body.phone : {};
+  const user = await UserService.validUserContact(email, slug, phone);
+
+  return reply.send(user);
+};
+
 export const createUser = async (req: CreateUser, reply: FastifyReply) => {
   const { email, name, phone, indicatedBy, password, optin } = req.body;
   const user = await UserService.createUser({
@@ -61,12 +76,9 @@ export const updateUser = async (req: UpdateUser, reply: FastifyReply) => {
     phone,
     password,
     optin,
+    isActive,
     isEmailConfirmed,
     isPhoneConfirmed,
-    isCandidate,
-    isRecruiter,
-    isServiceProvider,
-    isFreelancer,
   } = req.body;
 
   const user = await UserService.updateUser(Number(id), {
@@ -76,13 +88,21 @@ export const updateUser = async (req: UpdateUser, reply: FastifyReply) => {
     password,
     slug,
     optin,
+    isActive,
     isEmailConfirmed,
     isPhoneConfirmed,
-    isCandidate,
-    isRecruiter,
-    isServiceProvider,
-    isFreelancer,
   });
 
   return reply.send(user);
+};
+
+export const deleteUser = async (
+  request: DeleteUserRequest,
+  reply: FastifyReply
+) => {
+  const { id } = request.params;
+
+  await UserService.deleteUser(Number(id));
+
+  return reply.status(204).send({ status: true });
 };

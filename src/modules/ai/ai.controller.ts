@@ -2,7 +2,7 @@
 import { FastifyReply } from 'fastify';
 import OpenAI from 'openai';
 import { addUsage } from '../usage/usage.service';
-import { ChoiceCandidateJobAI, CreateAI, TesteAI } from './ai.model';
+import { ChoiceCandidateJobAI, CreateAI } from './ai.model';
 
 const cohere = require('cohere-ai');
 
@@ -38,33 +38,6 @@ export const completion = async (req: CreateAI, reply: FastifyReply) => {
   console.log(response);
   return reply.send({ text: `${response.choices[0].text}` });
   // return reply.send(response.choices[0].text);
-};
-
-export const test = async (req: TesteAI, reply: FastifyReply) => {
-  const { prompt } = req.body;
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: [
-      {
-        role: 'user',
-        content:
-          'qual a população de divinopolis de acordo com o site ibge.com.br',
-      },
-    ],
-    temperature: 0.6,
-    max_tokens: 4000,
-    top_p: 0.5,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-  });
-
-  return reply.send({
-    text: `${response.choices[0].message.content}`,
-    total: response?.usage?.total_tokens,
-    input: response?.usage?.prompt_tokens,
-    output: response?.usage?.completion_tokens,
-  });
 };
 
 export const chat = async (req: CreateAI, reply: FastifyReply) => {
@@ -216,6 +189,5 @@ export const ChoiceCandidateJob = async (
       { role: 'user', content: `Candidato 2: ${promptCandidate2}` },
     ],
   });
-  console.log(response.choices[0].message);
   return reply.send(response.choices[0].message);
 };

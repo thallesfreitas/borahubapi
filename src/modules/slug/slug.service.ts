@@ -3,6 +3,24 @@ import { Utils } from '../../utils/functions';
 import * as JobsService from '../jobs/jobs.service';
 import * as UserService from '../users/user.service';
 
+export const getBySlugApplication = async (
+  slug: string,
+  skip: number,
+  limit: number
+) => {
+  const user = await UserService.getUserBySlugApplication(slug, skip, limit);
+  let response = null;
+
+  if (user) {
+    response = {
+      type: 'user',
+      data: user,
+    };
+  }
+
+  return response;
+};
+
 export const getBySlug = async (slug: string, userID: number) => {
   const user = await UserService.getUserBySlug(slug);
   let response = null;

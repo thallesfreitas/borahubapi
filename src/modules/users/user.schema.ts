@@ -29,6 +29,23 @@ export const getUserByIdParams = {
   },
 };
 
+export const validUserContactBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: [],
+  properties: {
+    email: {
+      type: 'object',
+    },
+    phone: {
+      type: 'object',
+    },
+    slug: {
+      type: 'object',
+    },
+  },
+};
+
 export const createUserBody = {
   type: 'object',
   additionalProperties: false,
@@ -68,9 +85,5 @@ export const updateUserBody = {
     password: { type: 'string' },
     name: { type: 'string' },
     phone: { type: 'string' },
-    isCandidate: { type: 'boolean' },
-    isRecruiter: { type: 'boolean' },
-    isServiceProvider: { type: 'boolean' },
-    isFreelancer: { type: 'boolean' },
   },
 };

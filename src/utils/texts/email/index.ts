@@ -23,6 +23,7 @@ export type EmailType =
   | 'newOrderClient'
   | 'CREDIT_PURCHASED'
   | 'createAssessmentCandidate'
+  | 'createAssessmentCandidateRecuiter'
   | 'createAssessmentRecruiter';
 
 export const emailTemplates: Record<EmailType, Email> = {
@@ -135,6 +136,19 @@ export const emailTemplates: Record<EmailType, Email> = {
       template:
         '../../src/utils/templates/createAssessmentCandidate.handlebars',
       subject: 'Avaliamos sua aplicação. Boa sorte!',
+    },
+  },
+  createAssessmentCandidateRecuiter: {
+    admin: {
+      template: '',
+      subject: '',
+      to: process.env.NOREPLY_EMAIL_TO || '',
+      name: 'BoraHub',
+    },
+    client: {
+      template:
+        '../../src/utils/templates/createAssessmentCandidateRecuiter.handlebars',
+      subject: 'Você recebeu um feedback do recrutador! Boa sorte!',
     },
   },
   createAssessmentRecruiter: {

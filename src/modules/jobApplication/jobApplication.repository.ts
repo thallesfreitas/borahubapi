@@ -5,10 +5,95 @@ import * as emailService from '../../lib/email';
 import * as AiService from '../ai/ai.service';
 import {
   CreateAssessmentJobApplicationArgs,
+  CreateFeedbackRecruiterArgs,
   CreateJobApplicationArgs,
+  GetAssessmentArgs,
   UpdateJobApplicationArgs,
 } from './jobApplication.model';
 
+export const createFeedbackRecruiter = async ({
+  id,
+  feedbackrecruiter,
+}: CreateFeedbackRecruiterArgs) => {
+  try {
+    const jobApplication = await dbClient.jobApplication.update({
+      where: {
+        id: parseInt(id.toString(), 10),
+      },
+      data: {
+        feedbackrecruiter,
+      },
+    });
+
+    const job = await dbClient.jobs.findFirst({
+      where: {
+        id: jobApplication.jobId,
+      },
+    });
+    const user = await dbClient.user.findFirst({
+      where: {
+        id: jobApplication.createdBy as number,
+      },
+    });
+    console.log('feedbackrecruiter');
+    console.log('feedbackrecruiter');
+    console.log('feedbackrecruiter');
+    console.log('feedbackrecruiter');
+    console.log('feedbackrecruiter');
+    console.log('feedbackrecruiter');
+    console.log(feedbackrecruiter);
+    const scoreJobApplication = jobApplication?.score?.toString();
+    await emailService.sendEmail({
+      payload: {
+        name: user?.name as string,
+        email: user?.email as string,
+        vagaName: job?.title as string,
+        assessment: feedbackrecruiter as string,
+        score: scoreJobApplication as string,
+        url: `${process.env.URL}/${job?.slug}/feedback/${user?.slug}`,
+      },
+      type: 'createAssessmentCandidateRecuiter',
+    });
+
+    return jobApplication;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new Error('A new user cannot be created with this email');
+      }
+    }
+    throw error;
+  }
+};
+export const getFeedbackAssessment = async ({
+  jobslug,
+  userslug,
+}: GetAssessmentArgs) => {
+  try {
+    const jobApplication = await dbClient.jobApplication.findFirst({
+      where: {
+        job: {
+          slug: jobslug,
+        },
+        createdById: {
+          slug: userslug,
+        },
+      },
+      include: {
+        job: true,
+        createdById: true,
+      },
+    });
+    return jobApplication;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new Error('A new user cannot be created with this email');
+      }
+    }
+    throw error;
+  }
+};
 export const createAssessment = async ({
   id,
   name,
@@ -16,13 +101,6 @@ export const createAssessment = async ({
   userId,
   jobId,
 }: CreateAssessmentJobApplicationArgs) => {
-  console.log('createAssessment');
-  console.log('createAssessment');
-  console.log('createAssessment');
-  console.log('createAssessment');
-  console.log('createAssessment');
-  // console.log(id, name, description, userId, jobId);
-
   try {
     const job = await dbClient.jobs.findFirst({
       where: {

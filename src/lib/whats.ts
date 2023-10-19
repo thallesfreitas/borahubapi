@@ -7,7 +7,9 @@
 import * as ApprovalSystem from '../modules/approvalSystem/approvalSystem.service';
 import { checkAction } from '../modules/whats/webhook.service';
 import { WhatsType, whatsTemplates } from '../utils/texts/whats';
+import { sendWhatsConection } from './email';
 import * as Queue from './queue';
+import { uploadQr } from './storage';
 
 const fs = require('fs');
 const wppconnect = require('@wppconnect-team/wppconnect');
@@ -119,6 +121,7 @@ interface SendMessageArgs {
 }
 
 interface WP {
+  [x: string]: any;
   onMessage: (arg0: (message: any) => void) => void;
   sendText: (to: string, content: string, options?: any) => Promise<any>;
   sendLinkPreview: (to: string, content: string, options?: any) => Promise<any>;
@@ -143,7 +146,7 @@ function config(client: WP) {
   clientWP = client;
 }
 
-function start() {
+async function start() {
   clientWP.onMessage((message: { [x: string]: string; body: string }) => {
     const to = message.from;
     const textMessage = message.body.toLowerCase();
@@ -153,10 +156,30 @@ function start() {
       }
     }
   });
+
+  // await clientWP
+  //   .sendImage('5511945483326@c.us', 'out.png', 'qr', 'qr')
+  //   .then((result: any) => {
+  //     console.log('Result: ', result); // return object success
+  //   })
+  //   .catch((erro: any) => {
+  //     console.error('Error when sending: ', erro); // return object error
+  //   });
+
+  clientWP.onStateChange((state: any) => {
+    console.log('state');
+    console.log(state);
+    // if (state == 'UNPAIRED') {
+    // }
+  });
 }
 
 export async function startTyping(to: string) {
   const phone = to.toString().replace('+', '');
+  if (!clientWP) {
+    connectWP();
+    return false;
+  }
   clientWP.startTyping(phone);
 }
 
@@ -218,7 +241,11 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
 
   return true;
 }
-
+async function sendQR(fileQR: any) {
+  await sendWhatsConection();
+  const { Key } = await uploadQr(fileQR, 'tempqr');
+  // console.log(await getFile(Key));
+}
 export async function send({ to, message }: SendText) {
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
@@ -227,10 +254,10 @@ export async function send({ to, message }: SendText) {
   Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 }
 
-export const connectWP = async () => {
+export const connectWP = async (_session = 'Bora') => {
   wppconnect
     .create({
-      session: 'Bora',
+      session: _session,
       catchQR: (
         base64Qrimg: any,
         asciiQR: any,
@@ -240,13 +267,46 @@ export const connectWP = async () => {
         console.log('Number of attempts to read the qrcode: ', attempts);
         // console.log('Terminal qrcode: ', asciiQR);
         // console.log('base64 image string qrcode: ', base64Qrimg);
-        // console.log('urlCode (data-ref): ', urlCode);
+        console.log('urlCode (data-ref): ', urlCode);
+
+        const matches = base64Qrimg.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+
+        if (matches.length !== 3) {
+          return new Error('Invalid input string');
+        }
+        const response = {
+          type: matches[1],
+          data: Buffer.from(matches[2], 'base64'),
+        };
+        // response.type = matches[1];
+        // response.data = new Buffer.from(matches[2], 'base64');
+
+        const imageBuffer = response;
+        require('fs').writeFile(
+          'out.png',
+          imageBuffer.data,
+          'binary',
+          function writeFileCallback(err: any) {
+            if (err != null) {
+              console.log(err);
+            }
+          }
+        );
+
+        sendQR(imageBuffer);
       },
       statusFind: (statusSession: any, session: any) => {
         // return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
         console.log('Status Session: ', statusSession);
+        if (statusSession === 'desconnectedMobile') {
+          // connectWP();
+        }
         // Create session wss return "serverClose" case server for close
         console.log('Session name: ', session);
+        // connectWP(session);
+      },
+      onLoadingScreen: (percent: any, message: any) => {
+        console.log('LOADING_SCREEN', percent, message);
       },
       headless: true, // Headless chrome
       devtools: false, // Open devtools by default
@@ -268,7 +328,6 @@ export const connectWP = async () => {
         '--enable-features=NetworkService',
         '--disable-setuid-sandbox',
         '--no-sandbox',
-        // Extras
         '--disable-webgl',
         '--disable-threaded-animation',
         '--disable-threaded-scrolling',
@@ -283,10 +342,10 @@ export const connectWP = async () => {
         '--disable-accelerated-mjpeg-decode',
         '--disable-app-list-dismiss-on-blur',
         '--disable-accelerated-video-decode',
-      ], // Parameters to be added into the chrome browser instance
-      // puppeteerOptions: {}, // Will be passed to puppeteer.launch
+      ],
       puppeteerOptions: {
         headless: 'false',
+        userDataDir: `./datadir/${_session}`,
         args: [
           '--disable-gpu',
           '--disable-setuid-sandbox',
@@ -297,11 +356,11 @@ export const connectWP = async () => {
       disableSpins: true,
       disableWelcome: false, // Option to disable the welcoming message which appears in the beginning
       updatesLog: true, // Logs info updates automatically in terminal
-      autoClose: 60000, // Automatically closes the wppconnect only when scanning the QR code (default 60 seconds, if you want to turn it off, assign 0 or false)
+      autoClose: 600000, // Automatically closes the wppconnect only when scanning the QR code (default 60 seconds, if you want to turn it off, assign 0 or false)
       tokenStore: 'file', // Define how work with tokens, that can be a custom interface
       createPathFileToken: true,
       waitForLogin: true,
-      folderNameToken: './tokens/Bora', // folder name when saving tokens
+      folderNameToken: `./tokens/${_session}`, // folder name when saving tokens
       // BrowserSessionToken
       // To receive the client's token use the function await clinet.getSessionTokenBrowser()
       // sessionToken: {
@@ -313,6 +372,7 @@ export const connectWP = async () => {
       // },
     })
     .then((client: any) => {
+      console.log('START');
       config(client);
       start();
     })

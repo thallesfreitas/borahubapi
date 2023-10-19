@@ -20,26 +20,6 @@ export default async (fastify: FastifyInstance) => {
     Controller.generate
   );
 
-  // fastify.post<{ Params: Model.SlugFilters }>(
-  //   '/generate/:slug',
-  //   {
-  //     schema: { params: Schema.verifySlugParams },
-  //     onSend,
-  //   },
-  //   Controller.generate
-  // );
-
-  // fastify.get<Model.SlugParams>(
-  //   '/generate/:slug',
-  //   {
-  //     onSend,
-  //     schema: {
-  //       params: Schema.verifySlugParams,
-  //     },
-  //   },
-  //   Controller.generate
-  // );
-
   fastify.get<Model.SlugParams>(
     '/verify/:slug',
     {
@@ -61,5 +41,17 @@ export default async (fastify: FastifyInstance) => {
       preSerialization: Serializer.getBySlug,
     },
     Controller.getBySlug
+  );
+
+  fastify.get<Model.SlugParams>(
+    '/application/:slug',
+    {
+      onSend,
+      schema: {
+        params: Schema.getBySlugApplicationParams,
+      },
+      preSerialization: Serializer.getBySlugApplication,
+    },
+    Controller.getBySlugApplication
   );
 };

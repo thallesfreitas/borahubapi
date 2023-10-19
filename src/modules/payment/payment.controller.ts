@@ -7,6 +7,7 @@ import * as CreditsService from '../credits/credits.service';
 import * as PackService from '../packs/packs.service';
 import * as UserService from '../users/user.service';
 import {
+  CreateCardTokenModel,
   CustomerModel,
   GetPaymentStatusModel,
   IpnModel,
@@ -32,30 +33,30 @@ export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
   const { topic, id } = req.query;
 
   switch (topic) {
-  case 'payment':
-    try {
-      payment = await mercadopago.payment.findById(id);
+    case 'payment':
+      try {
+        payment = await mercadopago.payment.findById(id);
 
-      const ct = await CreditsService.getCreditsTransaction({
-        mp_id_transaction: id,
-      });
-      const statusCT = ct?.status;
-
-      if (payment.response.status === 'approved' && statusCT !== 'approved') {
-        const credits = await CreditsService.updateCreditsTransaction({
+        const ct = await CreditsService.getCreditsTransaction({
           mp_id_transaction: id,
-          status: 'approved',
         });
+        const statusCT = ct?.status;
+
+        if (payment.response.status === 'approved' && statusCT !== 'approved') {
+          const credits = await CreditsService.updateCreditsTransaction({
+            mp_id_transaction: id,
+            status: 'approved',
+          });
+        }
+      } catch (e) {
+        reply.code(200).send(true);
       }
-    } catch (e) {
-      reply.code(200).send(true);
-    }
-    break;
+      break;
     // case 'merchant_order':
     //   merchant_order = await mercadopago.merchant_orders.findById(id);
     //   break;
-  default:
-    break;
+    default:
+      break;
   }
 
   // let paid_amount = 0;
@@ -156,6 +157,33 @@ export const getCustomer = async (req: CustomerModel, reply: FastifyReply) => {
   return reply.send(getOrCreateCustomer(req.body.email));
 };
 
+export const createCardToken = async (
+  req: CreateCardTokenModel,
+  reply: FastifyReply
+) => {
+  const {
+    cardNumber,
+    cardholderName,
+    cardExpirationMonth,
+    cardExpirationYear,
+    securityCode,
+    identificationType,
+    identificationNumber,
+  } = req.body;
+
+  const cardToken = await mercadopago.createCardToken({
+    cardNumber,
+    cardholderName,
+    cardExpirationMonth,
+    cardExpirationYear,
+    securityCode,
+    identificationType,
+    identificationNumber,
+  });
+  return reply.send({
+    cardToken,
+  });
+};
 export const payment = async (req: PaymentModel, reply: FastifyReply) => {
   const { userName, paymentData, typePack, userPhone } = req.body;
 
@@ -197,6 +225,9 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
     description:
       'BoraPremium | Domine o jogo! Acesso total, prioridade e benefícios exclusivos. - Créditos: 1000',
   };
+
+  // mercadopago.createCardToken()
+  // createCardToken.
 
   await mercadopago.payment
     // .save(payment_data)

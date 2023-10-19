@@ -3,9 +3,12 @@ import * as Whats from './whats';
 const amqp = require('amqplib/callback_api');
 
 export function sendMessageToQueue(queueName: any, messageToSend: string) {
+  // 'amqp://user:password@localhost',
+  console.log(
+    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:5672`
+  );
   amqp.connect(
-    // 'amqp://user:password@localhost',
-    `amqp://${process.env.RABBIT_USER}:${process.env.RABBIT_PASS}@${process.env.RABBIT_HOST}`,
+    `amqp://${process.env.RABBITMQ_DEFAULT_PASS}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:5672`,
     (
       error: { message: any },
       connection: {

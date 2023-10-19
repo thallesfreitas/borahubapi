@@ -1,3 +1,2 @@
-2023/10/19-12:50:13.770 9603 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/File System/Origins/MANIFEST-000001
-2023/10/19-12:50:13.771 9603 Recovering log #3
-2023/10/19-12:50:13.775 9603 Reusing old log /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/File System/Origins/000003.log 
+2023/10/19-19:35:25.070 8003 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/File System/Origins since it was missing.
+2023/10/19-19:35:25.085 8003 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/File System/Origins/MANIFEST-000001

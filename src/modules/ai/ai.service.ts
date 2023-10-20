@@ -17,6 +17,12 @@ const openai = new OpenAI({
 });
 
 export const bot = async (to: string, prompt: string) => {
+  send({
+    to,
+    message: `teste: ${prompt}`,
+  });
+};
+export const botCERTO = async (to: string, prompt: string) => {
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
   const credits = verify({ userId: user?.id as number, type: 'MESSAGE_BOT' });

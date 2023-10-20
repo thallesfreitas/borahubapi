@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import app from './app';
-import { connectWP } from './lib/whats';
+import { sendMessageToQueue } from './lib/queue';
+// import { connectWP } from './lib/whats';
 
 const PORT = (process.env.PORT || 3000) as number;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
@@ -37,7 +38,10 @@ const server = app(config);
 const start = async () => {
   try {
     await server.listen({ port: PORT, host: process.env.HOST || '0.0.0.0' });
-    connectWP();
+    // connectWP();
+    setTimeout(function () {
+      sendMessageToQueue('fila', 'teste');
+    }, 1000);
   } catch (err) {
     server.log.error(err);
     start();

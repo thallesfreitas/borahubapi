@@ -27,6 +27,7 @@ export const startBoraBot = async (
   const data = {
     to,
     message: 'START_BORABOT',
+    type: 'borabot',
   };
   const sendMessage = await WhatsService.sendMessageWithTemplate(data);
 

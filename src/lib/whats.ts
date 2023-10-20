@@ -118,6 +118,7 @@ interface SendMessageArgs {
   to: string;
   payload?: string[];
   payloadVar?: string[];
+  type: string;
 }
 
 interface WP {
@@ -138,16 +139,31 @@ interface WP {
 interface SendText {
   to: string;
   message: string;
+  type: string;
 }
 
 let clientWP: WP;
+let borabot: WP;
 
-function config(client: WP) {
-  clientWP = client;
+function setClient(type: string) {
+  if (type === 'client') {
+    return clientWP;
+  }
+  return borabot;
 }
 
-async function start() {
-  clientWP.onMessage((message: { [x: string]: string; body: string }) => {
+function config(client: WP, type = 'Bora') {
+  if (type === 'Bora') {
+    clientWP = client;
+  } else {
+    borabot = client;
+  }
+}
+
+async function start(type = 'client') {
+  const client: WP = setClient(type);
+
+  client.onMessage((message: { [x: string]: string; body: string }) => {
     const to = message.from;
     const textMessage = message.body.toLowerCase();
     if (to.includes('@c.us')) {
@@ -157,16 +173,7 @@ async function start() {
     }
   });
 
-  // await clientWP
-  //   .sendImage('5511945483326@c.us', 'out.png', 'qr', 'qr')
-  //   .then((result: any) => {
-  //     console.log('Result: ', result); // return object success
-  //   })
-  //   .catch((erro: any) => {
-  //     console.error('Error when sending: ', erro); // return object error
-  //   });
-
-  clientWP.onStateChange((state: any) => {
+  client.onStateChange((state: any) => {
     console.log('state');
     console.log(state);
     // if (state == 'UNPAIRED') {
@@ -174,24 +181,21 @@ async function start() {
   });
 }
 
-export async function startTyping(to: string) {
+export async function startTyping(to: string, type: string) {
+  const client: WP = setClient(type);
   const phone = to.toString().replace('+', '');
-  if (!clientWP) {
-    connectWP();
-    return false;
-  }
-  clientWP.startTyping(phone);
+  client.startTyping(phone);
 }
 
 export async function sendProcess(action: string) {
-  console.log('sendProcess');
-  const data = action.split('&&&@@@');
+  const type = action.split('#T#T')[0];
+  const data = type[1].split('&&&@@@');
   const phone = data[0];
   const message = data[1];
-  clientWP.startTyping(phone);
-  // try {
-  const t = await clientWP.sendText(phone, message, {});
-  clientWP.stopTyping(phone);
+  const client: WP = setClient(type);
+  client.startTyping(phone);
+  const t = await client.sendText(phone, message, {});
+  client.stopTyping(phone);
   try {
     if (data.length === 3) {
       const group = data[2].split('#########');
@@ -206,7 +210,7 @@ export async function sendProcess(action: string) {
     return true;
   } catch (e) {
     console.error('Error when sending: ', e); // return object error
-    clientWP.stopTyping(phone);
+    client.stopTyping(phone);
     if (data.length === 3) {
       console.log('MENSAGEM ENVIADA PARA GRUPO DEU ERRO!');
       const group = data[2].split('#########');
@@ -230,7 +234,7 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
     let phone = groupPhone.toString().replace('+', '');
     if (!phone.includes('@')) phone = `${phone}@g.us`;
     clientWP.startTyping(phone);
-    const messageFinal = `${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
+    const messageFinal = `client#T#T${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
     Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 
     if (groupId === groupsWhatsTeste.length - 1) {
@@ -242,16 +246,16 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
 
   return true;
 }
-async function sendQR(fileQR: any) {
-  await sendWhatsConection();
+async function sendQR(fileQR: any, type: string) {
+  await sendWhatsConection(type);
   const { Key } = await uploadQr(fileQR, 'tempqr');
-  // console.log(await getFile(Key));
 }
-export async function send({ to, message }: SendText) {
+export async function send({ to, message, type }: SendText) {
+  const client: WP = setClient(type);
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
-  clientWP.startTyping(phone);
-  const messageFinal = `${phone}&&&@@@${message}`;
+  client.startTyping(phone);
+  const messageFinal = `${type}#T#T${phone}&&&@@@${message}`;
   Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 }
 
@@ -279,8 +283,6 @@ export const connectWP = async (_session = 'Bora') => {
           type: matches[1],
           data: Buffer.from(matches[2], 'base64'),
         };
-        // response.type = matches[1];
-        // response.data = new Buffer.from(matches[2], 'base64');
 
         const imageBuffer = response;
         require('fs').writeFile(
@@ -294,7 +296,7 @@ export const connectWP = async (_session = 'Bora') => {
           }
         );
 
-        sendQR(imageBuffer);
+        sendQR(imageBuffer, _session);
       },
       statusFind: (statusSession: any, session: any) => {
         // return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
@@ -374,8 +376,13 @@ export const connectWP = async (_session = 'Bora') => {
     })
     .then((client: any) => {
       console.log('START');
-      config(client);
-      start();
+      console.log(_session);
+      config(client, _session);
+      if (_session === 'Bora') {
+        start('client');
+      } else {
+        start('borabot');
+      }
     })
     .catch((error: any) => console.log(error));
 };
@@ -447,6 +454,7 @@ export const sendMessageWithTemplate = async ({
   to,
   payload,
   payloadVar,
+  type = 'client',
 }: SendMessageArgs) => {
   try {
     let messageFinal = '';
@@ -471,7 +479,7 @@ export const sendMessageWithTemplate = async ({
       toFinal = to;
     }
 
-    send({ to: toFinal, message: messageFinal });
+    send({ to: toFinal, message: messageFinal, type });
   } catch (e) {
     return e;
   }

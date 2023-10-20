@@ -33,6 +33,7 @@ export const createTokenToValidation = async ({
       await WhatsApi.sendMessageWithTemplate({
         to: user.phone,
         message: 'createTokenToValidation',
+        type: 'client',
       });
   } else if (sendEmailOrWhats === 'e') {
     if (!user.isEmailConfirmed)
@@ -50,6 +51,7 @@ export const createTokenToValidation = async ({
       await WhatsApi.sendMessageWithTemplate({
         to: user.phone,
         message: 'createTokenToValidation',
+        type: 'client',
       });
     if (!user.isEmailConfirmed)
       await emailService.sendEmail({
@@ -112,6 +114,7 @@ export const signinwithWhats = async ({ email }: SigninBodyWithEmail) => {
   await WhatsApi.sendMessageWithTemplate({
     to: user.phone,
     message: 'loginUser',
+    type: 'client',
   });
 
   return true;

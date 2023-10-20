@@ -1,0 +1,47 @@
+2023/10/20-19:00:53.499 9303 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/borabot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2023/10/20-19:00:53.519 9303 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/borabot/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/10/20-19:00:53.557 9303 Level-0 table #5: started
+2023/10/20-19:00:53.561 9303 Level-0 table #5: 7376 bytes OK
+2023/10/20-19:00:53.575 9303 Delete type=0 #3
+2023/10/20-19:00:53.576 ac03 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
+2023/10/20-19:00:54.012 9303 Level-0 table #7: started
+2023/10/20-19:00:54.018 9303 Level-0 table #7: 14408 bytes OK
+2023/10/20-19:00:54.029 9303 Delete type=0 #4
+2023/10/20-19:00:54.030 6703 Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)
+2023/10/20-19:02:30.558 6703 Level-0 table #9: started
+2023/10/20-19:02:30.598 6703 Level-0 table #9: 1022087 bytes OK
+2023/10/20-19:02:30.609 6703 Delete type=0 #6
+2023/10/20-19:02:30.846 6703 Compacting 1@0 + 1@1 files
+2023/10/20-19:02:30.884 6703 Generated table #10@0: 28949 keys, 627368 bytes
+2023/10/20-19:02:30.884 6703 Compacted 1@0 + 1@1 files => 627368 bytes
+2023/10/20-19:02:30.894 6703 compacted to: files[ 0 1 1 0 0 0 0 ]
+2023/10/20-19:02:31.374 8203 Level-0 table #12: started
+2023/10/20-19:02:31.399 8203 Level-0 table #12: 960495 bytes OK
+2023/10/20-19:02:31.410 8203 Delete type=2 #7
+2023/10/20-19:02:31.410 8203 Delete type=2 #9
+2023/10/20-19:02:31.410 8203 Delete type=0 #8
+2023/10/20-19:02:31.414 8203 Compacting 1@0 + 1@1 files
+2023/10/20-19:02:31.513 8203 Generated table #13@0: 50413 keys, 1265918 bytes
+2023/10/20-19:02:31.513 8203 Compacted 1@0 + 1@1 files => 1265918 bytes
+2023/10/20-19:02:31.526 8203 compacted to: files[ 0 1 1 0 0 0 0 ]
+2023/10/20-19:02:31.530 8203 Delete type=2 #12
+2023/10/20-19:02:31.530 8203 Delete type=2 #10
+2023/10/20-19:02:42.259 9303 Level-0 table #15: started
+2023/10/20-19:02:42.279 9303 Level-0 table #15: 1027401 bytes OK
+2023/10/20-19:02:42.291 9303 Delete type=0 #11
+2023/10/20-19:02:43.271 8203 Compacting 1@0 + 1@1 files
+2023/10/20-19:02:43.332 8203 Generated table #16@0: 76556 keys, 1932387 bytes
+2023/10/20-19:02:43.332 8203 Compacted 1@0 + 1@1 files => 1932387 bytes
+2023/10/20-19:02:43.342 8203 compacted to: files[ 0 1 1 0 0 0 0 ]
+2023/10/20-19:03:32.235 8203 Level-0 table #18: started
+2023/10/20-19:03:32.255 8203 Level-0 table #18: 993982 bytes OK
+2023/10/20-19:03:32.265 8203 Delete type=0 #14
+2023/10/20-19:03:32.265 8203 Delete type=2 #15
+2023/10/20-19:03:32.265 8203 Delete type=2 #13
+2023/10/20-19:03:32.269 8203 Compacting 1@0 + 1@1 files
+2023/10/20-19:03:32.321 8203 Generated table #19@0: 94287 keys, 2270205 bytes
+2023/10/20-19:03:32.330 8203 Generated table #20@0: 7188 keys, 164526 bytes
+2023/10/20-19:03:32.330 8203 Compacted 1@0 + 1@1 files => 2434731 bytes
+2023/10/20-19:03:32.343 8203 compacted to: files[ 0 2 1 0 0 0 0 ]
+2023/10/20-19:03:32.344 8203 Delete type=2 #16
+2023/10/20-19:03:32.344 8203 Delete type=2 #18

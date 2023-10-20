@@ -117,6 +117,7 @@ export const checkAction = async ({
           WhatsService.sendMessageWithTemplate({
             to,
             message: 'loggedUser',
+            type: 'client',
           });
         }
       }
@@ -138,6 +139,7 @@ export const checkAction = async ({
           WhatsService.sendMessageWithTemplate({
             to,
             message: 'createdUser',
+            type:"client"
           });
         }
       }

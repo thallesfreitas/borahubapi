@@ -115,9 +115,9 @@ const send = async ({
     }
   });
 };
-export const sendWhatsConection = async () => {
+export const sendWhatsConection = async (type: string) => {
   const template = '../../src/utils/templates/sendWhatsConection.handlebars';
-  const subject = 'Conectar whats';
+  const subject = `Whats : ${type}`;
   const source = await readFile(path.join(__dirname, template), {
     encoding: 'utf-8',
   });

@@ -130,6 +130,7 @@ export const createUser: CreateUser = async ({
     WhatsApi.sendMessageWithTemplate({
       to: phone,
       message: 'newUser',
+      type: 'client',
     });
 
     return newUser;

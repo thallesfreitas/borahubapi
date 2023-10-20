@@ -20,6 +20,7 @@ export const botTESTE = async (to: string, prompt: string) => {
   send({
     to,
     message: `teste: ${prompt}`,
+    type: 'borabot',
   });
 };
 
@@ -30,6 +31,7 @@ export const bot = async (to: string, prompt: string) => {
     sendMessageWithTemplate({
       to,
       message: 'USER_NOT_FOUND',
+      type: 'borabot',
     });
     return false;
   }
@@ -42,6 +44,7 @@ export const bot = async (to: string, prompt: string) => {
     sendMessageWithTemplate({
       to,
       message: 'CREDITS_INSUFFICIENT',
+      type: 'borabot',
     });
     return false;
   }
@@ -98,7 +101,7 @@ export const bot = async (to: string, prompt: string) => {
     });
   }
 
-  startTyping(to);
+  startTyping(to, 'borabot');
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
@@ -150,6 +153,7 @@ export const bot = async (to: string, prompt: string) => {
   send({
     to,
     message: response.choices[0].message.content as string,
+    type: 'borabot',
   });
 
   return response.choices[0].message.content;

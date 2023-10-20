@@ -59,6 +59,7 @@ export interface StartBoraBotArgs {
 export interface SendMessageArgs {
   to: string;
   message: string;
+  type: string;
 }
 
 export interface SendMessageToGroupsArgs {
@@ -90,6 +91,7 @@ export const startBoraBot = async (to: string) => {
     const response = await sendMessageWithTemplate({
       to,
       message: 'loggedUser',
+      type: 'client',
     });
     return response;
   } catch (error) {
@@ -117,22 +119,7 @@ export const sendMessageToGroups = async (
 ) => {
   try {
     let response;
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
-    console.log('sendMessageToGroups');
+
     const credits = await CreditsService.verify({
       userId,
       type: typeCost,
@@ -159,11 +146,13 @@ export const sendMessageToGroups = async (
       WhatsApi.send({
         to: '5511945483326',
         message: `Mensagem id:${statusMessage.id}\n\n ${messageToApprove}`,
+        type: 'client',
       });
       setTimeout(() => {
         WhatsApi.send({
           to: '5511945483326',
           message: `##status091423$$$$id=${statusMessage.id}$$$$status=s ou n$$$$explain=porque do status`,
+          type: 'client',
         });
       }, 1000);
       response = true;
@@ -172,12 +161,17 @@ export const sendMessageToGroups = async (
       !statusMessage.finished
     ) {
       console.log('SEND CASE 2');
-      WhatsApi.send({ to: '5511945483326', message: `Você aprovou uma vaga.` });
+      WhatsApi.send({
+        to: '5511945483326',
+        message: `Você aprovou uma vaga.`,
+        type: 'client',
+      });
 
       setTimeout(async () => {
         WhatsApi.send({
           to: user?.phone as string,
           message: `O envio da sua vaga ${job?.title} para os grupos foi *aprovada*. \n🎉 🍾 🎊\n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar?showStatus=true e veja para quais grupos ela já foi enviada. :) .`,
+          type: 'client',
         });
       }, 1000);
 
@@ -207,6 +201,7 @@ export const sendMessageToGroups = async (
       WhatsApi.send({
         to: user?.phone as string,
         message: `Sua vaga foi *reprovada*. \n 😥 😨 🙁\n Mas não fique triste, basta rever o item abaixo e enviar novamente. \n\nMotivo: ${statusMessage.explain}. \n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar , faça as edições que achar necessárias e envie novamente para nossa aprovação. :) .`,
+        type: 'client',
       });
     } else if (
       statusMessage.approved === 'APPROVED' &&
@@ -216,6 +211,7 @@ export const sendMessageToGroups = async (
       WhatsApi.send({
         to: '5511945483326',
         message: `Essa vaga já tinha sido aprovada e enviada.`,
+        type: 'client',
       });
     } else if (
       statusMessage.approved === 'DISAPPROVED' &&
@@ -224,6 +220,7 @@ export const sendMessageToGroups = async (
       WhatsApi.send({
         to: '5511945483326',
         message: `Esse descritivo de vaga foi reprovado. O usuário precisa fazer alterações e enviar novamente.`,
+        type: 'client',
       });
     }
 

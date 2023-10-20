@@ -7,7 +7,7 @@ export async function sendMessageToQueue(
   queueName: any,
   messageToSend: string
 ) {
-  Whats.sendProcess(messageToSend);
+  // Whats.sendProcess(messageToSend);
   // 'amqp://user:password@localhost',
   const rabbitmqUrl = `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}`;
 

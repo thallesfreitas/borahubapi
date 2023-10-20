@@ -39,9 +39,9 @@ const start = async () => {
   try {
     await server.listen({ port: PORT, host: process.env.HOST || '0.0.0.0' });
     connectWP();
-    // setTimeout(function () {
-    //   sendMessageToQueue('fila', 'teste');
-    // }, 1000);
+    setTimeout(function () {
+      connectWP('borabot');
+    }, 1000);
   } catch (err) {
     server.log.error(err);
     start();

@@ -260,6 +260,7 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
             process.env.URL as string,
           ],
           payloadVar: ['|||NAME|||', '|||CREDITS|||', '|||URL|||'],
+          type: 'client',
         });
       } else {
         await CreditsService.addCreditsTransaction({

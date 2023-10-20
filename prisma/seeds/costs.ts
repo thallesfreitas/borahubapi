@@ -27,7 +27,7 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   },
   {
     type: 'MESSAGE_BOT',
-    amount: 25,
+    amount: 2,
   },
   {
     type: 'COMPARE_JOB_CANDIDATE',

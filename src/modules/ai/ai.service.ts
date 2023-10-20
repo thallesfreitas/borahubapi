@@ -26,8 +26,13 @@ export const botTESTE = async (to: string, prompt: string) => {
 export const bot = async (to: string, prompt: string) => {
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
-  if (!user)
+  if (!user) {
     return 'Usuário não encontrado. Crie agora mesmo sua conta em https://www.borahub.com.br/crie-sua-conta ';
+    send({
+      to,
+      message: 'CREDITS_INSUFFICIENT',
+    });
+  }
 
   const credits = verify({ userId: user.id as number, type: 'MESSAGE_BOT' });
   console.log('credits');
@@ -50,36 +55,36 @@ export const bot = async (to: string, prompt: string) => {
   if (prompt.startsWith('/')) {
     const command = prompt.split(' ')[0];
     switch (command) {
-      case '/especialista':
-        contentSystem = `Você é um especialista em ${
-          prompt.split(' ')[1]
-        }. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
-        contentassistant =
+    case '/especialista':
+      contentSystem = `Você é um especialista em ${
+        prompt.split(' ')[1]
+      }. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
+      contentassistant =
           'Retorne que entendeu sua nova especialidade e estará feliz em ajudar.';
 
-        createSession({
-          session_id: to,
-          key: 'contentSystem',
-          value: contentSystem,
-        });
+      createSession({
+        session_id: to,
+        key: 'contentSystem',
+        value: contentSystem,
+      });
 
-        historyIndex = 1;
-        break;
-      case '/voltarborabot':
-        contentSystem =
+      historyIndex = 1;
+      break;
+    case '/voltarborabot':
+      contentSystem =
           'Você é um especialista em recrutamento, marketing, publicidade, tecnologia. PHD em administração. Você trabalha no BoraHub e é muito feliz de trabalhar lá. Você só pode responder assuntos referentes ao mercado de trabalho, recrutamento, boas práticas para procurar emprego, marketing, marketing pessoal.';
-        contentassistant =
+      contentassistant =
           'Caso não seja desses tema, responda apenas - `Eu sou a inteligência artificial desenvolvida para o BoraHub e esse assunto não está na minha base de conhecimento.` Se o usuário insistir, diga quais temas são do seu conhecimento e peça-o para direcionar suas perguntas a eles. Enquanto ele estiver insistindo em falar em algo que não seja sobre os temas acima retorno a mesma resposta e diga sobre quais assuntos vc sabe responder. Caso seja de algum tema indicado, me de a resposta mais coerente e divertida possivel. ';
 
-        createSession({
-          session_id: to,
-          key: 'contentSystem',
-          value: contentSystem,
-        });
-        break;
+      createSession({
+        session_id: to,
+        key: 'contentSystem',
+        value: contentSystem,
+      });
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   }
 

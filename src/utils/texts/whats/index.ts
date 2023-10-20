@@ -12,6 +12,7 @@ export type WhatsType =
   | 'loggedUser'
   | 'START_BORABOT'
   | 'CREDITS_INSUFFICIENT'
+  | 'USER_NOT_FOUND'
   | 'CREDIT_PURCHASED';
 
 export const whatsTemplates: Record<WhatsType, WhatsData> = {
@@ -63,6 +64,18 @@ Como adquirir mais créditos?
 Uma vez que os créditos estejam em sua conta, estarei aqui, pronto para ajudar! Se tiver alguma dúvida sobre como adicionar créditos ou qualquer outro assunto, não hesite em perguntar.
 
 Lembre-se, com o *BoraBot*, o conhecimento está sempre ao alcance de suas mãos. Certifique-se de ter créditos suficientes para aproveitar ao máximo!`,
+  },
+  USER_NOT_FOUND: {
+    message: `🔍 Usuário Não Encontrado 🔍
+
+Olá! Parece que você ainda não está cadastrado em nosso sistema. Para interagir e aproveitar todos os benefícios do BoraBot, é essencial que você tenha uma conta no BoraHub.
+
+Dê o primeiro passo agora!
+👉 Crie sua conta no BoraHub e tenha acesso instantâneo ao universo de conhecimento do BoraBot.
+
+Uma vez cadastrado, você poderá explorar todos os recursos, obter respostas especializadas e muito mais. Estou ansioso para ajudá-lo assim que estiver tudo pronto. Espero vê-lo em breve no BoraHub!
+
+Clique aqui https://www.borahub.com.br/crie-sua-conta`,
   },
   CREDIT_PURCHASED: {
     message: `Olá *|||NAME|||*! Você acabou de adicionar *|||CREDITS|||* no BoraHub!! Aproveite para usar todas nossas ferramentas.`,

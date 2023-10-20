@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
-import { send, startTyping } from '../../lib/whats';
+import { send, sendMessageWithTemplate, startTyping } from '../../lib/whats';
 import { verify } from '../credits/credits.service';
 import {
   createSession,
@@ -27,9 +27,9 @@ export const bot = async (to: string, prompt: string) => {
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
   if (!user) {
-    send({
+    sendMessageWithTemplate({
       to,
-      message: 'CREDITS_INSUFFICIENT',
+      message: 'USER_NOT_FOUND',
     });
     return false;
   }
@@ -39,7 +39,7 @@ export const bot = async (to: string, prompt: string) => {
   console.log(credits);
 
   if (!credits) {
-    send({
+    sendMessageWithTemplate({
       to,
       message: 'CREDITS_INSUFFICIENT',
     });

@@ -62,7 +62,7 @@ Como adquirir mais créditos?
 3 - Selecione a forma que prefere efetuar o pagamento - Pix ou Cartão de Crédito.
 Uma vez que os créditos estejam em sua conta, estarei aqui, pronto para ajudar! Se tiver alguma dúvida sobre como adicionar créditos ou qualquer outro assunto, não hesite em perguntar.
 
-Lembre-se, com o BoraBot, o conhecimento está sempre ao alcance de suas mãos. Certifique-se de ter créditos suficientes para aproveitar ao máximo!`,
+Lembre-se, com o *BoraBot*, o conhecimento está sempre ao alcance de suas mãos. Certifique-se de ter créditos suficientes para aproveitar ao máximo!`,
   },
   CREDIT_PURCHASED: {
     message: `Olá *|||NAME|||*! Você acabou de adicionar *|||CREDITS|||* no BoraHub!! Aproveite para usar todas nossas ferramentas.`,

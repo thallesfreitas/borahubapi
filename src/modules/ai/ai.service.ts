@@ -16,13 +16,13 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const bot = async (to: string, prompt: string) => {
+export const botTESTE = async (to: string, prompt: string) => {
   send({
     to,
     message: `teste: ${prompt}`,
   });
 };
-export const botCERTO = async (to: string, prompt: string) => {
+export const bot = async (to: string, prompt: string) => {
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
   const credits = verify({ userId: user?.id as number, type: 'MESSAGE_BOT' });

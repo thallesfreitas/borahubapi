@@ -41,7 +41,7 @@ const start = async () => {
     connectWP();
     setTimeout(function () {
       connectWP('borabot');
-    }, 1000);
+    }, 10000);
   } catch (err) {
     server.log.error(err);
     start();

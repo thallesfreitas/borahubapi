@@ -192,6 +192,11 @@ export async function sendProcess(action: string) {
   const data = type[1].split('&&&@@@');
   const phone = data[0];
   const message = data[1];
+  console.log(`sendProcess`);
+  console.log(`type ${type}`);
+  console.log(`data ${data}`);
+  console.log(`phone ${phone}`);
+  console.log(`message ${message}`);
   const client: WP = setClient(type);
   client.startTyping(phone);
   const t = await client.sendText(phone, message, {});
@@ -454,7 +459,7 @@ export const sendMessageWithTemplate = async ({
   to,
   payload,
   payloadVar,
-  type = 'client',
+  type,
 }: SendMessageArgs) => {
   try {
     let messageFinal = '';

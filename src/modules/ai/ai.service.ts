@@ -36,7 +36,10 @@ export const bot = async (to: string, prompt: string) => {
     return false;
   }
 
-  const credits = verify({ userId: user.id as number, type: 'MESSAGE_BOT' });
+  const credits = await verify({
+    userId: user.id as number,
+    type: 'MESSAGE_BOT',
+  });
   console.log('credits');
   console.log(credits);
 

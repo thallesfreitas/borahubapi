@@ -1,6 +1,7 @@
 import * as Whats from './whats';
-// const amqp = require('amqplib/callback_api');
-const amqp = require('amqplib');
+
+const amqp = require('amqplib/callback_api');
+// const amqp = require('amqplib');
 // import amqp from 'amqplib';
 
 export async function sendMessageToQueue(

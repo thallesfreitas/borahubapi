@@ -188,8 +188,9 @@ export async function startTyping(to: string, type: string) {
 }
 
 export async function sendProcess(action: string) {
+  console.log(action);
   const type = action.split('#T#T')[0];
-  const data = type[1].split('&&&@@@');
+  const data = action.split('#T#T')[1].split('&&&@@@');
   const phone = data[0];
   const message = data[1];
   console.log(`sendProcess`);

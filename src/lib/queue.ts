@@ -31,7 +31,8 @@ export async function sendMessageToQueue(
   // console.log(connection);
   // console.log('connection');
   // console.log('CONECTOU????');
-
+  console.log(messageToSend);
+  // Whats.sendProcess(messageToSend);
   amqp.connect(
     rabbitmqUrl,
     (
@@ -41,11 +42,12 @@ export async function sendMessageToQueue(
         close: () => void;
       }
     ) => {
+      console.log('amqp.connect');
       if (error) {
         console.error(`Failed to connect to RabbitMQ: ${error.message}`);
         // process.exit(1);
       }
-
+      console.log('RABBIT CONECTADO');
       connection.createChannel(
         (
           error: { message: any },
@@ -63,7 +65,7 @@ export async function sendMessageToQueue(
             console.error(`Failed to create a channel: ${error.message}`);
             // process.exit(1);
           }
-
+          console.log('assertQueue sendToQueue');
           channel.assertQueue(queueName, { durable: true });
           channel.sendToQueue(queueName, Buffer.from(messageToSend));
 
@@ -71,6 +73,7 @@ export async function sendMessageToQueue(
             queueName,
             (msg: { content: { toString: () => any } }) => {
               const receivedMessage = msg.content.toString();
+              console.log('RABBIT sendProcess');
               Whats.sendProcess(receivedMessage);
             },
             {

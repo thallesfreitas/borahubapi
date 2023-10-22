@@ -39,7 +39,7 @@ const start = async () => {
   try {
     await server.listen({ port: PORT, host: process.env.HOST || '0.0.0.0' });
     connectWP();
-    setTimeout(function () {
+    setTimeout(() => {
       connectWP('borabot');
     }, 10000);
   } catch (err) {

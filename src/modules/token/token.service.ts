@@ -61,6 +61,8 @@ export const createToken = async (
 
 export const getToken = async ({ email, phone, token, uuid }: TokenProps) => {
   console.log(`getToken`);
+  console.log('email, phone, token, uuid');
+  console.log(email, phone, token, uuid);
   const tokenDB = await dbClient.token.findFirst({
     select: {
       token: true,
@@ -71,6 +73,7 @@ export const getToken = async ({ email, phone, token, uuid }: TokenProps) => {
     },
   });
 
+  console.log(tokenDB);
   return tokenDB;
 };
 

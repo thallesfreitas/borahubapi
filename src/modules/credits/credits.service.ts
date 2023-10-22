@@ -42,6 +42,9 @@ export const updateCredits = async (data: UpdateCreditsType) => {
 export const removeCredits = async (data: CreditsType) => {
   return CreditsRepository.removeCredits(data);
 };
+export const getCostsUsage = async (type: string) => {
+  return CostsUsageRepository.getCostsUsage(type);
+};
 
 export const verify = async ({
   userId,

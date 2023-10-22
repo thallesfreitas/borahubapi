@@ -136,11 +136,7 @@ export const sendMessageToGroups = async (
     const user = await UserService.getUserById(userId);
     const job = await JobService.getJob(idMessage);
 
-    console.log('statusMessage.approved, statusMessage.finished');
-    console.log(statusMessage.approved, statusMessage.finished);
-
     if (statusMessage.approved === 'WAITING' && !statusMessage.finished) {
-      console.log('SEND CASE 1');
       const messageToApprove = `*#BoraHubJob ${message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
 
       WhatsApi.send({
@@ -154,13 +150,12 @@ export const sendMessageToGroups = async (
           message: `##status091423$$$$id=${statusMessage.id}$$$$status=s ou n$$$$explain=porque do status`,
           type: 'client',
         });
-      }, 1000);
+      }, 10000);
       response = true;
     } else if (
       statusMessage.approved === 'APPROVED' &&
       !statusMessage.finished
     ) {
-      console.log('SEND CASE 2');
       WhatsApi.send({
         to: '5511945483326',
         message: `Você aprovou uma vaga.`,
@@ -173,29 +168,26 @@ export const sendMessageToGroups = async (
           message: `O envio da sua vaga ${job?.title} para os grupos foi *aprovada*. \n🎉 🍾 🎊\n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar?showStatus=true e veja para quais grupos ela já foi enviada. :) .`,
           type: 'client',
         });
-      }, 1000);
+      }, 2000);
 
       setTimeout(async () => {
         const messageFinal = `*#BoraHubJob ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
         response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);
-        const costsusage = await CostsUsageRepository.getCostsUsage(
-          type as string
-        );
+        const typeString = type as string;
+        const costsusage = await CostsUsageRepository.getCostsUsage(typeString);
         const amountCost = costsusage?.amount as number;
         await CreditsService.removeCredits({
           userId,
           amount: amountCost,
           transactionType: 'REMOVE_CREDITS',
           status: 'approved',
-          type: costsusage?.type,
+          type: typeString,
         });
-      }, 2000);
+      }, 4000);
     } else if (
       statusMessage.approved === 'DISAPPROVED' &&
       !statusMessage.finished
     ) {
-      console.log('SEND CASE 3');
-
       await ApprovalSystem.finish(statusMessage.id);
 
       WhatsApi.send({
@@ -207,7 +199,6 @@ export const sendMessageToGroups = async (
       statusMessage.approved === 'APPROVED' &&
       statusMessage.finished
     ) {
-      console.log('SEND CASE 4');
       WhatsApi.send({
         to: '5511945483326',
         message: `Essa vaga já tinha sido aprovada e enviada.`,

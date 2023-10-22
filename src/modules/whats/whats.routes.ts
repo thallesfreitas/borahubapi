@@ -60,18 +60,6 @@ export default async (fastify: FastifyInstance) => {
     WhatsController.startBoraBot
   );
 
-  // fastify.post(
-  //   '/TESTEsendMessageToGroup',
-  //   {
-  //     schema: {
-  //       body: WhatsSchema.sendMessageToGroups,
-  //     },
-  //     onSend,
-  //     preSerialization: [Serializer.message],
-  //   },
-  //   WhatsController.sendMessageToGroups
-  // );
-
   fastify.post(
     '/sendMessageToGroup',
     { schema: { body: WhatsSchema.sendMessageToGroups } },

@@ -63,27 +63,7 @@ export const createUser: CreateUser = async ({
       });
       i += 1;
     }
-
-    // const customers = await stripe.customers.list({ email });
-
-    // let customer;
-
-    // if (customers.data.length > 0) {
-    //   customer = await stripe.customers.update(customers.data[0].id, {
-    //     name,
-    //   });
-    // } else {
-    //   customer = await stripe.customers.create({
-    //     name,
-    //     email,
-    //   });
-    // }
-
-    // const stripe_id = customer.id;
-    // const stripe_id = await createUserStripe(email, name);
     const customerMP = await getOrCreateCustomer(email);
-    console.log('customerMP');
-    console.log(customerMP);
     const password = Utils.generatePassword();
 
     const newUser = await dbClient.user.create({
@@ -105,9 +85,12 @@ export const createUser: CreateUser = async ({
       },
     });
 
+    const credits = await CreditsService.getCostsUsage('WELCOME');
+    const welcomeCredits = credits?.amount as number;
+
     await CreditsService.addCredits({
       userId: newUser.id,
-      amount: 100,
+      amount: welcomeCredits,
       transactionType: 'WELCOME',
       status: 'approved',
     });
@@ -117,6 +100,7 @@ export const createUser: CreateUser = async ({
       newUser.phone,
       newUser.email
     );
+
     emailService.sendEmail({
       payload: {
         name,

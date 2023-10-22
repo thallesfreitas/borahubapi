@@ -165,9 +165,9 @@ async function start(type = 'client') {
 
   client.onMessage((message: { [x: string]: string; body: string }) => {
     const to = message.from;
-    const textMessage = message.body.toLowerCase();
     if (to.includes('@c.us')) {
       if (message) {
+        const textMessage = message.body.toLowerCase();
         checkAction({ to, message: textMessage });
       }
     }

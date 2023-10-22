@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 
 export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   {
+    type: 'WELCOME',
+    amount: 500,
+  },
+  {
     type: 'CREATE_PROFILE_CANDIDATE',
     amount: 50,
   },

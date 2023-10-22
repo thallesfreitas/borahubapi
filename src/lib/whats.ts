@@ -61,14 +61,37 @@ Enviar para Marcela Matos (Head de Atendimento) no e-mail m.matos@docsync.com.br
 // const groupsWhatsTeste = '5511945483326-1593553509@g.us';
 // const groupsWhatsTeste = '120363047748135271@g.us';
 export const groupsWhatsStatusTeste = [false, false, false, false, false];
-export const groupsWhatsTeste = [
+const groupsWhatsTeste = [
   { name: '#1BoraAjudar.work-teste', idWhats: '120363047748135271@g.us' },
   { name: '#2BoraAjudar.work-teste', idWhats: '120363170446337370@g.us' },
   { name: '#3BoraAjudar.work-teste', idWhats: '120363170098349977@g.us' },
   { name: '#4BoraAjudar.work-teste', idWhats: '120363170837080195@g.us' },
   { name: '#5BoraAjudar.work-teste', idWhats: '120363152796875195@g.us' },
 ];
-
+export const groupsWhatsStatus = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
 const groupsWhats = [
   { name: '1#BoraAjudar.Work', idWhats: '5521996164999-1487957874@g.us' },
   { name: '2#BoraAjudar.Work', idWhats: '120363045425946745@g.us' },
@@ -235,16 +258,16 @@ export async function sendProcess(action: string) {
 export async function sendToGroups(message: string, approvalSystemId: number) {
   let groupId = 0;
   const interval: NodeJS.Timeout = setInterval(async () => {
-    const groupPhone = groupsWhatsTeste[groupId].idWhats;
-    // const groupPhone = groupsWhats[groupId].idWhats;
+    // const groupPhone = groupsWhatsTeste[groupId].idWhats;
+    const groupPhone = groupsWhats[groupId].idWhats;
     let phone = groupPhone.toString().replace('+', '');
     if (!phone.includes('@')) phone = `${phone}@g.us`;
     clientWP.startTyping(phone);
     const messageFinal = `client#T#T${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
     Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 
-    if (groupId === groupsWhatsTeste.length - 1) {
-      // if (groupId === groupsWhats.length - 1) {
+    // if (groupId === groupsWhatsTeste.length - 1) {
+    if (groupId === groupsWhats.length - 1) {
       clearInterval(interval);
     }
     groupId += 1;

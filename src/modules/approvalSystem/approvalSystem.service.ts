@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import db from '../../lib/dbClient';
-import { groupsWhatsStatusTeste } from '../../lib/whats';
+import { groupsWhatsStatus } from '../../lib/whats';
+// import { groupsWhatsStatusTeste } from '../../lib/whats';
 import { UpdateType } from './approvalSystem.model';
 
 export interface MessageToApprovalArgs {
@@ -31,7 +32,8 @@ const createMessageToApproval = async (params: MessageToApprovalArgs) => {
       type,
       userId,
       idMessage,
-      status: groupsWhatsStatusTeste,
+      status: groupsWhatsStatus,
+      // status: groupsWhatsStatusTeste,
     },
   });
 

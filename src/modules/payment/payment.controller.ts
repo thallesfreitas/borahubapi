@@ -20,15 +20,8 @@ import * as WhatsApi from '../../lib/whats';
 const mercadopago = require('mercadopago');
 
 mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_TOKEN);
-// mercadopago.configurations.setAccessToken(process.env.MERCADO_PAGO_TOKEN_TESTE);
-// mercadopago.configurations.setAccessToken(
-//   'TEST-1096322674221768-042314-51497efa45e4c3466c35bbefac5786d8-75364347'
-// );
 
-// export const webhookMP = async (req: WebhookModel, reply: FastifyReply) => {
 export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
-  // const merchant_order = null;
-  console.log('ipnMP');
   let payment;
   const { topic, id } = req.query;
 
@@ -202,12 +195,12 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
   }
   paymentData.transaction_amount = pack?.credits as number;
 
-  paymentData.transaction_amount = 1.1;
+  // paymentData.transaction_amount = 1.1;
 
-  console.log('+++++++++++++++++++++++++++++++');
-  console.log('paymentData');
-  console.log(paymentData);
-  console.log('+++++++++++++++++++++++++++++++');
+  // console.log('+++++++++++++++++++++++++++++++');
+  // console.log('paymentData');
+  // console.log(paymentData);
+  // console.log('+++++++++++++++++++++++++++++++');
 
   // const payment_data = {
   //   transaction_amount: paymentData.transaction_amount,
@@ -217,14 +210,14 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
   //   },
   // };
 
-  const payment_data = {
-    installments: 1,
-    payer: { identification: { number: '10268064709', type: 'CPF' } },
-    payment_method_id: 'pix',
-    transaction_amount: 1.1,
-    description:
-      'BoraPremium | Domine o jogo! Acesso total, prioridade e benefícios exclusivos. - Créditos: 1000',
-  };
+  // const payment_data = {
+  //   installments: 1,
+  //   payer: { identification: { number: '10268064709', type: 'CPF' } },
+  //   payment_method_id: 'pix',
+  //   transaction_amount: 1.1,
+  //   description:
+  //     'BoraPremium | Domine o jogo! Acesso total, prioridade e benefícios exclusivos. - Créditos: 1000',
+  // };
 
   // mercadopago.createCardToken()
   // createCardToken.
@@ -233,35 +226,37 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
     // .save(payment_data)
     .save(paymentData)
     .then(async function (response: { id: any; body: any; status: any }) {
-      if (paymentData.payment_method_id !== 'pix' && response.status === 201) {
-        await CreditsService.addCredits({
-          userId: user?.id as number,
-          amount: pack?.credits as number,
-          transactionType: 'CREDIT_PURCHASED',
-          status: 'approved',
-          mp_id_transaction: response.body.id,
-        });
+      if (paymentData.payment_method_id !== 'pix') {
+        if (response.status === 201) {
+          await CreditsService.addCredits({
+            userId: user?.id as number,
+            amount: pack?.credits as number,
+            transactionType: 'CREDIT_PURCHASED',
+            status: 'approved',
+            mp_id_transaction: response.body.id,
+          });
 
-        emailService.sendEmail({
-          payload: {
-            name: user?.name as string,
-            credits: pack?.credits.toString() as string,
-            url: process.env.URL as string,
-          },
-          type: 'CREDIT_PURCHASED',
-        });
+          emailService.sendEmail({
+            payload: {
+              name: user?.name as string,
+              credits: pack?.credits.toString() as string,
+              url: process.env.URL as string,
+            },
+            type: 'CREDIT_PURCHASED',
+          });
 
-        WhatsApi.sendMessageWithTemplate({
-          to: user?.phone as string,
-          message: 'CREDIT_PURCHASED',
-          payload: [
-            user?.name as string,
-            pack?.credits.toString() as string,
-            process.env.URL as string,
-          ],
-          payloadVar: ['|||NAME|||', '|||CREDITS|||', '|||URL|||'],
-          type: 'client',
-        });
+          WhatsApi.sendMessageWithTemplate({
+            to: user?.phone as string,
+            message: 'CREDIT_PURCHASED',
+            payload: [
+              user?.name as string,
+              pack?.credits.toString() as string,
+              process.env.URL as string,
+            ],
+            payloadVar: ['|||NAME|||', '|||CREDITS|||', '|||URL|||'],
+            type: 'client',
+          });
+        }
       } else {
         await CreditsService.addCreditsTransaction({
           userId: user?.id as number,

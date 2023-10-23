@@ -35,21 +35,23 @@ export const bot = async (to: string, prompt: string) => {
     });
     return false;
   }
-
-  const credits = await verify({
-    userId: user.id as number,
-    type: 'MESSAGE_BOT',
-  });
-  console.log('credits');
-  console.log(credits);
-
-  if (!credits) {
-    sendMessageWithTemplate({
-      to,
-      message: 'CREDITS_INSUFFICIENT',
-      type: 'borabot',
+  if (prompt.length > 15) {
+    const credits = await verify({
+      userId: user.id as number,
+      type: 'MESSAGE_BOT',
     });
-    return false;
+
+    console.log('credits');
+    console.log(credits);
+
+    if (!credits) {
+      sendMessageWithTemplate({
+        to,
+        message: 'CREDITS_INSUFFICIENT',
+        type: 'borabot',
+      });
+      return false;
+    }
   }
   let contentSystem =
     'Você é um especialista em recrutamento, marketing, publicidade, tecnologia. PHD em administração. Você trabalha no BoraHub e é muito feliz de trabalhar lá. Você só pode responder assuntos referentes ao mercado de trabalho, recrutamento, boas práticas para procurar emprego, marketing, marketing pessoal.';
@@ -76,7 +78,7 @@ export const bot = async (to: string, prompt: string) => {
 
         historyIndex = 1;
         break;
-      case '/voltarborabot':
+      case '/voltar':
         contentSystem =
           'Você é um especialista em recrutamento, marketing, publicidade, tecnologia. PHD em administração. Você trabalha no BoraHub e é muito feliz de trabalhar lá. Você só pode responder assuntos referentes ao mercado de trabalho, recrutamento, boas práticas para procurar emprego, marketing, marketing pessoal.';
         contentassistant =
@@ -109,7 +111,7 @@ export const bot = async (to: string, prompt: string) => {
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
     // model: 'gpt-3.5-turbo',
-    temperature: 0.6,
+    temperature: 0.7,
     max_tokens: 500,
     messages: [
       {

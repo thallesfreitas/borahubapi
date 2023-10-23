@@ -141,6 +141,7 @@ export const getPayment = async (
     })
     .catch((err: any) => {
       // Tratamento de erro
+      console.log(err);
     });
 };
 
@@ -194,8 +195,8 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
     });
   }
   paymentData.transaction_amount = (pack?.unit_amount as number) / 100;
-  console.log('paymentData.transaction_amount');
-  console.log(paymentData.transaction_amount);
+  // console.log('paymentData.transaction_amount');
+  // console.log(paymentData.transaction_amount);
   // paymentData.transaction_amount = 1.1;
 
   // console.log('+++++++++++++++++++++++++++++++');
@@ -227,6 +228,10 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
     // .save(payment_data)
     .save(paymentData)
     .then(async function (response: { id: any; body: any; status: any }) {
+      console.log('status PAYMENT');
+      console.log(response.status);
+      // console.log(response.id);
+      // console.log(response.body);
       if (paymentData.payment_method_id !== 'pix') {
         if (response.status === 201) {
           await CreditsService.addCredits({

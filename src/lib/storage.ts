@@ -27,7 +27,8 @@ const compressVideoFFMPG = (
       .input(tmpPath)
       .withNoAudio()
       .outputOptions('-vf', 'scale=-2:720')
-      .saveToFile(`${__dirname}/tmp/${convertedFilePath}`)
+      // .saveToFile(`${__dirname}/tmp/${convertedFilePath}`)
+      .saveToFile(`${__dirname}/${convertedFilePath}`)
       .on('progress', (progress: { percent: number }) => {
         if (progress.percent) {
           console.log(`Processing: ${Math.floor(progress.percent)}% done`);
@@ -96,7 +97,8 @@ export const uploadFile = async (file: any, folder: string = 'temp') => {
       convertedFilePath,
       tmpPath
     );
-    tmpVideoName = `${__dirname}/tmp/${convertedFilePath}`;
+    // tmpVideoName = `${__dirname}/tmp/${convertedFilePath}`;
+    tmpVideoName = `${__dirname}/${convertedFilePath}`;
 
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     fileUPLOAD = fs.readFileSync(tmpVideoName);

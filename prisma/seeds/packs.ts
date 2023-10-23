@@ -37,7 +37,7 @@ export const defaultPacks: Prisma.PacksCreateInput[] = [
       'Prioridade máxima.',
       'Benefícios exclusivos.',
     ],
-    phrases: 'Domine o jogo! Acesso total, prioridade e benefícios exclusivos.',
+    phrases: 'O Pacote Supremo para Seu Desenvolvimento!',
     credits: 1000,
   },
 ];

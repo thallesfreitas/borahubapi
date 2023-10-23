@@ -240,6 +240,7 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
           emailService.sendEmail({
             payload: {
               name: user?.name as string,
+              email: user?.email as string,
               credits: pack?.credits.toString() as string,
               url: process.env.URL as string,
             },

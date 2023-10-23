@@ -81,7 +81,7 @@ model Packs {
   id Int @id @default(autoincrement())
   type String @unique
   name String
-  unit_amount Int
+  unit_amount Float
   features String[]
   phrases String
   credits Int

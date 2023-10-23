@@ -193,8 +193,9 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
       optin: true,
     });
   }
-  paymentData.transaction_amount = pack?.credits as number;
-
+  paymentData.transaction_amount = (pack?.unit_amount as number) / 100;
+  console.log('paymentData.transaction_amount');
+  console.log(paymentData.transaction_amount);
   // paymentData.transaction_amount = 1.1;
 
   // console.log('+++++++++++++++++++++++++++++++');

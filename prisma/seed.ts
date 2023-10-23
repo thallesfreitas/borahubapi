@@ -16,7 +16,10 @@ async function main() {
   for (const packs of defaultPacks) {
     await prisma.packs.upsert({
       where: { type: packs.type },
-      update: { unit_amount: packs.unit_amount },
+      update: {
+        unit_amount: packs.unit_amount,
+        phrases: packs.phrases,
+      },
       create: packs,
     });
   }

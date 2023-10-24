@@ -22,7 +22,9 @@ export interface CreateUserArgs
 interface CreateUser {
   (param: CreateUserArgs): Promise<User>;
 }
-
+interface NewUser extends User {
+  token?: String;
+}
 export const createUser: CreateUser = async ({
   name,
   email,
@@ -66,7 +68,7 @@ export const createUser: CreateUser = async ({
     const customerMP = await getOrCreateCustomer(email);
     const password = Utils.generatePassword();
 
-    const newUser = await dbClient.user.create({
+    const newUser = (await dbClient.user.create({
       data: {
         name,
         email,
@@ -77,7 +79,7 @@ export const createUser: CreateUser = async ({
         slug,
         customerMP,
       },
-    });
+    })) as NewUser;
 
     await dbClient.candidate.create({
       data: {
@@ -117,6 +119,7 @@ export const createUser: CreateUser = async ({
       type: 'client',
     });
 
+    newUser.token = token.token;
     return newUser;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

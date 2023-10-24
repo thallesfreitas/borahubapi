@@ -279,6 +279,7 @@ export async function send({ to, message, type }: SendText) {
   if (!phone.includes('@')) phone = `${phone}@c.us`;
   client.startTyping(phone);
   const messageFinal = `${type}#T#T${phone}&&&@@@${message}`;
+
   Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 }
 

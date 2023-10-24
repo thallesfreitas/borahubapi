@@ -95,6 +95,13 @@ export const signinOauth = async (
     });
     if (tokenWS) {
       console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
+      console.log('decoded jwt.verify');
       const decoded = jwt.verify(
         tokenWS.token,
         process.env.JWT_SECRET as string
@@ -102,16 +109,31 @@ export const signinOauth = async (
 
       if (!decoded) {
         console.log('1');
+        console.log('1');
+        console.log('1');
+        console.log('1');
+        console.log('1');
         return await reply.status(403).send(invalid);
       }
 
       if (!decoded.hasOwnProperty('email') || !decoded.hasOwnProperty('exp')) {
+        console.log('2');
+        console.log('2');
+        console.log('2');
+        console.log('2');
+        console.log('2');
+        console.log('2');
         console.log('2');
         return await reply.status(403).send(invalid);
       }
       const { exp } = decoded as unknown as JwtPayload;
 
       if (exp instanceof Date && exp < new Date()) {
+        console.log('3');
+        console.log('3');
+        console.log('3');
+        console.log('3');
+        console.log('3');
         console.log('3');
         return await reply.status(403).send(invalid);
       }
@@ -121,6 +143,11 @@ export const signinOauth = async (
       };
 
       if (!email) {
+        console.log('4');
+        console.log('4');
+        console.log('4');
+        console.log('4');
+        console.log('4');
         console.log('4');
         return await reply.status(403).send(invalid);
       }
@@ -136,14 +163,24 @@ export const signinOauth = async (
           token: tokenWS.token,
           page: tokenWS.page,
         });
-        tokenService.deleteUserTokens(email);
+        // tokenService.deleteUserTokens(email);
         return await reply.send(logged);
       }
     } else {
       console.log('5');
+      console.log('5');
+      console.log('5');
+      console.log('5');
+      console.log('5');
+      console.log('5');
+      console.log('5');
       return await reply.status(400).send(invalid);
     }
   } catch (error) {
+    console.log('6');
+    console.log('6');
+    console.log('6');
+    console.log('6');
     console.log('6');
     return await reply.status(400).send(error);
   }

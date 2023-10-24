@@ -15,8 +15,8 @@ interface SendEmail {
 export const sendEmail: SendEmail = async ({ payload, type }) => {
   try {
     const email = emailTemplates[type];
-    console.log('sendEmail');
-    console.log(email);
+    // console.log('sendEmail');
+    // console.log(email);
     if (email.admin.template != '') {
       send({
         payload,
@@ -65,25 +65,10 @@ const send = async ({
   toReceive,
   nameReceive,
 }: SendProps) => {
-  // const mailerSend = new MailerSend({
-  //   apiKey: process.env.API_KEY || '',
-  // });
-
   const source = await readFile(path.join(__dirname, template), {
     encoding: 'utf-8',
   });
   const compiledTemplate = handlebars.compile(source);
-  // const sentFrom = new Sender(email.to as string, email.name as string);
-  // const recipients = [new Recipient(toReceive, nameReceive)];
-
-  // const emailParams = new EmailParams()
-  //   .setFrom(sentFrom)
-  //   .setTo(recipients)
-  //   .setReplyTo(sentFrom)
-  //   .setSubject(subject)
-  //   .setHtml(compiledTemplate(payload));
-
-  // await mailerSend.email.send(emailParams);
   const mail = {
     from: `${email.name} <${email.to}>`,
     to: `${nameReceive} <${toReceive}>`,

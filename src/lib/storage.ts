@@ -42,35 +42,7 @@ const compressVideoFFMPG = (
       });
   });
 };
-/*
-USING HANDBREAK
-const hbjs = require('handbrake-js');
 
-async function compressVideo(path: any, format = 'mp4') {
-  const fileName = path.replace(/\.[^/.]+$/, '');
-  const convertedFilePath = `${fileName}_${+new Date()}.${format}`;
-  hbjs
-    .spawn({
-      input: `${__dirname}/tmp/${path}`,
-      output: convertedFilePath,
-    })
-    .on('error', (err: any) => {
-      console.log(err);
-      console.log('err');
-    })
-    .on('complete', (data: any) => {
-      console.log('data');
-      console.log(data);
-    })
-    .on('progress', (progress: { percentComplete: any; eta: any }) => {
-      console.log(
-        'Percent complete: %s, ETA: %s',
-        progress.percentComplete,
-        progress.eta
-      );
-    });
-}
-*/
 interface VideoType {
   convertedFilePath: string;
 }

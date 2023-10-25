@@ -51,7 +51,9 @@ Como usar:
 
 Digite sua pergunta ou tópico de interesse e eu farei o meu melhor para fornecer uma resposta precisa.
 Deseja que eu me especialize em uma área específica? Use o comando /especialista [área]. Por exemplo: /especialista direito.
-Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda.
+Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda (Em construção.).
+
+\n *Por exemplo*, você pode perguntar sobre como elaborar um CV envolvente ou estratégias eficazes de marketing pessoal.  \n \nExemplos de perguntas:\n "Como posso me preparar para uma entrevista?" \n"Quais são as estratégias eficazes de marketing digital?"\n"Como posso criar um portfólio atraente?" \n Seja Criativo!! 
 
 Vamos começar? 🌟`,
   },

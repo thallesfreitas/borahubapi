@@ -139,8 +139,15 @@ export const checkAction = async ({
           WhatsService.sendMessageWithTemplate({
             to,
             message: 'createdUser',
-            type:"client"
+            type: 'client',
           });
+          setTimeout(() => {
+            WhatsService.sendMessageWithTemplate({
+              to,
+              message: 'createdUserBoraBot',
+              type: 'borabot',
+            });
+          }, 5000);
         }
       }
 

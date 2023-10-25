@@ -42,7 +42,7 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
 
 Como membro da nossa comunidade, agora você tem uma ferramenta valiosa ao seu dispor. E o melhor, interagir comigo custa apenas *2 créditos do BoraHub!* 🚀
 
-Dica: Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda.
+*Dica:* Para uma lista completa de comandos ou se precisar de ajuda adicional, digite */ajuda*.
 
 *Como utilizar meus serviços:*
 Digite sua pergunta ou tópico de interesse e estarei aqui para fornecer respostas e orientações precisas.

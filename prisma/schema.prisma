@@ -320,6 +320,40 @@ model Areas {
 
   @@map("areas")
 }
+// model Inclusive {
+//   id        Int                     @id @default(autoincrement())
+//   uuid      String                  @default(cuid())
+//   type      ProfileType
+//   name      String
+//   createdAt DateTime                @default(now()) @map("created_at")
+//   updatedAt DateTime                @default(now()) @map("updated_at")
+//   deletedAt DateTime?               @map("deleted_at")
+//   candidate InclusiveOnCandidate[]
+//   jobs      InclusiveOnJobs[]
+//   createdBy Int?
+//   updatedBy Int?
+//   deletedBy Int?
+
+//   @@map("inclusive")
+// }
+
+// model InclusiveOnCandidate {
+//   candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+//   candidateId Int
+//   inclusive    Inclusive  @relation(fields: [inclusiveId], references: [id], onDelete: Cascade)
+//   inclusiveId  Int
+//   assignedAt  DateTime  @default(now())
+//   @@id([candidateId, inclusiveId])
+// }
+
+// model InclusiveOnJobs {
+//   jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
+//   jobsId Int
+//   inclusive    Inclusive  @relation(fields: [inclusiveId], references: [id], onDelete: Cascade)
+//   inclusiveId  Int
+//   assignedAt  DateTime  @default(now())
+//   @@id([jobsId, inclusiveId])
+// }
 
 model AreasOnCandidate {
   candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
@@ -380,6 +414,7 @@ model Candidate {
   categories   CategoriesOnCandidate[]
   tags         TagsOnCandidate[]
   areas        AreasOnCandidate[]
+  // inclusive           InclusiveOnCandidate[]
   city         String?
   state        String?
   extra        String?
@@ -435,6 +470,7 @@ model Jobs {
   categories          CategoriesOnJobs[]
   tags                TagsOnJobs[]
   areas               AreasOnJobs[]
+  // inclusive           InclusiveOnJobs[]
   slug                String   @unique
   isActive            Boolean  @default(true)
   isPublished         Boolean  @default(false) @map("is_published")

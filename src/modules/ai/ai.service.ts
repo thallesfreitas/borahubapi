@@ -270,6 +270,7 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         historyIndex = zeraSession(to, contentSystem);
         break;
       case '/ajuda':
+      case '/ajudar':
         await WhatsService.sendMessageWithTemplate({
           to,
           message: 'borabotajuda',

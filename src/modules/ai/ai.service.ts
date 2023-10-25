@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
 import { send, sendMessageWithTemplate, startTyping } from '../../lib/whats';
@@ -7,6 +8,7 @@ import {
   getSession,
 } from '../manageSessions/manageSessions.service';
 import { getUserByPhone } from '../users/user.repository';
+import * as WhatsService from '../whats/whats.service';
 
 const cohere = require('cohere-ai');
 
@@ -24,7 +26,17 @@ export const botTESTE = async (to: string, prompt: string) => {
   });
 };
 
+function zeraSession(to: string, contentSystem: string) {
+  createSession({
+    session_id: to,
+    key: 'contentSystem',
+    value: contentSystem,
+  });
+  return 1;
+}
+
 export const bot = async (to: string, prompt: string) => {
+  let promptFinal = prompt;
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
   if (!user) {
@@ -35,14 +47,11 @@ export const bot = async (to: string, prompt: string) => {
     });
     return false;
   }
-  if (prompt.length > 15) {
+  if (promptFinal.length > 15) {
     const credits = await verify({
       userId: user.id as number,
       type: 'MESSAGE_BOT',
     });
-
-    console.log('credits');
-    console.log(credits);
 
     if (!credits) {
       sendMessageWithTemplate({
@@ -60,12 +69,12 @@ export const bot = async (to: string, prompt: string) => {
 
   const history = await getSession(to);
   let historyIndex = 0;
-  if (prompt.startsWith('/')) {
-    const command = prompt.split(' ')[0];
+  if (promptFinal.startsWith('/')) {
+    const command = promptFinal.split(' ')[0];
     switch (command) {
       case '/especialista':
         contentSystem = `Você é um especialista em ${
-          prompt.split(' ')[1]
+          promptFinal.split(' ')[1]
         }. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
         contentassistant =
           'Retorne que entendeu sua nova especialidade e estará feliz em ajudar.';
@@ -75,8 +84,8 @@ export const bot = async (to: string, prompt: string) => {
           key: 'contentSystem',
           value: contentSystem,
         });
-
-        historyIndex = 1;
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
         break;
       case '/voltar':
         contentSystem =
@@ -84,13 +93,190 @@ export const bot = async (to: string, prompt: string) => {
         contentassistant =
           'Caso não seja desses tema, responda apenas - `Eu sou a inteligência artificial desenvolvida para o BoraHub e esse assunto não está na minha base de conhecimento.` Se o usuário insistir, diga quais temas são do seu conhecimento e peça-o para direcionar suas perguntas a eles. Enquanto ele estiver insistindo em falar em algo que não seja sobre os temas acima retorno a mesma resposta e diga sobre quais assuntos vc sabe responder. Caso seja de algum tema indicado, me de a resposta mais coerente e divertida possivel. ';
 
-        createSession({
-          session_id: to,
-          key: 'contentSystem',
-          value: contentSystem,
-        });
+        historyIndex = zeraSession(to, contentSystem);
         break;
+      case '/dica_cv':
+      case '/dicas_cv':
+        contentSystem =
+          'Imagine que você é um conselheiro de carreira experiente. Um cliente veio até você pedindo conselhos sobre como melhorar seu currículo para aumentar suas chances de ser chamado para entrevistas. Por favor, forneça dicas detalhadas e práticas.';
+        contentassistant =
+          'Por favor, forneça dicas sobre como melhorar um currículo, organizadas em categorias como: Informações de Contato, Experiência Profissional, Educação, Habilidades, e Personalização.';
 
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/dica_entrevista':
+      case '/dicas_entrevista':
+        contentSystem =
+          'Imagine que você é um coach de carreira ajudando um cliente que tem uma entrevista de emprego importante na próxima semana. Por favor, forneça uma lista de dicas práticas e estratégicas sobre como se preparar para a entrevista.';
+        contentassistant =
+          'Por favor, forneça dicas de preparação para entrevistas categorizadas em: Pesquisa Pré-Entrevista, Comunicação, Apresentação Pessoal, Respostas a Perguntas Comuns e Seguimento Pós-Entrevista.';
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/estrategia_marketing':
+      case '/estrategias_marketing':
+        contentSystem =
+          'Provide effective marketing strategies to promote a product or service, focusing on digital marketing, traditional marketing, content marketing, and paid advertising.';
+
+        contentassistant = `
+1. **Digital Marketing:**
+   - SEO (Search Engine Optimization): Optimize your website to rank higher on search engine results pages.
+   - SEM (Search Engine Marketing): Utilize paid advertising on search engines to drive traffic.
+   - Social Media Marketing: Engage with your audience on social platforms like Facebook, Instagram, and Twitter.
+
+2. **Traditional Marketing:**
+   - Print Advertising: Utilize newspapers, magazines, and brochures.
+   - Broadcast Advertising: Leverage TV and radio advertising.
+   - Direct Mail: Send personalized offers or information to targeted customers.
+
+3. **Content Marketing:**
+   - Blogging: Create valuable content that solves problems for your audience.
+   - Video Marketing: Utilize platforms like YouTube to share informative videos.
+   - Podcasting: Share expertise and engage with your audience through podcast series.
+
+4. **Paid Advertising:**
+   - PPC (Pay Per Click): Use platforms like Google Ads to drive traffic to your site.
+   - Social Media Ads: Utilize the advertising platforms of social media sites to reach a broader audience.
+   - Display Ads: Use visually appealing ads on various platforms to attract potential customers.
+
+Each strategy has its own set of benefits and can be more effective depending on the specific context and target audience.
+`;
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/estrategias_publicidade':
+      case '/estrategia_publicidade':
+        contentSystem =
+          'Provide effective advertising strategies to promote a product or service, focusing on online advertising, offline advertising, targeted advertising, and measuring advertising effectiveness.';
+        contentassistant = `
+1. **Online Advertising:**
+   - Pay-Per-Click (PPC): Utilize platforms like Google Ads to drive targeted traffic to your website.
+   - Social Media Advertising: Leverage platforms like Facebook and Instagram to reach a broader audience.
+   - Display Advertising: Create visually appealing banner ads and display them on relevant websites.
+
+2. **Offline Advertising:**
+   - Print Advertising: Use newspapers, magazines, and brochures to reach a local audience.
+   - Broadcast Advertising: Utilize radio and television spots to build brand awareness.
+   - Outdoor Advertising: Use billboards, transit ads, and posters to catch people's attention in public spaces.
+
+3. **Targeted Advertising:**
+   - Geo-Targeting: Target ads to users based on their location.
+   - Demographic Targeting: Target ads based on age, gender, income, education, and other demographic factors.
+   - Behavioral Targeting: Target ads based on user behavior, such as browsing history and purchase behavior.
+
+4. **Measuring Advertising Effectiveness:**
+   - Return on Advertising Spend (ROAS): Calculate the revenue generated per dollar spent on advertising.
+   - Conversion Rate: Measure the percentage of ad viewers who take a desired action.
+   - Click-Through Rate (CTR): Measure the percentage of people who click on the ad to visit your website.
+
+Each strategy could be tailored to meet the specific goals and target audience of the advertising campaign.
+`;
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/dica_tecnologia':
+      case '/dicas_tecnologia':
+        contentSystem =
+          'Provide the latest technological trends in the job market focusing on remote working technologies, automation, artificial intelligence, and digital communication tools.';
+        contentassistant = `
+1. **Remote Working Technologies:**
+   - Video Conferencing: Tools like Zoom and Microsoft Teams have become essential for remote meetings and collaboration.
+   - Cloud Computing: Services like AWS and Google Cloud enable remote access to resources and data management.
+
+2. **Automation:**
+   - Robotic Process Automation (RPA): Automating repetitive tasks to improve efficiency and free up employees for more strategic work.
+   - Automated Analytics: Utilizing automated tools to analyze data and generate insights.
+
+3. **Artificial Intelligence:**
+   - Machine Learning in Recruitment: Using AI to screen resumes and match candidates to job openings.
+   - Chatbots for Customer Service: Employing AI-driven chatbots to handle routine customer inquiries.
+
+4. **Digital Communication Tools:**
+   - Internal Communication Platforms: Tools like Slack or Microsoft Teams for real-time communication and collaboration within organizations.
+   - Customer Relationship Management (CRM) Systems: Platforms like Salesforce for managing interactions with customers and potential customers.
+
+Staying updated on these trends and incorporating relevant technologies can enhance efficiency, collaboration, and overall competitiveness in the modern job market.
+`;
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/dicas_portifolio':
+      case '/dica_portifolio':
+      case '/portifolio':
+        contentSystem =
+          'Provide tips on creating and improving a portfolio, focusing on showcasing skills, including relevant projects, maintaining a professional appearance, and using online platforms.';
+
+        contentassistant = `
+1. **Showcasing Skills:**
+   - Clearly List Your Skills: Mention the skills you possess, and the tools or technologies you are proficient with.
+   - Show, Don’t Just Tell: Demonstrate your skills through projects, case studies, or problem-solving scenarios.
+
+2. **Including Relevant Projects:**
+   - Project Descriptions: Provide a brief description, the goal, and the outcome of each project.
+   - Visuals: Include images, videos, or interactive demos to provide a visual representation of your work.
+
+3. **Maintaining a Professional Appearance:**
+   - Consistent Branding: Maintain a consistent style, color scheme, and typography throughout your portfolio.
+   - Proofread: Ensure there are no typos or grammatical errors, and all information is up-to-date.
+
+4. **Using Online Platforms:**
+   - Portfolio Websites: Use platforms like Behance or create a personal website to showcase your portfolio.
+   - Social Media: Share your work on professional networks like LinkedIn or industry-specific platforms.
+
+5. **Receiving and Implementing Feedback:**
+   - Peer Reviews: Ask peers or mentors to review your portfolio and provide constructive feedback.
+   - Continuous Improvement: Regularly update your portfolio with new work and implement feedback to improve its quality.
+
+A well-curated portfolio can significantly enhance your visibility and attractiveness to potential employers or clients.
+`;
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/marketing_pessoal':
+        contentSystem =
+          'Provide tips on personal marketing focusing on online presence, networking, consistent branding, and showcasing expertise.';
+
+        contentassistant = `
+1. **Online Presence:**
+   - Professional Website: Create a personal website to showcase your portfolio, blog, and provide a way for people to contact you.
+   - Social Media: Utilize platforms like LinkedIn to share your achievements, articles, and engage with industry discussions.
+
+2. **Networking:**
+   - Attend Industry Events: Network with professionals in your field by attending conferences, webinars, and local meetups.
+   - Build Relationships: Foster meaningful relationships by offering help, engaging in discussions, and showing genuine interest in others’ work.
+
+3. **Consistent Branding:**
+   - Personal Branding Statement: Develop a clear and concise branding statement that communicates your value proposition.
+   - Consistent Imagery: Use a professional and consistent profile picture and cover images across your online profiles.
+
+4. **Showcasing Expertise:**
+   - Blogging: Share your knowledge and insights through blogging on platforms like Medium or your personal website.
+   - Public Speaking: Offer to speak at industry events or host webinars to showcase your expertise and gain visibility.
+
+5. **Continuous Learning and Improvement:**
+   - Stay Updated: Keep learning and staying updated with the latest trends and technologies in your field.
+   - Seek Feedback: Ask for feedback from peers, mentors, and your network to continuously improve your personal marketing strategies.
+
+Personal marketing is about showcasing your skills, experiences, and values in a way that resonates with your target audience, whether they are potential employers, clients, or collaborators.
+`;
+
+        promptFinal = '';
+        historyIndex = zeraSession(to, contentSystem);
+        break;
+      case '/ajuda':
+        await WhatsService.sendMessageWithTemplate({
+          to,
+          message: 'borabotajuda',
+          type: 'borabot',
+        });
+
+        return false;
       default:
         break;
     }

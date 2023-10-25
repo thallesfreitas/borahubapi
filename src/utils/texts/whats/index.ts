@@ -10,6 +10,7 @@ export type WhatsType =
   | 'createTokenToValidation'
   | 'createdUser'
   | 'createdUserBoraBot'
+  | 'borabotajuda'
   | 'loggedUser'
   | 'START_BORABOT'
   | 'CREDITS_INSUFFICIENT'
@@ -34,10 +35,40 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
     message: `Para validar seus dados agora envie: *CONFIRMO*`,
   },
   createdUser: {
-    message: `Boa!! Agora você já confirmou seu WhatsApp. \n Se você validou seu email ainda, fique de olho na sua caixa para confirmar esse importante contato também.. :) 📩📱`,
+    message: `Boa!! Agora você já confirmou seu WhatsApp. \n Se você não validou seu email ainda, fique de olho na sua caixa para confirmar esse importante contato também.. :) 📩📱`,
   },
   createdUserBoraBot: {
-    message: `Olá! Parabéns por dar um passo empolgante ao se cadastrar no BoraHub! Sou o *BoraBot*, seu assistente virtual especializado, e estou aqui para enriquecer sua experiência na nossa plataforma. Tenho grande paixão pelo ambiente inovador do BoraHub, estou muito feliz em trabalhar aqui e ajudá-lo em sua jornada profissional. 🎓🌟 \n \n Agora que você é um membro da nossa comunidade, tem à sua disposição uma ferramenta valiosa para obter insights sobre recrutamento, marketing, publicidade, tecnologia, e boas práticas para a busca de emprego. Além disso, posso oferecer dicas sobre como aprimorar seu marketing pessoal no competitivo mercado de trabalho! 🚀 \n \n  Como utilizar meus serviços: \n \n  Simplesmente digite sua pergunta ou tópico de interesse, e eu estarei aqui para fornecer respostas precisas e orientações baseadas nas áreas mencionadas.\n *Por exemplo*, você pode perguntar sobre como elaborar um CV envolvente ou estratégias eficazes de marketing pessoal.  \n \nExemplos de perguntas:\n "Como posso me preparar para uma entrevista?" \n"Quais são as estratégias eficazes de marketing digital?"\n"Como posso criar um portfólio atraente?" \n Seja Criativo!! \n \n Estou aqui para ajudá-lo a navegar pelo mundo do trabalho e a aproveitar ao máximo as oportunidades disponíveis no BoraHub. \n \n Vamos começar?? 🌟`,
+    message: `Olá! Parabéns por se juntar ao BoraHub! Sou o BoraBot, seu assistente virtual, aqui para ajudar em sua jornada profissional com insights sobre recrutamento, marketing, publicidade, tecnologia, e mais. 🎓🌟
+
+Como membro da nossa comunidade, agora você tem uma ferramenta valiosa ao seu dispor. E o melhor, interagir comigo custa apenas *2 créditos do BoraHub!* 🚀
+
+*Como utilizar meus serviços:*
+Digite sua pergunta ou tópico de interesse e estarei aqui para fornecer respostas e orientações precisas.
+Por exemplo, pergunte sobre elaboração de CV ou estratégias de marketing pessoal.
+
+*Exemplos de perguntas:*
+- Como me preparar para uma entrevista?
+- Quais estratégias de marketing digital são eficazes?
+- Como criar um portfólio atraente?
+
+Estou ansioso para ajudá-lo a explorar as oportunidades no BoraHub.
+Vamos começar? 🌟`,
+  },
+  borabotajuda: {
+    message: `Aqui estão alguns comandos úteis que você pode usar ao interagir comigo:
+
+*/ajuda* - Para ver a lista de comandos disponíveis.
+*/especialista* [área] - Para me especializar em uma área, exemplo: */especialista* marketing.
+*/dica_cv* - Para dicas sobre como melhorar seu currículo.
+*/dica_entrevista* - Para dicas de preparação para entrevistas.
+*/estrategia_marketing* - Para estratégias de marketing eficazes.
+*/estrategia_publicidade* - Para estratégias de publicidade eficaz.
+*/dica_tecnologia* - Para as últimas tendências tecnológicas no mercado de trabalho.
+*/portifolio* - Para dicas sobre como criar e melhorar seu portfólio.
+*/marketing_pessoal* - Para dicas sobre marketing pessoal.
+*/voltar* - Faz o Borabot voltar a ser um especialista em recrutamento, marketing, publicidade, tecnologia.
+
+Fique à vontade para digitar qualquer comando ou fazer perguntas sobre os tópicos mencionados. Estou aqui para ajudar! 🌟`,
   },
   loggedUser: {
     message: `Show! Agora você já tá logado. \nPode clicar aqui https://borahub.com.br ou voltar para o browser que você estava.`,

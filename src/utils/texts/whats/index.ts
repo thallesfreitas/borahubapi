@@ -38,9 +38,11 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
     message: `Boa!! Agora você já confirmou seu WhatsApp. \n Se você não validou seu email ainda, fique de olho na sua caixa para confirmar esse importante contato também.. :) 📩📱`,
   },
   createdUserBoraBot: {
-    message: `Olá! Parabéns por se juntar ao BoraHub! Sou o BoraBot, seu assistente virtual, aqui para ajudar em sua jornada profissional com insights sobre recrutamento, marketing, publicidade, tecnologia, e mais. 🎓🌟
+    message: `Olá! Parabéns por se juntar ao BoraHub! Sou o BoraBot, seu assistente virtual, estou aqui para ajudar em sua jornada profissional com insights sobre recrutamento, marketing, publicidade, tecnologia, e mais. 🎓🌟
 
 Como membro da nossa comunidade, agora você tem uma ferramenta valiosa ao seu dispor. E o melhor, interagir comigo custa apenas *2 créditos do BoraHub!* 🚀
+
+Dica: Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda.
 
 *Como utilizar meus serviços:*
 Digite sua pergunta ou tópico de interesse e estarei aqui para fornecer respostas e orientações precisas.
@@ -82,7 +84,7 @@ Como usar:
 
 Digite sua pergunta ou tópico de interesse e eu farei o meu melhor para fornecer uma resposta precisa.
 Deseja que eu me especialize em uma área específica? Use o comando /especialista [área]. Por exemplo: /especialista direito.
-Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda (Em construção.).
+Para uma lista completa de comandos ou se precisar de ajuda adicional, digite /ajuda.
 
 \n *Por exemplo*, você pode perguntar sobre como elaborar um CV envolvente ou estratégias eficazes de marketing pessoal.  \n \nExemplos de perguntas:\n "Como posso me preparar para uma entrevista?" \n"Quais são as estratégias eficazes de marketing digital?"\n"Como posso criar um portfólio atraente?" \n Seja Criativo!! 
 

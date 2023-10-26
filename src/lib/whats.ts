@@ -412,7 +412,9 @@ export const connectWP = async (_session = 'Bora') => {
 };
 
 export const getGroups = async () => {
-  const data = await clientWP.listChats({ onlyGroups: true });
+  const client: WP = setClient('client');
+
+  const data = await client.listChats({ onlyGroups: true });
 
   const linkRegex = /https:\/\/chat\.whatsapp\.com\/[^\s]+/;
   // ULTRA
@@ -424,13 +426,13 @@ export const getGroups = async () => {
   // });
   // const { data } = response;
   const filteredData = data
-    // .filter(
-    //   (item: Item) => !item.name.toLowerCase().includes('boraajudar.work')
-    // )
     .filter(
-      (item: Item) => item.name.toLowerCase().includes('boraajudar.work-teste')
-      // item.name.toLowerCase().includes('boraajudar.work')
+      (item: Item) => !item.name.toLowerCase().includes('boraajudar.work')
     )
+    // .filter(
+    //   (item: Item) => item.name.toLowerCase().includes('boraajudar.work-teste')
+    //   // item.name.toLowerCase().includes('boraajudar.work')
+    // )
     .map(
       (item: {
         groupMetadata: { desc: string; participants: string | any[] };

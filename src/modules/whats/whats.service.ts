@@ -12,6 +12,7 @@ export const getGroups = async () => {
   } catch (error) {
     console.error(error);
   }
+  return false;
 };
 
 export interface WebhookAPIPostArgs {

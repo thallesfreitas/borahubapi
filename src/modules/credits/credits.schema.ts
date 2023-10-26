@@ -23,6 +23,7 @@ export const verifyBody = {
   properties: {
     userId: { type: 'number' },
     type: { type: 'string' },
+    withRemove: { type: 'boolean' },
   },
 };
 

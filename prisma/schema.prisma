@@ -81,7 +81,7 @@ model Packs {
   id Int @id @default(autoincrement())
   type String @unique
   name String
-  unit_amount Float
+  unit_amount Int
   features String[]
   phrases String
   credits Int
@@ -421,6 +421,7 @@ model Candidate {
   workMode     String[]
   seniority    String[]
   travel       String[]
+  affirmative          String[]
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @default(now()) @map("updated_at")
   deletedAt    DateTime?               @map("deleted_at")
@@ -467,6 +468,7 @@ model Jobs {
   city                String?
   state               String?
   salary              String[]
+  affirmative          String[]
   categories          CategoriesOnJobs[]
   tags                TagsOnJobs[]
   areas               AreasOnJobs[]

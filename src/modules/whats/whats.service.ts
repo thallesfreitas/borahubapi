@@ -138,7 +138,7 @@ export const sendMessageToGroups = async (
     const job = await JobService.getJob(idMessage);
 
     if (statusMessage.approved === 'WAITING' && !statusMessage.finished) {
-      const messageToApprove = `*#BoraHubJob ${message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
+      const messageToApprove = `*#BoraHubJob*\n${message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
 
       WhatsApi.send({
         to: '5511945483326',

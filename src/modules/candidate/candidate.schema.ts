@@ -45,6 +45,7 @@ export const candidateBody = {
     contractMode: { type: 'string' },
     actualRole: { type: 'string' },
     categories: { type: 'string' },
+    affirmative: { type: 'string' },
     tags: { type: 'string' },
     city: { type: 'string' },
     state: { type: 'string' },

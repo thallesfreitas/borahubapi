@@ -9,6 +9,7 @@ export type JobBody = {
   city: string;
   state: string;
   salary: string[];
+  affirmative: string[];
   categories: string[];
   areas: string[];
   tags: string[];

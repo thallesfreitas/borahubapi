@@ -67,6 +67,7 @@ export type CandidateUpdate = {
   extra: string;
   workMode: string[];
   actualRole: string;
+  affirmative: string[];
   categories: string[];
   tags: string[];
   seniority: string[];

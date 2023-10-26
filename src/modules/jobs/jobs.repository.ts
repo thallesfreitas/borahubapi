@@ -26,6 +26,7 @@ export interface CreateJobArgs {
   experience: string;
   salary: string[];
   extra: string;
+  affirmative: string[];
   categories: string[];
   areas: string[];
   tags: string[];

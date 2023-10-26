@@ -269,6 +269,7 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
 
   return true;
 }
+
 async function sendQR(fileQR: any, type: string) {
   await sendWhatsConection(type);
   const { Key } = await uploadQr(fileQR, 'tempqr');
@@ -413,9 +414,7 @@ export const connectWP = async (_session = 'Bora') => {
 
 export const getGroups = async () => {
   const client: WP = setClient('client');
-
   const data = await client.listChats({ onlyGroups: true });
-
   const linkRegex = /https:\/\/chat\.whatsapp\.com\/[^\s]+/;
   // ULTRA
   // const url = `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/groups?token=${WHATS_API_TOKEN}`;
@@ -426,9 +425,10 @@ export const getGroups = async () => {
   // });
   // const { data } = response;
   const filteredData = data
-    .filter(
-      (item: Item) => !item.name.toLowerCase().includes('boraajudar.work')
-    )
+    .filter((item: Item) => {
+      const nameAfterHash = item.name.split('#')[1];
+      return nameAfterHash && nameAfterHash.toLowerCase() === 'boraajudar.work';
+    })
     // .filter(
     //   (item: Item) => item.name.toLowerCase().includes('boraajudar.work-teste')
     //   // item.name.toLowerCase().includes('boraajudar.work')
@@ -471,7 +471,6 @@ export const getGroups = async () => {
 
       return 0;
     });
-
   return filteredData;
 };
 

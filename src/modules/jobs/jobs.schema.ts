@@ -11,6 +11,7 @@ export const jobBody = {
     state: { type: 'string' },
     salary: { type: 'array' },
     experience: { type: 'string' },
+    affirmative: { type: 'array' },
     categories: { type: 'array' },
     areas: { type: 'array' },
     tags: { type: 'array' },

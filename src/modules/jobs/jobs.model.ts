@@ -8,6 +8,7 @@ export type JobBody = {
   modelOfWork: string;
   city: string;
   state: string;
+  showSalary: boolean;
   salary: string[];
   affirmative: string[];
   categories: string[];

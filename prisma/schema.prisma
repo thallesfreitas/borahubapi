@@ -467,12 +467,12 @@ model Jobs {
   modelOfWork         String?
   city                String?
   state               String?
+  showSalary          Boolean  @default(true)
   salary              String[]
   affirmative          String[]
   categories          CategoriesOnJobs[]
   tags                TagsOnJobs[]
   areas               AreasOnJobs[]
-  // inclusive           InclusiveOnJobs[]
   slug                String   @unique
   isActive            Boolean  @default(true)
   isPublished         Boolean  @default(false) @map("is_published")

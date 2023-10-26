@@ -85,6 +85,7 @@ export const getBySlug = async (
         modelOfWork: data.modelOfWork,
         city: data.city,
         state: data.state,
+        showSalary: data.showSalary,
         salary: data.salary,
         tags: data.tags,
         affirmative: data.affirmative,

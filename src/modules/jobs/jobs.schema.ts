@@ -36,6 +36,7 @@ export const jobBodyUpdate = {
     modelOfWork: { type: 'string' },
     city: { type: 'string' },
     state: { type: 'string' },
+    showSalary: { type: 'boolean' },
     salary: { type: 'array' },
     experience: { type: 'string' },
     categories: { type: 'array' },

@@ -24,6 +24,7 @@ export interface CreateJobArgs {
   city: string;
   state: string;
   experience: string;
+  showSalary: boolean;
   salary: string[];
   extra: string;
   affirmative: string[];

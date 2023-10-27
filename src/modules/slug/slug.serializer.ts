@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import {
   Candidate,
   Freelancer,
@@ -71,33 +72,12 @@ export const getBySlug = async (
 
       const owner = payloadType.userID == data.updatedById?.id;
       let jobApplied = false;
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(' TESTE  jobApplied');
-      console.log(data.jobApplication);
-      console.log(data.jobApplication.length);
-      console.log(payloadType.userID);
-      if (data.jobApplication.length > 0) {
-        jobApplied =
-          data.jobApplication.find(
-            app => app.createdBy === payloadType.userID
-          ) === undefined;
-      }
+
+      data.jobApplication?.map((item: any) => {
+        if (item.id === payloadType.userID) jobApplied = true;
+        return false;
+      });
+
       response = {
         type: payloadType.type,
         id: data.id,
@@ -148,49 +128,5 @@ export const getBySlug = async (
   console.log('response');
   console.log('response');
   console.log(response);
-  return response;
-};
-export const getBySlugApplication = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
-  payload: unknown
-) => {
-  console.log('getBySlugApplication');
-  console.log('payload');
-  console.log(payload);
-  const payloadType = payload as PayloadType;
-  let response;
-  let data;
-
-  switch (payloadType.type) {
-    case 'user':
-      data = payloadType.data as UserComplete;
-      console.log('data user');
-      console.log(data);
-      console.log(data?.createdJobApplication);
-      response = {
-        type: payloadType.type,
-        createdJobApplication: data?.createdJobApplication,
-        id: data?.id,
-        // stripe_id: data?.stripe_id,
-        optin: data?.optin,
-        email: data?.email,
-        name: data?.name,
-        phone: data?.phone,
-        slug: data?.slug,
-        isActive: data?.isActive,
-        createdAt: data?.createdAt,
-        updatedAt: data?.updatedAt,
-        teste: '3',
-        candidate: data?.candidate,
-        serviceProvider: data?.serviceProvider,
-        freelancer: data?.freelancer,
-      };
-      break;
-
-    default:
-      break;
-  }
-
   return response;
 };

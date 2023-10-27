@@ -5,50 +5,51 @@ import {
   GetAssessmentArgs,
   UpdateJobApplicationArgs,
 } from './jobApplication.model';
-import * as JobsRepository from './jobApplication.repository';
+import * as JobsApplicationRepository from './jobApplication.repository';
 
 export const getFeedbackAssessment = (params: GetAssessmentArgs) =>
-  JobsRepository.getFeedbackAssessment(params);
+  JobsApplicationRepository.getFeedbackAssessment(params);
 
 export const createFeedbackRecruiter = (params: CreateFeedbackRecruiterArgs) =>
-  JobsRepository.createFeedbackRecruiter(params);
+  JobsApplicationRepository.createFeedbackRecruiter(params);
 
 export const createAssessment = (params: CreateAssessmentJobApplicationArgs) =>
-  JobsRepository.createAssessment(params);
+  JobsApplicationRepository.createAssessment(params);
 
 export const createJobApplication = (params: CreateJobApplicationArgs) =>
-  JobsRepository.createJobApplication(params);
+  JobsApplicationRepository.createJobApplication(params);
 
 export const getJobs = (limit: number, skip: number) =>
-  JobsRepository.getJobs(limit, skip);
+  JobsApplicationRepository.getJobs(limit, skip);
 
-export const getJobsCount = () => JobsRepository.getJobsCount();
+export const getJobsCount = () => JobsApplicationRepository.getJobsCount();
 
 export const getJobsByUserCount = (createdBy: number) =>
-  JobsRepository.getJobsByUserCount(createdBy);
+  JobsApplicationRepository.getJobsByUserCount(createdBy);
 
 export const getJobsByUserSlugCount = (slug: string) =>
-  JobsRepository.getJobsByUserSlugCount(slug);
+  JobsApplicationRepository.getJobsByUserSlugCount(slug);
 
 export const getJobsByUserSlug = (
   slug: string,
   limit: number,
   skip: number,
   isActive: boolean
-) => JobsRepository.getJobsByUserSlug(slug, limit, skip, isActive);
+) => JobsApplicationRepository.getJobsByUserSlug(slug, limit, skip, isActive);
 
-export const getJobBySlug = (slug: string) => JobsRepository.getJobBySlug(slug);
+export const getJobBySlug = (slug: string) =>
+  JobsApplicationRepository.getJobBySlug(slug);
 
 export const getJobsByUserId = (
   createdBy: number,
   limit: number,
   skip: number
-) => JobsRepository.getJobsByUserId(createdBy, limit, skip);
+) => JobsApplicationRepository.getJobsByUserId(createdBy, limit, skip);
 
 export const updateJobApplication = (params: UpdateJobApplicationArgs) =>
-  JobsRepository.updateJobApplication(params);
+  JobsApplicationRepository.updateJobApplication(params);
 
-export const deleteJob = (id: number, userId: number) =>
-  JobsRepository.deleteJob(id, userId);
+export const deleteJob = (id: number) =>
+  JobsApplicationRepository.deleteJob(id);
 
-export const getJob = (id: number) => JobsRepository.getJob(id);
+export const getJob = (id: number) => JobsApplicationRepository.getJob(id);

@@ -156,7 +156,6 @@ interface GetUserBy {
 }
 
 export const deleteUser = async (id: number) => {
-  console.log(`deleteUser: ${id}`);
   return dbClient.user.delete({
     where: {
       id,
@@ -442,7 +441,7 @@ export const updateUserByMail = async (
 
 export interface UpdateUserArgs extends Partial<User> {}
 export const updateUser = async (id: number, params: UpdateUserArgs) => {
-  const user = await dbClient.user.update({
+  const userUpdate = await dbClient.user.update({
     where: {
       id,
     },
@@ -451,9 +450,19 @@ export const updateUser = async (id: number, params: UpdateUserArgs) => {
     },
   });
 
-  const tokenUser = await tokenService.getToken({ email: params.email });
+  const user = await getUserBy(
+    { id },
+    {
+      application: false,
+      skip: 0,
+      limit: 0,
+    }
+  );
+
+  // const tokenUser = await tokenService.getToken({ email: params.email });
   // user.token = tokenUser;
-  return { user, tokenUser };
+  return { user };
+  // return { user, tokenUser };
 };
 
 // export const updatePhoneConfirm = async (id: number) => {

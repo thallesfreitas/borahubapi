@@ -32,7 +32,6 @@ export const getJobsByUserId = (
 export const updateJob = (params: JobsRepository.UpdateJobArgs) =>
   JobsRepository.updateJob(params);
 
-export const deleteJob = (id: number, userId: number) =>
-  JobsRepository.deleteJob(id, userId);
+export const deleteJob = (id: number) => JobsRepository.deleteJob(id);
 
 export const getJob = (id: number) => JobsRepository.getJob(id);

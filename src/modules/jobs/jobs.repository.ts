@@ -86,6 +86,7 @@ export const createJob = async ({ userId, ...rest }: CreateJobArgs) => {
     delete data.categories;
     delete data.tags;
     delete data.areas;
+
     const job = await dbClient.jobs.create({
       data,
     });
@@ -163,14 +164,10 @@ export const getJob = async (id: number) => {
   return job;
 };
 
-export const deleteJob = async (id: number, userId: number) => {
-  return dbClient.jobs.update({
+export const deleteJob = async (id: number) => {
+  return dbClient.jobs.delete({
     where: {
       id,
-    },
-    data: {
-      deletedAt: new Date(),
-      deletedBy: userId,
     },
   });
 };

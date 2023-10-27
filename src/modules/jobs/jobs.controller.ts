@@ -96,7 +96,7 @@ export const deleteJob = async (
 ) => {
   const { id } = request.params;
 
-  await JobsService.deleteJob(Number(id), 1);
+  await JobsService.deleteJob(Number(id));
 
   return reply.status(204).send();
 };

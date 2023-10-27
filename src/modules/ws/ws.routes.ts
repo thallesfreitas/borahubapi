@@ -14,20 +14,7 @@ export default async (fastify: FastifyInstance) => {
   }
 
   fastify.get('/getLogin', { websocket: true }, async (connection, request) => {
-    console.log('---------------------------');
-    console.log('---------------------------');
-    console.log('---------------------------');
-    console.log('---------------------------');
-    console.log('++++++++++++++++WS getLogin');
-    console.log('---------------------------');
-    console.log('---------------------------');
-    console.log('---------------------------');
-    console.log('---------------------------');
-
     const { email } = request.query as RequestGetLoginProps;
-    console.log('request.query');
-    console.log(request.query);
-    console.log(email);
 
     const queryEventListener = async (event: any) => {
       const { query, params } = event;
@@ -66,39 +53,17 @@ export default async (fastify: FastifyInstance) => {
         //   },
         // });
         const user = await UserService.getUserByEmail(email); // .getUserByPhone();
-        console.log('user');
-        console.log(user);
         const userPhone = user?.phone;
         if (userPhone) {
           const token = await tokenService.getToken({ email });
-          console.log('token');
-          console.log('token');
-          console.log('token');
-          console.log('token');
-          console.log('token');
-          console.log('token');
-          console.log('token');
-          console.log(token);
           const logged = JSON.stringify({
             sucess: true,
             user,
             token,
           });
-          console.log('---------------------------');
-          console.log('---------------------------');
-          console.log('---------------------------');
-          console.log('---------------------------');
-          console.log(logged);
-          console.log('---------------------------');
-          console.log('---------------------------');
-          console.log('---------------------------');
-          console.log('---------------------------');
           const dbPhone = `+${phoneNumber.replace(/[^0-9]/g, '')}`;
 
           if (isValid && dbPhone === userPhone) {
-            console.log('WS');
-            console.log('logged');
-            console.log(logged);
             connection.socket.send(logged);
             connection.socket.close();
             setTimeout(() => {
@@ -115,20 +80,8 @@ export default async (fastify: FastifyInstance) => {
     '/confirmAccount',
     { websocket: true },
     async (connection, request) => {
-      console.log('---------------------------');
-      console.log('---------------------------');
-      console.log('---------------------------');
-      console.log('---------------------------');
-
-      console.log('++++++++++++++++ | WS confirmAccount');
-      console.log('---------------------------');
-      console.log('---------------------------');
-      console.log('---------------------------');
-      console.log('---------------------------');
-
       const { email, token } = request.query as RequestCreateAccountProps;
-      console.log('email');
-      console.log(email);
+
       const queryEventListener = async (event: any) => {
         const { query, params, target } = event;
         const isUpdate = query.includes('UPDATE');
@@ -150,21 +103,17 @@ export default async (fastify: FastifyInstance) => {
             //   },
             // });
             const tokenUser = await tokenService.getToken({ email });
-            console.log(
-              '_______________________tokenUser______________________'
-            );
-            console.log(tokenUser);
+
             const logged = JSON.stringify({
               sucess: true,
               user,
               token: tokenUser?.token,
               page: tokenUser?.page,
             });
-            console.log(logged);
+
             const dbPhone = `+${phoneNumber.replace(/[^0-9]/g, '')}`;
 
             if (isValid && dbPhone === userPhone) {
-              console.log('++++++++++++++++ | WS confirmAccount- VALIDADO');
               connection.socket.send(logged);
               connection.socket.close();
               tokenService.deleteUserTokens(email);

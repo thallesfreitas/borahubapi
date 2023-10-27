@@ -35,7 +35,7 @@ export const completion = async (req: CreateAI, reply: FastifyReply) => {
     temperature: req.body.temperature ? req.body.temperature : 0.8,
     max_tokens: 3000,
   });
-  console.log(response);
+
   return reply.send({ text: `${response.choices[0].text}` });
   // return reply.send(response.choices[0].text);
 };
@@ -51,8 +51,7 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
     assistant,
     temperature,
   } = req.body;
-  console.log('req.body');
-  console.log(req.body);
+
   // let responseCohere = prompt;
   // if (prompt.length > 250) {
   //   responseCohere = await cohere.summarize({

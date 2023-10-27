@@ -12,7 +12,7 @@ export async function sendMessageToQueue(
   // 'amqp://user:password@localhost',
   const rabbitmqUrl = `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}`;
 
-  console.log(rabbitmqUrl);
+  // console.log(rabbitmqUrl);
   // `amqp://${process.env.RABBITMQ_DEFAULT_USER}:${process.env.RABBITMQ_DEFAULT_PASS}@${process.env.RABBIT_HOST}:${process.env.RABBITMQ_PORT}`,
   // amqp.connect(rabbitmqUrl).then(conn => {
   //   console.log('CONECTOU');
@@ -32,7 +32,7 @@ export async function sendMessageToQueue(
   // console.log(connection);
   // console.log('connection');
   // console.log('CONECTOU????');
-  console.log(messageToSend);
+  // console.log(messageToSend);
   // Whats.sendProcess(messageToSend);
   amqp.connect(
     rabbitmqUrl,
@@ -43,12 +43,10 @@ export async function sendMessageToQueue(
         close: () => void;
       }
     ) => {
-      console.log('amqp.connect');
       if (error) {
         console.error(`Failed to connect to RabbitMQ: ${error.message}`);
         // process.exit(1);
       }
-      console.log('RABBIT CONECTADO');
       connection.createChannel(
         (
           error: { message: any },
@@ -74,7 +72,6 @@ export async function sendMessageToQueue(
             queueName,
             (msg: { content: { toString: () => any } }) => {
               const receivedMessage = msg.content.toString();
-              console.log('RABBIT sendProcess');
               Whats.sendProcess(receivedMessage);
             },
             {

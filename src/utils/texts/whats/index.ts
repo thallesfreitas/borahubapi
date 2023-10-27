@@ -15,7 +15,9 @@ export type WhatsType =
   | 'START_BORABOT'
   | 'CREDITS_INSUFFICIENT'
   | 'USER_NOT_FOUND'
-  | 'CREDIT_PURCHASED';
+  | 'CREDIT_PURCHASED'
+  | 'createAssessmentCandidate'
+  | 'createAssessmentRecruiter';
 
 export const whatsTemplates: Record<WhatsType, WhatsData> = {
   default: {
@@ -118,5 +120,11 @@ Clique aqui https://www.borahub.com.br/crie-sua-conta`,
   },
   CREDIT_PURCHASED: {
     message: `Olá *|||NAME|||*! Você acabou de adicionar *|||CREDITS|||* no BoraHub!! Aproveite para usar todas nossas ferramentas.`,
+  },
+  createAssessmentCandidate: {
+    message: `Olá *|||NAME|||*! Avaliamos seu perfil para a vaga: *|||JOBNAME|||*. Veja mais detalhe em |||URL|||`,
+  },
+  createAssessmentRecruiter: {
+    message: `O Candidato *|||NAME|||* acabou de aplicar para a vaga: *|||JOBNAME|||*. Veja mais detalhe em |||URL|||`,
   },
 };

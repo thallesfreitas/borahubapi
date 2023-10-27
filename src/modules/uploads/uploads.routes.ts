@@ -61,8 +61,7 @@ export default async (fastify: FastifyInstance) => {
     const { '*': imageKey } = req.params as {
       '*': string;
     };
-    console.log('GET');
-    console.log(imageKey);
+
     const response = await getFile(imageKey);
 
     reply.send(response.Body);

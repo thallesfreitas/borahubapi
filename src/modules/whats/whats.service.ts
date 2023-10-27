@@ -58,8 +58,10 @@ export interface StartBoraBotArgs {
 }
 
 export interface SendMessageArgs {
-  to: string;
   message: string;
+  to: string;
+  payload?: string[];
+  payloadVar?: string[];
   type: string;
 }
 
@@ -151,7 +153,7 @@ export const sendMessageToGroups = async (
           message: `##status091423$$$$id=${statusMessage.id}$$$$status=s ou n$$$$explain=porque do status`,
           type: 'client',
         });
-      }, 10000);
+      }, 30000);
       response = true;
     } else if (
       statusMessage.approved === 'APPROVED' &&
@@ -170,6 +172,15 @@ export const sendMessageToGroups = async (
           type: 'client',
         });
       }, 2000);
+      if (user?.phone !== job?.phone) {
+        setTimeout(async () => {
+          WhatsApi.send({
+            to: job?.phone as string,
+            message: `O envio da sua vaga ${job?.title} para os grupos foi *aprovada*. \n🎉 🍾 🎊\n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar?showStatus=true e veja para quais grupos ela já foi enviada. :) .`,
+            type: 'client',
+          });
+        }, 6000);
+      }
 
       setTimeout(async () => {
         const messageFinal = `*#BoraHubJob ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
@@ -196,6 +207,13 @@ export const sendMessageToGroups = async (
         message: `Sua vaga foi *reprovada*. \n 😥 😨 🙁\n Mas não fique triste, basta rever o item abaixo e enviar novamente. \n\nMotivo: ${statusMessage.explain}. \n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar , faça as edições que achar necessárias e envie novamente para nossa aprovação. :) .`,
         type: 'client',
       });
+      if (user?.phone !== job?.phone) {
+        WhatsApi.send({
+          to: job?.phone as string,
+          message: `Sua vaga foi *reprovada*. \n 😥 😨 🙁\n Mas não fique triste, basta rever o item abaixo e enviar novamente. \n\nMotivo: ${statusMessage.explain}. \n\nEntre em https://borahub.com.br/${job?.slug}/vagas/editar , faça as edições que achar necessárias e envie novamente para nossa aprovação. :) .`,
+          type: 'client',
+        });
+      }
     } else if (
       statusMessage.approved === 'APPROVED' &&
       statusMessage.finished

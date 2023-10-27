@@ -82,21 +82,6 @@ export const ipnMP = async (req: IpnModel, reply: FastifyReply) => {
   reply.code(200).send(true);
 };
 export const webhookMP = async (req: FastifyRequest, reply: FastifyReply) => {
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  // console.log('______________________________________________________________');
-  // console.log(req);
-  console.log('______________________________________________________________');
-  console.log(req.query);
-  console.log('______________________________________________________________');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
-  console.log('webhookMP');
   return reply.send(true);
 };
 
@@ -228,10 +213,6 @@ export const payment = async (req: PaymentModel, reply: FastifyReply) => {
     // .save(payment_data)
     .save(paymentData)
     .then(async function (response: { id: any; body: any; status: any }) {
-      console.log('status PAYMENT');
-      console.log(response.status);
-      // console.log(response.id);
-      // console.log(response.body);
       if (paymentData.payment_method_id !== 'pix') {
         if (response.status === 201) {
           await CreditsService.addCredits({

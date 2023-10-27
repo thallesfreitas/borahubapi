@@ -247,16 +247,16 @@ export async function sendProcess(action: string) {
 export async function sendToGroups(message: string, approvalSystemId: number) {
   let groupId = 0;
   const interval: NodeJS.Timeout = setInterval(async () => {
-    const groupPhone = groupsWhatsTeste[groupId].idWhats;
-    // const groupPhone = groupsWhats[groupId].idWhats;
+    // const groupPhone = groupsWhatsTeste[groupId].idWhats;
+    const groupPhone = groupsWhats[groupId].idWhats;
     let phone = groupPhone.toString().replace('+', '');
     if (!phone.includes('@')) phone = `${phone}@g.us`;
     clientWP.startTyping(phone);
     const messageFinal = `client#T#T${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
     Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 
-    if (groupId === groupsWhatsTeste.length - 1) {
-      // if (groupId === groupsWhats.length - 1) {
+    // if (groupId === groupsWhatsTeste.length - 1) {
+    if (groupId === groupsWhats.length - 1) {
       clearInterval(interval);
     }
     groupId += 1;

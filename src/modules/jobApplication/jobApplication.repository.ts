@@ -3,6 +3,7 @@ import { Areas, Category, Jobs, Prisma, Tags, User } from '@prisma/client';
 import dbClient from '../../lib/dbClient';
 import * as emailService from '../../lib/email';
 import * as AiService from '../ai/ai.service';
+import * as WhatsService from '../whats/whats.service';
 import {
   CreateAssessmentJobApplicationArgs,
   CreateFeedbackRecruiterArgs,
@@ -35,13 +36,6 @@ export const createFeedbackRecruiter = async ({
         id: jobApplication.createdBy as number,
       },
     });
-    console.log('feedbackrecruiter');
-    console.log('feedbackrecruiter');
-    console.log('feedbackrecruiter');
-    console.log('feedbackrecruiter');
-    console.log('feedbackrecruiter');
-    console.log('feedbackrecruiter');
-    console.log(feedbackrecruiter);
     const scoreJobApplication = jobApplication?.score?.toString();
     await emailService.sendEmail({
       payload: {
@@ -130,7 +124,7 @@ export const createAssessment = async ({
       },
     });
 
-    await emailService.sendEmail({
+    emailService.sendEmail({
       payload: {
         name: user?.name as string,
         email: user?.email as string,
@@ -141,34 +135,50 @@ export const createAssessment = async ({
       },
       type: 'createAssessmentCandidate',
     });
-
-    await emailService.sendEmail({
-      payload: {
-        email: job?.email as string,
-        vagaName: job?.title as string,
-        candidateName: user?.name as string,
-        assessment: result[0] as string,
-        score: result[2] as string,
-        url: `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}`,
-      },
-      type: 'createAssessmentRecruiter',
-    });
-
-    /*
-
-
-        WhatsApi.sendMessageWithTemplate({
+    let time = 0;
+    const interval: any = setInterval(() => {
+      if (time === 2) {
+        emailService.sendEmail({
+          payload: {
+            email: job?.email as string,
+            vagaName: job?.title as string,
+            candidateName: user?.name as string,
+            assessment: result[0] as string,
+            score: result[2] as string,
+            url: `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}`,
+          },
+          type: 'createAssessmentRecruiter',
+        });
+      }
+      if (time === 4) {
+        WhatsService.sendMessageWithTemplate({
           to: user?.phone as string,
-          message: 'CREDIT_PURCHASED',
+          message: 'createAssessmentCandidate',
           payload: [
             user?.name as string,
-            pack?.credits.toString() as string,
-            process.env.URL as string,
+            job?.title as string,
+            `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}` as string,
           ],
-          payloadVar: ['|||NAME|||', '|||CREDITS|||', '|||URL|||'],
+          payloadVar: ['|||NAME|||', '|||JOBNAME|||', '|||URL|||'],
+          type: 'client',
         });
-
-        */
+      }
+      if (time === 6) {
+        WhatsService.sendMessageWithTemplate({
+          to: job?.phone as string,
+          message: 'createAssessmentRecruiter',
+          payload: [
+            user?.name as string,
+            job?.title as string,
+            `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}` as string,
+          ],
+          payloadVar: ['|||NAME|||', '|||JOBNAME|||', '|||URL|||'],
+          type: 'client',
+        });
+        clearInterval(interval);
+      }
+      time += 1;
+    }, 1000);
 
     return jobApplicationUupdated;
   } catch (error) {
@@ -237,14 +247,10 @@ export const getJob = async (id: number) => {
   return job;
 };
 
-export const deleteJob = async (id: number, userId: number) => {
-  return dbClient.jobs.update({
+export const deleteJob = async (id: number) => {
+  return dbClient.jobApplication.delete({
     where: {
       id,
-    },
-    data: {
-      deletedAt: new Date(),
-      deletedBy: userId,
     },
   });
 };

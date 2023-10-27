@@ -1,3 +1,6 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable indent */
+/* eslint-disable no-case-declarations */
 import {
   Candidate,
   Freelancer,
@@ -73,8 +76,7 @@ export const getBySlug = async (
       let jobApplied = false;
 
       data.jobApplication?.map((item: any) => {
-        if (item.id === payloadType.userID) jobApplied = true;
-        return false;
+        if (item.createdBy === payloadType.userID) jobApplied = true;
       });
       response = {
         type: payloadType.type,

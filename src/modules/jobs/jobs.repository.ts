@@ -328,6 +328,7 @@ export const getJobBySlug = async (slug: string) =>
           phone: true,
           description: true,
           createdBy: true,
+          score: true,
           createdById: {
             select: {
               id: true,
@@ -384,6 +385,9 @@ export const getJobBySlug = async (slug: string) =>
               },
             },
           },
+        },
+        orderBy: {
+          score: 'desc',
         },
       },
       categories: {

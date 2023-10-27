@@ -145,6 +145,7 @@ export const createAssessment = async ({
             candidateName: user?.name as string,
             assessment: result[0] as string,
             score: result[2] as string,
+            profile: `${process.env.URL}/${user?.slug}` as string,
             url: `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}`,
           },
           type: 'createAssessmentRecruiter',
@@ -157,7 +158,7 @@ export const createAssessment = async ({
           payload: [
             user?.name as string,
             job?.title as string,
-            `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}` as string,
+            `${process.env.URL}/${job?.slug}/feedback/${user?.slug}` as string,
           ],
           payloadVar: ['|||NAME|||', '|||JOBNAME|||', '|||URL|||'],
           type: 'client',
@@ -170,9 +171,15 @@ export const createAssessment = async ({
           payload: [
             user?.name as string,
             job?.title as string,
+            `${process.env.URL}/${user?.slug}` as string,
             `${process.env.URL}/${job?.slug}/avaliacao/${user?.slug}` as string,
           ],
-          payloadVar: ['|||NAME|||', '|||JOBNAME|||', '|||URL|||'],
+          payloadVar: [
+            '|||NAME|||',
+            '|||JOBNAME|||',
+            '|||PROFILE|||',
+            '|||URL|||',
+          ],
           type: 'client',
         });
         clearInterval(interval);

@@ -126,7 +126,7 @@ Clique aqui https://www.borahub.com.br/crie-sua-conta`,
     message: `Olá *|||NAME|||*! Avaliamos seu perfil para a vaga: *|||JOBNAME|||*. Veja mais detalhe em |||URL|||`,
   },
   createAssessmentRecruiter: {
-    message: `O Candidato *|||NAME|||* acabou de aplicar para a vaga: *|||JOBNAME|||*. Veja mais detalhe em |||URL|||`,
+    message: `O Candidato *|||NAME|||* acabou de aplicar para a vaga: *|||JOBNAME|||*. \nO Perfil dele é Veja a nossa avaliação em |||PROFILE|||. Veja a nossa avaliação em |||URL|||`,
   },
   CREDIT_INDICATED_BY: {
     message: `Olá *|||NAME|||*! Seu amigo *|||INDICATED|||* acabou de se cadastrar e você ganhou *|||CREDITOS|||* créditos!! Continue indicando amigos! :) `,

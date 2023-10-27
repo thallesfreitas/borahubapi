@@ -2,6 +2,10 @@ import { Prisma } from '@prisma/client';
 
 export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   {
+    type: 'WELCOME_INDICATEDBY',
+    amount: 1500,
+  },
+  {
     type: 'WELCOME',
     amount: 500,
   },

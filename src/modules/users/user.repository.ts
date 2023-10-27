@@ -90,12 +90,21 @@ export const createUser: CreateUser = async ({
     const credits = await CreditsService.getCostsUsage('WELCOME');
     const welcomeCredits = credits?.amount as number;
 
-    await CreditsService.addCredits({
-      userId: newUser.id,
-      amount: welcomeCredits,
-      transactionType: 'WELCOME',
-      status: 'approved',
-    });
+    if (indicatedBy === 'thallesfreitas@gmail.com') {
+      await CreditsService.addCredits({
+        userId: newUser.id,
+        amount: welcomeCredits,
+        transactionType: 'WELCOME_INDICATEDBY',
+        status: 'approved',
+      });
+    } else {
+      await CreditsService.addCredits({
+        userId: newUser.id,
+        amount: welcomeCredits,
+        transactionType: 'WELCOME',
+        status: 'approved',
+      });
+    }
 
     const token = await tokenService.createToken(
       newUser.uuid,

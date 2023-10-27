@@ -17,7 +17,8 @@ export type WhatsType =
   | 'USER_NOT_FOUND'
   | 'CREDIT_PURCHASED'
   | 'createAssessmentCandidate'
-  | 'createAssessmentRecruiter';
+  | 'createAssessmentRecruiter'
+  | 'CREDIT_INDICATED_BY';
 
 export const whatsTemplates: Record<WhatsType, WhatsData> = {
   default: {
@@ -126,5 +127,8 @@ Clique aqui https://www.borahub.com.br/crie-sua-conta`,
   },
   createAssessmentRecruiter: {
     message: `O Candidato *|||NAME|||* acabou de aplicar para a vaga: *|||JOBNAME|||*. Veja mais detalhe em |||URL|||`,
+  },
+  CREDIT_INDICATED_BY: {
+    message: `Olá *|||NAME|||*! Seu amigo *|||INDICATED|||* acabou de se cadastrar e você ganhou *|||CREDITOS|||* créditos!! Continue indicando amigos! :) `,
   },
 };

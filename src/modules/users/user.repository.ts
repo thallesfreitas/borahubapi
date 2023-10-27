@@ -132,6 +132,36 @@ export const createUser: CreateUser = async ({
     }, 5000);
 
     newUser.token = token.token;
+
+    const userIndicatedBy = await getUserByEmail(indicatedBy as string);
+    if (userIndicatedBy) {
+      const idIndicatedBtTransactionType = 'INDICATEDBY';
+      const creditsUserIndicatedBy = await CreditsService.getCostsUsage(
+        idIndicatedBtTransactionType
+      );
+      const welcomeCreditsUserIndicatedBy =
+        creditsUserIndicatedBy?.amount as number;
+      await CreditsService.addCredits({
+        userId: userIndicatedBy.id,
+        amount: welcomeCreditsUserIndicatedBy,
+        transactionType: idIndicatedBtTransactionType,
+        status: 'approved',
+      });
+      setTimeout(() => {
+        WhatsApi.sendMessageWithTemplate({
+          to: userIndicatedBy?.phone as string,
+          message: 'CREDIT_INDICATED_BY',
+          payload: [
+            userIndicatedBy?.name as string,
+            name as string,
+            welcomeCreditsUserIndicatedBy.toString() as string,
+          ],
+          payloadVar: ['|||NAME|||', '|||INDICATED|||', '|||CREDITOS|||'],
+          type: 'client',
+        });
+      }, 10000);
+    }
+
     return newUser;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {

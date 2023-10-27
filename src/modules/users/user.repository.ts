@@ -86,25 +86,20 @@ export const createUser: CreateUser = async ({
         user: { connect: { id: newUser.id } },
       },
     });
+    let idTransactionType = 'WELCOME';
+    if (indicatedBy === 'thallesfreitas@gmail.com') {
+      idTransactionType = 'WELCOME_INDICATEDBY';
+    }
 
-    const credits = await CreditsService.getCostsUsage('WELCOME');
+    const credits = await CreditsService.getCostsUsage(idTransactionType);
     const welcomeCredits = credits?.amount as number;
 
-    if (indicatedBy === 'thallesfreitas@gmail.com') {
-      await CreditsService.addCredits({
-        userId: newUser.id,
-        amount: welcomeCredits,
-        transactionType: 'WELCOME_INDICATEDBY',
-        status: 'approved',
-      });
-    } else {
-      await CreditsService.addCredits({
-        userId: newUser.id,
-        amount: welcomeCredits,
-        transactionType: 'WELCOME',
-        status: 'approved',
-      });
-    }
+    await CreditsService.addCredits({
+      userId: newUser.id,
+      amount: welcomeCredits,
+      transactionType: idTransactionType,
+      status: 'approved',
+    });
 
     const token = await tokenService.createToken(
       newUser.uuid,

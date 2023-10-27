@@ -71,10 +71,32 @@ export const getBySlug = async (
 
       const owner = payloadType.userID == data.updatedById?.id;
       let jobApplied = false;
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(' TESTE  jobApplied');
+      console.log(data.jobApplication);
+      console.log(data.jobApplication.length);
+      console.log(payloadType.userID);
       if (data.jobApplication.length > 0) {
         jobApplied =
-          data.jobApplication.find(app => app.id === payloadType.userID) ===
-          undefined;
+          data.jobApplication.find(
+            app => app.createdById.id === payloadType.userID
+          ) === undefined;
       }
       response = {
         type: payloadType.type,

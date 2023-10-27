@@ -95,7 +95,7 @@ export const getBySlug = async (
       if (data.jobApplication.length > 0) {
         jobApplied =
           data.jobApplication.find(
-            app => app.createdById.id === payloadType.userID
+            app => app.createdBy === payloadType.userID
           ) === undefined;
       }
       response = {
@@ -135,7 +135,19 @@ export const getBySlug = async (
     default:
       break;
   }
-
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log(response);
   return response;
 };
 export const getBySlugApplication = async (

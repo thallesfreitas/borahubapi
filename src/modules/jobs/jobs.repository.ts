@@ -433,7 +433,7 @@ export const getJobsByUserId = async (
     where: {
       createdBy,
       deletedAt: null,
-      isActive,
+      // isActive,
     },
     include: {
       createdById: {

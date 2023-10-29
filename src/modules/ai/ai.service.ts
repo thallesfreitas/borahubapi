@@ -109,7 +109,7 @@ export const bot = async (to: string, prompt: string) => {
     const restOfString = promptFinal.slice(firstSpaceIndex + 1);
 
     const command = [firstCommand, restOfString];
-    switch (command[0]) {
+    switch (command[0].toLocaleLowerCase()) {
       case '/especialista':
         contentSystem = `Você é um especialista em ${restOfString}. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
         contentassistant =
@@ -329,6 +329,13 @@ Personal marketing is about showcasing your skills, experiences, and values in a
 
         return false;
       case '/ajuda':
+        await WhatsService.sendMessageWithTemplate({
+          to,
+          message: 'borabotajuda',
+          type: 'borabot',
+        });
+
+        return false;
       case '/ajudar':
         await WhatsService.sendMessageWithTemplate({
           to,

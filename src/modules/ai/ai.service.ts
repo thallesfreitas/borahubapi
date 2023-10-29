@@ -105,8 +105,18 @@ export const bot = async (to: string, prompt: string) => {
     // const command = promptFinal.split(' ');
 
     const firstSpaceIndex = promptFinal.indexOf(' ');
-    const firstCommand = promptFinal.slice(0, firstSpaceIndex + 1);
-    const restOfString = promptFinal.slice(firstSpaceIndex + 1);
+    let firstCommand;
+    let restOfString;
+
+    if (firstSpaceIndex === -1) {
+      firstCommand = promptFinal;
+      restOfString = '';
+    } else {
+      firstCommand = promptFinal.slice(0, firstSpaceIndex);
+      restOfString = promptFinal.slice(firstSpaceIndex + 1);
+    }
+    // const firstCommand = promptFinal.slice(0, firstSpaceIndex);
+    // const restOfString = promptFinal.slice(firstSpaceIndex + 1);
     console.log('firstCommand: ', firstCommand);
 
     switch (firstCommand.toLocaleLowerCase().trim()) {
@@ -401,6 +411,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
       model: 'command-light',
     });
     if (historyIndex === 0) {
+      console.log('dataUserCohere.body.summary');
+      console.log(dataUserCohere.body.summary);
       createSession({
         session_id: to,
         key: 'history',

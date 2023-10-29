@@ -68,7 +68,7 @@ export const webhook = async (request: FastifyRequest, reply: FastifyReply) => {
 export const checkAction = async ({
   to,
   message,
-  idClient,
+  idClient = 'client',
 }: WhatsService.SendMessageAPIArgs) => {
   const phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
   let checkLogin;

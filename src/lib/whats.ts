@@ -194,7 +194,7 @@ function config(client: WP, type = 'Bora') {
 async function start(type = 'client') {
   const client: WP = setClient(type);
 
-  client.onMessage((message: { [x: string]: string; body: string }) => {
+  client.onMessage((message: { [x: string]: string }) => {
     const to = message.from;
     const idClient = message.to === '5511934984506@c.us' ? 'borabot' : 'client';
     if (to.includes('@c.us')) {

@@ -1515,7 +1515,11 @@ export const search = async (data: SearchQuery) => {
     experience: string | null;
     description: string | null;
     descriptionCompany: string | null;
-    modelOfWork: string | null;
+    contractMode: string[] | null;
+    affirmative: string[] | null;
+    modelOfWork: string[] | null;
+    seniority: string[] | null;
+    travel: string[] | null;
     city: string | null;
     state: string | null;
     salary: string[];
@@ -1543,13 +1547,15 @@ export const search = async (data: SearchQuery) => {
           link: string | null;
           salary: string[];
           contractMode: string[];
+          affirmative: string[] | null;
+          seniority: string[] | null;
+          travel: string[] | null;
+
           actualRole: string | null;
           city: string | null;
           state: string | null;
           extra: string | null;
           workMode: string[];
-          seniority: string[];
-          travel: string[];
           createdAt: Date;
           updatedAt: Date;
           deletedAt: Date | null;
@@ -1588,14 +1594,15 @@ export const search = async (data: SearchQuery) => {
           banner: string | null;
           link: string | null;
           salary: string[];
-          contractMode: string[];
           actualRole: string | null;
           city: string | null;
           state: string | null;
           extra: string | null;
           workMode: string[];
-          seniority: string[];
-          travel: string[];
+          contractMode: string[] | null;
+          seniority: string[] | null;
+          travel: string[] | null;
+
           createdAt: Date;
           updatedAt: Date;
           deletedAt: Date | null;
@@ -1633,14 +1640,15 @@ export const search = async (data: SearchQuery) => {
           banner: string | null;
           link: string | null;
           salary: string[];
-          contractMode: string[];
+          contractMode: string[] | null;
+          seniority: string[] | null;
+          travel: string[] | null;
+
           actualRole: string | null;
           city: string | null;
           state: string | null;
           extra: string | null;
           workMode: string[];
-          seniority: string[];
-          travel: string[];
           createdAt: Date;
           updatedAt: Date;
           deletedAt: Date | null;

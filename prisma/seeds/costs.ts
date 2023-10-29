@@ -50,6 +50,10 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
     amount: 50,
   },
   {
+    type: 'CREATE_IMAGE',
+    amount: 100,
+  },
+  {
     type: 'CREATE_DESCRIPTION_CANDIDATE',
     amount: 50,
   },

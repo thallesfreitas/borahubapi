@@ -20,7 +20,7 @@ export interface CreateJobArgs {
   slug: string;
   description: string;
   descriptionCompany: string;
-  modelOfWork: string;
+  modelOfWork: string[];
   city: string;
   state: string;
   experience: string;
@@ -345,6 +345,9 @@ export const getJobBySlug = async (slug: string) =>
                   salary: true,
                   contractMode: true,
                   actualRole: true,
+                  affirmative: true,
+                  travel: true,
+                  seniority: true,
                   categories: {
                     select: {
                       category: {
@@ -379,8 +382,6 @@ export const getJobBySlug = async (slug: string) =>
                   state: true,
                   extra: true,
                   workMode: true,
-                  seniority: true,
-                  travel: true,
                 },
               },
             },
@@ -484,6 +485,9 @@ export const getJobsByUserId = async (
                   salary: true,
                   contractMode: true,
                   actualRole: true,
+                  affirmative: true,
+                  travel: true,
+                  seniority: true,
                   categories: {
                     select: {
                       category: {
@@ -518,8 +522,6 @@ export const getJobsByUserId = async (
                   state: true,
                   extra: true,
                   workMode: true,
-                  seniority: true,
-                  travel: true,
                 },
               },
             },

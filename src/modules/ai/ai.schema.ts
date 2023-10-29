@@ -32,3 +32,16 @@ export const ChoiceCandidateJobBody = {
     promptCandidate2: { type: 'string' },
   },
 };
+
+export const aiImageBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: [],
+  properties: {
+    model: { type: 'string' },
+    userId: { type: 'number' },
+    textPrompt: { type: 'string' },
+    width: { type: 'number' },
+    height: { type: 'number' },
+  },
+};

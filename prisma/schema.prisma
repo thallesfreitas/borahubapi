@@ -464,9 +464,12 @@ model Jobs {
   experience          String?
   description         String? 
   descriptionCompany  String?
-  modelOfWork         String?
+  modelOfWork         String[]
+  contractMode        String[]
   city                String?
   state               String?
+  seniority    String[]
+  travel       String[]
   showSalary          Boolean  @default(true)
   salary              String[]
   affirmative          String[]

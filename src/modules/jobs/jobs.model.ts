@@ -5,7 +5,7 @@ export type JobBody = {
   slug: string;
   description: string;
   descriptionCompany: string;
-  modelOfWork: string;
+  modelOfWork: string[];
   city: string;
   state: string;
   showSalary: boolean;

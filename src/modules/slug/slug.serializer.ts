@@ -91,6 +91,9 @@ export const getBySlug = async (
         salary: data.salary,
         tags: data.tags,
         affirmative: data.affirmative,
+        travel: data.travel,
+        contractMode: data.contractMode,
+        seniority: data.seniority,
         categories: data.categories,
 
         jobApplication: data.jobApplication,

@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
+import { SDXL } from 'segmind-npm';
 import { send, sendMessageWithTemplate, startTyping } from '../../lib/whats';
 import { verify } from '../credits/credits.service';
 import {
@@ -9,6 +10,7 @@ import {
 } from '../manageSessions/manageSessions.service';
 import { getUserByPhone } from '../users/user.repository';
 import * as WhatsService from '../whats/whats.service';
+import { CreateAiModel } from './ai.model';
 
 const cohere = require('cohere-ai');
 
@@ -34,7 +36,36 @@ function zeraSession(to: string, contentSystem: string) {
   });
   return 1;
 }
-
+export const createImage = async (req: CreateAiModel) => {
+  const { prompt, width, height } = req;
+  const apiKey = process.env.SEGMING_KEY;
+  const sdxl = new SDXL(apiKey);
+  console.log('prompt');
+  console.log(prompt);
+  try {
+    const response = await sdxl.generate({
+      prompt,
+      style: 'base', // Style of the image
+      samples: 1, // Number of samples to generate
+      scheduler: 'UniPC', // Type of scheduler
+      num_inference_steps: 40, // Number of denoising steps
+      guidance_scale: 8, // Scale for classifier-free guidance
+      strength: 0.2, // Transformation strength
+      high_noise_fraction: 0.8, // Fraction of inference steps to run on each expert
+      seed: 468685, // Seed for image generation
+      img_width: width || 1024, // Image width
+      // img_width: 1000, // Image width
+      // img_height: 1000, // Image height
+      img_height: height || 1024, // Image height
+      refiner: true, // Improve image quality
+      base64: true, // Base64 encoding of the output image
+    });
+    return response.data.image;
+  } catch (error) {
+    console.error('Error:', error);
+    return error;
+  }
+};
 export const bot = async (to: string, prompt: string) => {
   let promptFinal = prompt;
   const userPhone = `+${to.split('@')[0]}`;
@@ -70,12 +101,16 @@ export const bot = async (to: string, prompt: string) => {
   const history = await getSession(to);
   let historyIndex = 0;
   if (promptFinal.startsWith('/')) {
-    const command = promptFinal.split(' ')[0];
-    switch (command) {
+    // const command = promptFinal.split(' ');
+
+    const firstSpaceIndex = promptFinal.indexOf(' ');
+    const firstCommand = promptFinal.slice(0, firstSpaceIndex);
+    const restOfString = promptFinal.slice(firstSpaceIndex + 1);
+
+    const command = [firstCommand, restOfString];
+    switch (command[0]) {
       case '/especialista':
-        contentSystem = `Você é um especialista em ${
-          promptFinal.split(' ')[1]
-        }. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
+        contentSystem = `Você é um especialista em ${restOfString}. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
         contentassistant =
           'Retorne que entendeu sua nova especialidade e estará feliz em ajudar.';
 
@@ -269,6 +304,15 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         promptFinal = '';
         historyIndex = zeraSession(to, contentSystem);
         break;
+      case '/imagem':
+      case '/image':
+        await WhatsService.sendImagemToWhats({
+          to,
+          message: restOfString,
+          type: 'borabot',
+        });
+
+        return false;
       case '/ajuda':
       case '/ajudar':
         await WhatsService.sendMessageWithTemplate({

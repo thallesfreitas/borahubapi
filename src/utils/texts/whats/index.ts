@@ -64,6 +64,7 @@ Vamos começar? 🌟`,
 
 */ajuda* - Para ver a lista de comandos disponíveis.
 */especialista* [área] - Para me especializar em uma área, exemplo: */especialista* marketing.
+*/imagem* [descritivo detalhado de como quer sua imagem] - Crie imagens com o borabot. :) *IMPORTANTE* O custo para gerar uma imagem é de 100 créditos.
 */dica_cv* - Para dicas sobre como melhorar seu currículo.
 */dica_entrevista* - Para dicas de preparação para entrevistas.
 */estrategia_marketing* - Para estratégias de marketing eficazes.

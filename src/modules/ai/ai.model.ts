@@ -10,12 +10,15 @@ export type ChatBotModelBody = {
 export type CreateAiModel = {
   tokens?: number;
   model?: string;
-  userId: number;
+  userId?: number;
   type?: string;
   prompt: string;
+  size?: string;
   temperature?: number;
   system?: string;
   assistant?: string;
+  height?: number;
+  width?: number;
 };
 
 export type CreateAIBody = {

@@ -1,8 +1,10 @@
 // import { cohere } from 'cohere-ai';
 import { FastifyReply } from 'fastify';
 import OpenAI from 'openai';
+// import { SDXL } from 'segmind-npm';
 import { addUsage } from '../usage/usage.service';
 import { ChoiceCandidateJobAI, CreateAI } from './ai.model';
+import * as AiService from './ai.service';
 
 const cohere = require('cohere-ai');
 
@@ -12,21 +14,30 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-enum CreateImageRequestSizeEnum {
-  '256x256' = '256x256',
-  '512x512' = '512x512',
-  '1024x1024' = '1024x1024',
-}
 export const createImage = async (req: CreateAI, reply: FastifyReply) => {
-  const request = {
-    prompt: req.body.prompt,
-    n: 1,
-    size: '1024x1024' as CreateImageRequestSizeEnum,
-  };
+  const { prompt, width, height } = req.body;
+  // const apiKey = process.env.SEGMING_KEY;
+  // const sdxl = new SDXL(apiKey);
 
-  const response = await (await openai.images.generate(request)).data;
-  return reply.send(response);
+  try {
+    const response = await AiService.createImage({ prompt, width, height });
+
+    const jsonResponse = {
+      image: response,
+    };
+
+    return await reply
+      .header('Content-Type', 'application/json')
+      .send(jsonResponse);
+  } catch (error) {
+    console.error('Error:', error);
+    return reply
+      .status(500)
+      .send({ status: 'error', message: 'Internal server error' });
+  }
 };
+
+// console.log(response.data);
 
 export const completion = async (req: CreateAI, reply: FastifyReply) => {
   const response = await openai.completions.create({
@@ -90,14 +101,13 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
       {
         role: 'user',
         content: prompt as string,
-        // content: finalPrompt as string,
       },
     ],
   });
 
   if (responseAi.usage && userId) {
     const dataUsage = {
-      userId,
+      userId: userId as number,
       total: responseAi.usage.total_tokens,
       input: responseAi.usage.prompt_tokens,
       output: responseAi.usage.completion_tokens,
@@ -151,7 +161,7 @@ export const OLDchat = async (req: CreateAI, reply: FastifyReply) => {
 
   if (response.usage) {
     const dataUsage = {
-      userId,
+      userId: userId as number,
       total: response.usage.total_tokens,
       input: response.usage.prompt_tokens,
       output: response.usage.completion_tokens,

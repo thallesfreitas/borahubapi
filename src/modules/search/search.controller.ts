@@ -27,10 +27,6 @@ export const search = async (req: Model.SearchRequest, reply: FastifyReply) => {
     area,
     isActive,
   });
-  console.log('searchResult.jobs.length');
-  console.log('searchResult.jobs.length');
-  console.log('searchResult.jobs.length');
-  console.log('searchResult.jobs.length');
-  console.log(searchResult.jobs.length);
+
   return reply.send({ data: searchResult });
 };

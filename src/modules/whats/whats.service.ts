@@ -103,6 +103,16 @@ export const startBoraBot = async (to: string) => {
   }
 };
 
+export const sendImagemToWhats = async (params: SendMessageArgs) => {
+  try {
+    const response = await WhatsApi.sendImagemToWhats(params);
+    return response;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
 export const sendMessageWithTemplate = async (params: SendMessageArgs) => {
   try {
     const response = await WhatsApi.sendMessageWithTemplate(params);

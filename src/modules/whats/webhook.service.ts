@@ -68,6 +68,7 @@ export const webhook = async (request: FastifyRequest, reply: FastifyReply) => {
 export const checkAction = async ({
   to,
   message,
+  idClient,
 }: WhatsService.SendMessageAPIArgs) => {
   const phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
   let checkLogin;
@@ -152,7 +153,7 @@ export const checkAction = async ({
       //   to: to,
       //   message: 'default',
       // });
-      AiService.bot(to, message);
+      if (idClient === 'borabot') AiService.bot(to, message);
       break;
   }
   return false;

@@ -105,11 +105,11 @@ export const bot = async (to: string, prompt: string) => {
     // const command = promptFinal.split(' ');
 
     const firstSpaceIndex = promptFinal.indexOf(' ');
-    const firstCommand = promptFinal.slice(0, firstSpaceIndex);
+    const firstCommand = promptFinal.slice(0, firstSpaceIndex + 1);
     const restOfString = promptFinal.slice(firstSpaceIndex + 1);
     console.log('firstCommand: ', firstCommand);
 
-    switch (firstCommand.toLocaleLowerCase()) {
+    switch (firstCommand.toLocaleLowerCase().trim()) {
       case '/especialista':
         contentSystem = `Você é um especialista em ${restOfString}. Você trabalha no BoraHub e é muito feliz de trabalhar lá.`;
         contentassistant =

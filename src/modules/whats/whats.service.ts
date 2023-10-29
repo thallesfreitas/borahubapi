@@ -51,6 +51,7 @@ export interface webhookArgs {
 export interface SendMessageAPIArgs {
   to: string;
   message: string;
+  idClient: string;
 }
 
 export interface StartBoraBotArgs {

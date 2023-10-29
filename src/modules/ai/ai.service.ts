@@ -25,7 +25,8 @@ export const botTESTE = async (to: string, prompt: string) => {
   send({
     to,
     message: `teste: ${prompt}`,
-    type: 'borabot',
+    // type: 'borabot',
+    type: 'client',
   });
 };
 
@@ -75,7 +76,8 @@ export const bot = async (to: string, prompt: string) => {
     sendMessageWithTemplate({
       to,
       message: 'USER_NOT_FOUND',
-      type: 'borabot',
+      // type: 'borabot',
+      type: 'client',
     });
     return false;
   }
@@ -89,7 +91,8 @@ export const bot = async (to: string, prompt: string) => {
       sendMessageWithTemplate({
         to,
         message: 'CREDITS_INSUFFICIENT',
-        type: 'borabot',
+        // type: 'borabot',
+        type: 'client',
       });
       return false;
     }
@@ -326,7 +329,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
           sendMessageWithTemplate({
             to,
             message: 'CREDITS_INSUFFICIENT',
-            type: 'borabot',
+            // type: 'borabot',
+            type: 'client',
           });
           return false;
         }
@@ -334,7 +338,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         await WhatsService.sendImagemToWhats({
           to,
           message: restOfString,
-          type: 'borabot',
+          // type: 'borabot',
+          type: 'client',
         });
 
         return false;
@@ -342,7 +347,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         await WhatsService.sendMessageWithTemplate({
           to,
           message: 'borabotajuda',
-          type: 'borabot',
+          // type: 'borabot',
+          type: 'client',
         });
 
         return false;
@@ -350,7 +356,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         await WhatsService.sendMessageWithTemplate({
           to,
           message: 'borabotajuda',
-          type: 'borabot',
+          // type: 'borabot',
+          type: 'client',
         });
 
         return false;
@@ -369,7 +376,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
     });
   }
 
-  startTyping(to, 'borabot');
+  // startTyping(to, 'borabot');
+  startTyping(to, 'client');
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
@@ -423,7 +431,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
   send({
     to,
     message: response.choices[0].message.content as string,
-    type: 'borabot',
+    // type: 'borabot',
+    type: 'client',
   });
 
   return response.choices[0].message.content;

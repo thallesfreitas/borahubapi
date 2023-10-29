@@ -153,7 +153,8 @@ export const checkAction = async ({
       //   to: to,
       //   message: 'default',
       // });
-      if (idClient === 'borabot') AiService.bot(to, message);
+      // if (idClient === 'borabot') AiService.bot(to, message);
+      AiService.bot(to, message);
       break;
   }
   return false;

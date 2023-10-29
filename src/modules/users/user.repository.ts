@@ -123,13 +123,14 @@ export const createUser: CreateUser = async ({
       type: 'client',
     });
 
-    setTimeout(() => {
-      WhatsApi.sendMessageWithTemplate({
-        to: phone,
-        message: 'createdUserBoraBot',
-        type: 'borabot',
-      });
-    }, 5000);
+    // setTimeout(() => {
+    //   WhatsApi.sendMessageWithTemplate({
+    //     to: phone,
+    //     message: 'createdUserBoraBot',
+    //     // type: 'borabot',
+    //     type: 'client',
+    //   });
+    // }, 5000);
 
     newUser.token = token.token;
 

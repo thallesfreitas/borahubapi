@@ -174,20 +174,22 @@ interface SendText {
 }
 
 let clientWP: WP;
-let borabot: WP;
+// let borabot: WP;
 
 function setClient(type: string) {
   if (type === 'client') {
     return clientWP;
   }
-  return borabot;
+  // return borabot;
+  return clientWP;
 }
 
 function config(client: WP, type = 'Bora') {
   if (type === 'Bora') {
     clientWP = client;
   } else {
-    borabot = client;
+    // borabot = client;
+    clientWP = client;
   }
 }
 
@@ -300,7 +302,7 @@ export async function sendImagemToWhats({ to, message, type }: SendText) {
   client.startTyping(phone);
 
   const response = await AiService.createImage({ prompt: message });
-  const t = await borabot
+  const t = await client
     .sendFileFromBase64(
       phone,
       `data:image/jpeg;base64,${response}`,
@@ -441,7 +443,7 @@ export const connectWP = async (_session = 'Bora') => {
       if (_session === 'Bora') {
         start('client');
       } else {
-        start('borabot');
+        // start('borabot');
       }
     })
     .catch((error: any) => console.log(error));

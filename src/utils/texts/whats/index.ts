@@ -38,7 +38,28 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
     message: `Para validar seus dados agora envie: *CONFIRMO*`,
   },
   createdUser: {
-    message: `Boa!! Agora você já confirmou seu WhatsApp. \n Se você não validou seu email ainda, fique de olho na sua caixa para confirmar esse importante contato também.. :) 📩📱`,
+    message: `Boa! Você confirmou seu WhatsApp. Não esqueça de validar seu email também. 📩📱
+
+ops... nem me apresentei. 
+Sou o *BoraBot*, seu assistente. 
+Aqui, ofereço insights sobre recrutamento, marketing e tecnologia. 
+Também consigo gerar imagens. Use */imagem* + descrição. Seja criativo
+Para comandos ou ajuda, digite */ajuda*. 
+
+Faça perguntas como:
+- Preparação para entrevista?
+- Estratégias de marketing digital?
+- Criar um bom portfólio?
+
+Estou à disposição para ajudar no BoraHub. 
+
+Bora!?
+
+*IMPORTANTE*
+🎓🌟 Interagir comigo custa *2 créditos do BoraHub! Para gerar imagem o custo é um pouco maior, de 20 créditos* 🚀
+*Mensagens de suporte ao site não são pagas.*
+  
+`,
   },
   createdUserBoraBot: {
     message: `Olá! Parabéns por se juntar ao BoraHub! Sou o BoraBot, seu assistente virtual, estou aqui para ajudar em sua jornada profissional com insights sobre recrutamento, marketing, publicidade, tecnologia, e mais. 🎓🌟

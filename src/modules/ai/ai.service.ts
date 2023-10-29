@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable indent */
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
@@ -306,6 +307,20 @@ Personal marketing is about showcasing your skills, experiences, and values in a
         break;
       case '/imagem':
       case '/image':
+        const creditsToUseCreateImage = await verify({
+          userId: user.id as number,
+          type: 'CREATE_IMAGE',
+        });
+
+        if (!creditsToUseCreateImage) {
+          sendMessageWithTemplate({
+            to,
+            message: 'CREDITS_INSUFFICIENT',
+            type: 'borabot',
+          });
+          return false;
+        }
+
         await WhatsService.sendImagemToWhats({
           to,
           message: restOfString,

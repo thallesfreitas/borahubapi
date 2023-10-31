@@ -58,7 +58,7 @@ export const createImage = async (req: CreateAiModel) => {
       : 'Crie um prompt para fazer a modificacao pedida na imagem enviada. Deixe a descrição abaixo perfeita pra enviar ao segmind.';
 
   console.log(promptAssist);
-  /*
+
   const refinePrompt = await openai.chat.completions.create({
     model: 'gpt-4',
     temperature: 0.9,
@@ -85,8 +85,8 @@ export const createImage = async (req: CreateAiModel) => {
     ],
   });
   const promptRefine = refinePrompt.choices[0].message.content as string;
-  */
-  const promptRefine = prompt;
+
+  // const promptRefine = prompt;
 
   try {
     let response;

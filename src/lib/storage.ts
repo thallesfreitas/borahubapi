@@ -108,6 +108,29 @@ export const uploadFile = async (file: any, folder: string = 'temp') => {
   return s3Return;
 };
 
+export const uploadImageToAI = async (file: any, folder: string = 'temp') => {
+  try {
+    // const image = await sharp(file.data);
+    const image = sharp(Buffer.from(file));
+
+    const compressedImage = image.resize({ width: 1024, height: 1024 });
+    const fileUPLOAD = compressedImage.webp({ quality: 70 });
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME as string,
+      Key: `${folder}/imageToAI.png`,
+      Body: fileUPLOAD,
+      ACL: 'public-read',
+    };
+    const s3Return = await s3.upload(params).promise();
+
+    return s3Return;
+  } catch (error) {
+    console.error('Error upload image:', error);
+    return error;
+  }
+};
+
 export const uploadQr = async (file: any, folder: string = 'temp') => {
   const image = await sharp(file.data);
 

@@ -456,6 +456,7 @@ model JobApplication {
 model Jobs {
   id                  Int      @id @default(autoincrement())
   title               String
+  slug                String   @unique
   company             String?
   email               String?
   phone               String?
@@ -476,7 +477,6 @@ model Jobs {
   categories          CategoriesOnJobs[]
   tags                TagsOnJobs[]
   areas               AreasOnJobs[]
-  slug                String   @unique
   isActive            Boolean  @default(true)
   isPublished         Boolean  @default(false) @map("is_published")
   isApproved          Boolean  @default(false) @map("is_approved")
@@ -568,6 +568,8 @@ model Recruiter {
 model ServiceProvider {
   id           Int       @id @default(autoincrement())
   uuid         String    @default(cuid())
+  title               String
+  slug                String   @unique
   description  String?
   avatar  String?
   banner  String?
@@ -596,6 +598,8 @@ model ServiceProvider {
 model Freelancer {
   id           Int       @id @default(autoincrement())
   uuid         String    @default(cuid())
+  title               String
+  slug                String   @unique
   description  String?
   avatar  String?
   banner  String?

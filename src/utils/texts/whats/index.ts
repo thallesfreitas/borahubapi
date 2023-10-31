@@ -11,6 +11,7 @@ export type WhatsType =
   | 'createdUser'
   | 'createdUserBoraBot'
   | 'borabotajuda'
+  | 'changeImage'
   | 'loggedUser'
   | 'START_BORABOT'
   | 'CREDITS_INSUFFICIENT'
@@ -79,6 +80,10 @@ Por exemplo, pergunte sobre elaboração de CV ou estratégias de marketing pess
 
 Estou ansioso para ajudá-lo a explorar as oportunidades no BoraHub.
 Vamos começar? 🌟`,
+  },
+  changeImage: {
+    message:
+      'Legal. Estamos processando sua imagem. Seja um paciente porque é um processo um pouco trabalhoso. :)',
   },
   borabotajuda: {
     message: `Aqui estão alguns comandos úteis que você pode usar ao interagir comigo:

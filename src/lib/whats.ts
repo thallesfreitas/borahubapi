@@ -15,50 +15,6 @@ import { uploadQr } from './storage';
 const fs = require('fs');
 const wppconnect = require('@wppconnect-team/wppconnect');
 
-const {
-  WHATS_API_URL,
-  WHATS_API_TOKEN,
-  DELAY_MESSAGE_GROUPS,
-  WHATS_INSTANCE_ID,
-  ULTRA_END_POINT,
-  TOKEN_FB_TEST,
-} = process.env;
-
-const jobsample = `
-ATENDIMENTO OFFLINE - PLENO OU SÊNIOR
-
-EMPRESA
-Agência Doc.Sync
-
-DATA E LOCAL
-06/09, São Paulo 
-
-ATIVIDADES
-- Fluxo entre a agência e as incorporadoras.
-- Acompanhamento de fornecedores.
-- Auxílio no desenvolvimento de campanhas offline.
-- Acompanhamento da produção de materiais gráficos.
-- Acompanhamento da comunicação visual de stands e terrenos.
-- Verificação in loco da instalação de placas, adesivos, e painéis.
-- Compra e verificação de mídia offline.
-- Ativações, eventos e promoção de rua.
-- Prestação de contas e controle de budget do job.
-- Serviço de produção (cotações de fornecedores e serviços).
-
-REQUISITOS
-- Experiência no mercado imobiliário (agências, incorporadoras, construtoras e/ou grandes imobiliárias).
-- Experiência comprovada em fluxo de aprovação de KV, montagem de stand e campanhas offline.
-- Perfil analítico, pró ativo e curioso. Bom relacionamento interpessoal e facilidade em trabalhar no regime home office.
-
-DETALHES DA POSIÇÃO
-- Contratação PJ.
-- Home office (com exceção de reuniões pontuais com o cliente e visitas técnicas).
-- Nossos clientes estão em São Paulo e é preciso ter fácil acesso.
-
-CV COM PRETENSÃO SALARIAL
-Enviar para Marcela Matos (Head de Atendimento) no e-mail m.matos@docsync.com.br
-`;
-
 // const groupsWhatsTeste = '5511945483326-1593553509@g.us';
 // const groupsWhatsTeste = '120363047748135271@g.us';
 export const groupsWhatsStatusTeste = [false, false, false, false, false];
@@ -171,6 +127,8 @@ interface SendText {
   to: string;
   message: string;
   type: string;
+  typeWhats?: string;
+  image?: string;
 }
 
 let clientWP: WP;
@@ -192,17 +150,37 @@ function config(client: WP, type = 'Bora') {
     clientWP = client;
   }
 }
-
 async function start(type = 'client') {
   const client: WP = setClient(type);
 
-  client.onMessage((message: { [x: string]: string }) => {
+  client.onMessage(async (message: { [x: string]: string }) => {
+    // console.log('client.onMessage');
+    // console.log(message);
     const to = message.from;
     const idClient = message.to === '5511934984506@c.us' ? 'borabot' : 'client';
     if (to.includes('@c.us')) {
       if (message) {
-        const textMessage = message.body.toLowerCase();
-        checkAction({ to, message: textMessage, idClient });
+        let textMessage = '';
+        if (message.type === 'chat') {
+          textMessage = message.body.toLowerCase();
+        } else {
+          textMessage = message.caption.startsWith('/imagem ')
+            ? message.caption.toLowerCase()
+            : `/imagem ${message.caption.toLowerCase()}`;
+        }
+
+        const imageHihg =
+          message.type === 'image'
+            ? await client.downloadMedia(message.id)
+            : '';
+
+        checkAction({
+          to,
+          message: textMessage,
+          idClient,
+          image: imageHihg.split(',')[1],
+          typeWhats: message.type,
+        });
       }
     }
   });
@@ -295,20 +273,49 @@ export async function send({ to, message, type }: SendText) {
   Queue.sendMessageToQueue('queueSendWhats', messageFinal);
 }
 
-export async function sendImagemToWhats({ to, message, type }: SendText) {
+export async function sendImagemToWhats({
+  to,
+  message,
+  type,
+  typeWhats,
+  image,
+}: SendText) {
   const client: WP = setClient(type);
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
   client.startTyping(phone);
-
-  const response = await AiService.createImage({ prompt: message });
+  if (typeWhats === 'image') {
+    sendMessageWithTemplate({
+      to,
+      message: 'changeImage',
+      // type: 'borabot',
+      type: 'client',
+    });
+  }
+  const response = (await AiService.createImage({
+    prompt: message,
+    typeWhats,
+    image,
+  })) as string;
+  console.log('response293');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response');
+  console.log('response300');
+  console.log(response);
+  console.log(typeof response);
+  // console.log(response.data);
+  // console.log(response.data.image);
+  const responseFinal = response;
+  // if (!response.startsWith('data')) {
+  //   responseFinal = `data:image/jpeg;base64,${response}`;
+  // }
+  // responseFinal = `data:image/jpeg;base64,${response}`;
   const t = await client
-    .sendFileFromBase64(
-      phone,
-      `data:image/jpeg;base64,${response}`,
-      'image-borabot',
-      ''
-    )
+    .sendFileFromBase64(phone, responseFinal, 'image-borabot', '')
     .then(result => {
       console.log('Result: ', result); // return object success
       client.stopTyping(phone);

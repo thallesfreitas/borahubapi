@@ -19,6 +19,8 @@ export type CreateAiModel = {
   assistant?: string;
   height?: number;
   width?: number;
+  typeWhats?: string;
+  image?: string;
 };
 
 export type CreateAIBody = {

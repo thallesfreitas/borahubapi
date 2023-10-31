@@ -69,6 +69,8 @@ export const checkAction = async ({
   to,
   message,
   idClient = 'client',
+  typeWhats = 'chat',
+  image = '',
 }: WhatsService.SendMessageAPIArgs) => {
   const phoneNumber = `+${to.replace(/@c\.us/g, '')}`;
   let checkLogin;
@@ -154,7 +156,7 @@ export const checkAction = async ({
       //   message: 'default',
       // });
       // if (idClient === 'borabot') AiService.bot(to, message);
-      AiService.bot(to, message);
+      AiService.bot(to, message, typeWhats, image);
       break;
   }
   return false;

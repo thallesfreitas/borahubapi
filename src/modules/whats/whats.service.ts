@@ -52,6 +52,8 @@ export interface SendMessageAPIArgs {
   to: string;
   message: string;
   idClient?: string;
+  typeWhats?: string;
+  image?: string;
 }
 
 export interface StartBoraBotArgs {
@@ -64,6 +66,8 @@ export interface SendMessageArgs {
   payload?: string[];
   payloadVar?: string[];
   type: string;
+  typeWhats?: string;
+  image?: string;
 }
 
 export interface SendMessageToGroupsArgs {

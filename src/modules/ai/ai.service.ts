@@ -2,7 +2,7 @@
 /* eslint-disable indent */
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
-import { SDXL } from 'segmind-npm';
+import { Img2Img, SDXL } from 'segmind-npm';
 import { send, sendMessageWithTemplate, startTyping } from '../../lib/whats';
 import { verify } from '../credits/credits.service';
 import {
@@ -38,37 +38,174 @@ function zeraSession(to: string, contentSystem: string) {
   });
   return 1;
 }
+const fs = require('fs');
+const path = require('path');
+const request = require('request');
+
+async function toB64(imgPath: string) {
+  const data = fs.readFileSync(path.resolve(imgPath));
+  return Buffer.from(data).toString('base64');
+}
 export const createImage = async (req: CreateAiModel) => {
-  const { prompt, width, height } = req;
+  const { prompt, width, height, typeWhats, image } = req;
   const apiKey = process.env.SEGMING_KEY;
-  const sdxl = new SDXL(apiKey);
+
   console.log('prompt');
   console.log(prompt);
+  const promptAssist =
+    typeWhats === 'chat'
+      ? 'Crie um prompt para gerar uma imagem no stable diffuse. Deixe a descrição abaixo perfeita pra enviar ao segmind do stable diffuse. Coloque bastante detalhes para gerar uma imagem muito boa.'
+      : 'Crie um prompt para fazer a modificacao pedida na imagem enviada. Deixe a descrição abaixo perfeita pra enviar ao segmind.';
+
+  console.log(promptAssist);
+  /*
+  const refinePrompt = await openai.chat.completions.create({
+    model: 'gpt-4',
+    temperature: 0.9,
+    max_tokens: 1000,
+    messages: [
+      {
+        role: 'system',
+        content: 'Você é um engenheiro de prompt senior.',
+      },
+      {
+        role: 'assistant',
+        content: promptAssist,
+      },
+      {
+        role: 'assistant',
+        content: 'Escreva apenas o prompt e em inglês.',
+        // 'Escreva apenas o prompt e em inglês. OBS - não traduza textos que tenham sido pedido para ser escritos pelo usuario.',
+      },
+
+      {
+        role: 'user',
+        content: prompt as string,
+      },
+    ],
+  });
+  const promptRefine = refinePrompt.choices[0].message.content as string;
+  */
+  const promptRefine = prompt;
+
   try {
-    const response = await sdxl.generate({
-      prompt,
-      style: 'base', // Style of the image
-      samples: 1, // Number of samples to generate
-      scheduler: 'UniPC', // Type of scheduler
-      num_inference_steps: 40, // Number of denoising steps
-      guidance_scale: 8, // Scale for classifier-free guidance
-      strength: 0.2, // Transformation strength
-      high_noise_fraction: 0.8, // Fraction of inference steps to run on each expert
-      seed: 468685, // Seed for image generation
-      img_width: width || 1024, // Image width
-      // img_width: 1000, // Image width
-      // img_height: 1000, // Image height
-      img_height: height || 1024, // Image height
-      refiner: true, // Improve image quality
-      base64: true, // Base64 encoding of the output image
+    let response;
+    let sdxl;
+
+    if (typeWhats === 'chat') {
+      sdxl = new SDXL(apiKey);
+      response = await sdxl.generate({
+        prompt: promptRefine,
+        style: 'base', //
+        samples: 1,
+        scheduler: 'UniPC',
+        num_inference_steps: 40,
+        guidance_scale: 8,
+        strength: 0.2,
+        high_noise_fraction: 0.8,
+        seed: 468685,
+        img_width: width || 1024,
+        img_height: height || 1024,
+        refiner: true,
+        base64: true,
+      });
+      return `data:image/jpeg;base64,${response.data.image}`;
+    }
+    console.log('Img2Img');
+    console.log('Img2Img');
+    console.log('Img2Img');
+    console.log('Img2Img');
+    console.log('Img2Img');
+    console.log('Img2Img');
+    console.log('Img2Img');
+    // console.log(image);
+
+    // sdxl = new Word2Img(apiKey);
+    // sdxl = new Controlnet(apiKey, 'scribble');
+    sdxl = new Img2Img(apiKey);
+
+    const imageBuffer = Buffer.from(image as string, 'base64');
+    const tempFilePath = 'tempImage.jpg';
+    fs.writeFileSync(tempFilePath, imageBuffer);
+
+    // const imageS3 = (await uploadImageToAI(imageBuffer, 'tempaiimage')) as {
+    //   Location: any;
+    //   key: any;
+    // };
+
+    // const imageTo = (await toB64(image as string)) as string;
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    console.log('tempFilePath');
+    // const imageTo = (await toB64('tempImage.jpg')) as string;
+    console.log(tempFilePath);
+
+    response = await sdxl.generate({
+      // image: tempFilePath,
+      // image: await toB64(tempFilePath),
+      // image: await toB64('tempImage.jpg'),
+      image: 'tempImage.jpg',
+      // image: imageS3.Location,
+      // image: imageTo,
+      negativePrompt: '',
+      prompt: promptRefine,
+      scheduler: 'DDIM',
+      num_inference_steps: 40,
+      guidance_scale: 10.5,
+      strength: 0.75,
+      seed: 58877465625,
+      // img_width: width || 1024,
+      // img_height: height || 1024,
+      samples: 1,
+      base64: true,
     });
-    return response.data.image;
+
+    fs.unlinkSync(tempFilePath);
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log('data:image/jpeg;base64,response.data.image');
+    console.log(response);
+    // deleteFile(imageS3.key);
+    // return `data:image/jpeg;base64,`;
+    return `data:image/jpeg;base64,${response.data.image}`;
+
+    // console.log('response');
+    // console.log(response);
   } catch (error) {
-    console.error('Error:', error);
-    return error;
+    console.error('Error ai service:', error);
+    return 'erro';
   }
 };
-export const bot = async (to: string, prompt: string) => {
+
+// image: image as string,
+// prompt: promptRefine,
+// samples: 1, // Number of samples to generate
+// scheduler: 'UniPC', // Type of scheduler
+// num_inference_steps: 40, // Number of denoising steps
+// guidance_scale: 8, // Scale for classifier-free guidance
+// strength: 0.2, // Transformation strength
+// seed: 468685, // Seed for image generation
+// img_width: width || 1024, // Image width
+// // img_width: 1000, // Image width
+// // img_height: 1000, // Image height
+// img_height: height || 1024, // Image height
+// base64: true, // Base64 encoding of the output image
+// image: image as string,
+export const bot = async (
+  to: string,
+  prompt: string,
+  typeWhats: string,
+  image: string
+) => {
   let promptFinal = prompt;
   const userPhone = `+${to.split('@')[0]}`;
   const user = await getUserByPhone(userPhone);
@@ -340,6 +477,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
           message: restOfString,
           // type: 'borabot',
           type: 'client',
+          typeWhats,
+          image,
         });
 
         return false;

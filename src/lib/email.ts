@@ -109,7 +109,7 @@ export const sendWhatsConection = async (type: string) => {
   const compiledTemplate = handlebars.compile(source);
   const mail = {
     from: `contato@boraajudar.work`,
-    to: `thallesfreitas@yahoo.com.br`,
+    to: `thallesfreitas@yahoo.com.br, thallesfreitas@gmail.com`,
     subject,
     html: compiledTemplate({}),
     attachments: [

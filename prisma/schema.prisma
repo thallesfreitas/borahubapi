@@ -568,8 +568,8 @@ model Recruiter {
 model ServiceProvider {
   id           Int       @id @default(autoincrement())
   uuid         String    @default(cuid())
-  title               String
-  slug                String   @unique
+  // title               String
+  // slug                String   @unique
   description  String?
   avatar  String?
   banner  String?
@@ -598,8 +598,8 @@ model ServiceProvider {
 model Freelancer {
   id           Int       @id @default(autoincrement())
   uuid         String    @default(cuid())
-  title               String
-  slug                String   @unique
+  // title               String
+  // slug                String   @unique
   description  String?
   avatar  String?
   banner  String?

@@ -2,7 +2,6 @@
 /* eslint-disable indent */
 /* eslint-disable import/no-cycle */
 import OpenAI from 'openai';
-import { Controlnet, SDXL } from 'segmind-npm';
 import { send, sendMessageWithTemplate, startTyping } from '../../lib/whats';
 import { verify } from '../credits/credits.service';
 import {
@@ -14,6 +13,7 @@ import * as WhatsService from '../whats/whats.service';
 import { CreateAiModel } from './ai.model';
 
 const cohere = require('cohere-ai');
+const axios = require('axios');
 
 cohere.init(process.env.COHERE_API_KEY_HOMO);
 
@@ -31,6 +31,12 @@ function zeraSession(to: string, contentSystem: string) {
 }
 const fs = require('fs');
 
+const path = require('path');
+
+async function toB64(imgPath: any) {
+  const data = fs.readFileSync(path.resolve(imgPath));
+  return Buffer.from(data).toString('base64');
+}
 export const createImage = async (req: CreateAiModel) => {
   const { prompt, width, height, typeWhats, image } = req;
   const apiKey = process.env.SEGMING_KEY;
@@ -38,8 +44,7 @@ export const createImage = async (req: CreateAiModel) => {
   const promptAssist =
     typeWhats === 'chat'
       ? 'Crie um prompt para gerar uma imagem no stable diffuse. Deixe a descrição abaixo perfeita pra enviar ao segmind do stable diffuse. Coloque bastante detalhes para gerar uma imagem muito boa.'
-      : 'Crie um prompt para fazer a modificacao pedida na imagem enviada. Deixe a descrição abaixo perfeita pra enviar ao segmind.';
-
+      : 'Explique melhor o pedido feito no prompt em cima da imagem enviada. Deixe a descrição abaixo perfeita pra enviar ao segmind do stable diffuse. Coloque bastante detalhes para gerar uma imagem muito boa.';
   const refinePrompt = await openai.chat.completions.create({
     model: 'gpt-4',
     temperature: 0.9,
@@ -51,11 +56,7 @@ export const createImage = async (req: CreateAiModel) => {
       },
       {
         role: 'assistant',
-        content: promptAssist,
-      },
-      {
-        role: 'assistant',
-        content: 'Escreva apenas o prompt e em inglês.',
+        content: `${promptAssist} Escreva apenas o prompt e em inglês.`,
       },
 
       {
@@ -68,34 +69,59 @@ export const createImage = async (req: CreateAiModel) => {
 
   try {
     let response;
-    let sdxl;
+    let url;
+    let data;
+    // let sdxl;
 
     if (typeWhats === 'chat') {
+      /* FUNCIONANDO
       sdxl = new SDXL(apiKey);
       response = await sdxl.generate({
         prompt: promptRefine,
         style: 'base', //
         samples: 1,
-        scheduler: 'UniPC',
+        negativePrompt: '',
+        // scheduler: 'UniPC',
+        scheduler: 'DDIM',
         num_inference_steps: 40,
         guidance_scale: 8,
         strength: 0.2,
         high_noise_fraction: 0.8,
-        seed: 468685,
+        // seed: 468685,
+        seed: Math.floor(Math.random() * 999999999999999 + 1),
         img_width: width || 1024,
         img_height: height || 1024,
         refiner: true,
         base64: true,
       });
+      */
+
+      url = 'https://api.segmind.com/v1/ssd-1b';
+      data = {
+        prompt: promptRefine,
+        negative_prompt:
+          'underexposed, overexposed, ugly, disfigured, deformed',
+        samples: 1,
+        scheduler: 'UniPC',
+        num_inference_steps: 25,
+        guidance_scale: 9,
+        seed: Math.floor(Math.random() * 999999999999999 + 1),
+        img_width: 1024,
+        img_height: 1024,
+        base64: true,
+      };
+      response = await axios.post(url, data, {
+        headers: { 'x-api-key': apiKey },
+      });
+
       return `data:image/jpeg;base64,${response.data.image}`;
     }
-    sdxl = new Controlnet(apiKey, 'scribble');
     // sdxl = new Img2Img(apiKey);
-
     const imageBuffer = Buffer.from(image as string, 'base64');
     const tempFilePath = 'tempImage.jpg';
     fs.writeFileSync(tempFilePath, imageBuffer);
-
+    /*
+    sdxl = new Controlnet(apiKey, 'scribble');
     response = await sdxl.generate({
       // image: 'tempImage.jpg',
       image: tempFilePath,
@@ -112,7 +138,30 @@ export const createImage = async (req: CreateAiModel) => {
       samples: 1,
       base64: true,
     });
-
+*/
+    url = 'https://api.segmind.com/v1/sd1.5-img2img';
+    // console.log('promptRefine');
+    // console.log(promptRefine);
+    data = {
+      //  image: "toB64('/sd-img2img-input.jpeg')",
+      image: await toB64('./tempImage.jpg'),
+      samples: '1',
+      prompt: promptRefine,
+      negative_prompt: 'underexposed, overexposed, ugly, disfigured, deformed',
+      scheduler: 'DDIM',
+      num_inference_steps: 40,
+      guidance_scale: 7.5,
+      strength: 0.5,
+      seed: Math.floor(Math.random() * 999999999999999 + 1),
+      img_width: 1024,
+      img_height: 1024,
+      base64: true,
+    };
+    response = await axios.post(url, data, {
+      headers: { 'x-api-key': apiKey },
+    });
+    // console.log('response');
+    // console.log(response);
     fs.unlinkSync(tempFilePath);
     return `data:image/jpeg;base64,${response.data.image}`;
   } catch (error) {

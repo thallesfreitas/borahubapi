@@ -284,45 +284,35 @@ export async function sendImagemToWhats({
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
 
-  if (typeWhats === 'image') {
-    await sendMessageWithTemplate({
-      to,
-      message: 'changeImage',
-      // type: 'borabot',
-      type: 'client',
-    });
-  }
+  // if (typeWhats === 'image') {
+  await sendMessageWithTemplate({
+    to,
+    message: 'changeImage',
+    // type: 'borabot',
+    type: 'client',
+  });
+  // }
   client.startTyping(phone);
   const response = (await AiService.createImage({
     prompt: message,
     typeWhats,
     image,
   })) as string;
-  console.log('response293');
-  console.log('response');
-  console.log('response');
-  console.log('response');
-  console.log('response');
-  console.log('response');
-  console.log('response');
-  console.log('response300');
-  console.log(response);
-  console.log(typeof response);
-  // console.log(response.data);
-  // console.log(response.data.image);
   const responseFinal = response;
-  // if (!response.startsWith('data')) {
-  //   responseFinal = `data:image/jpeg;base64,${response}`;
-  // }
-  // responseFinal = `data:image/jpeg;base64,${response}`;
   const t = await client
     .sendFileFromBase64(phone, responseFinal, 'image-borabot', '')
     .then(result => {
       console.log('Result: ', result); // return object success
       client.stopTyping(phone);
     })
-    .catch(erro => {
+    .catch(async erro => {
       console.error('Error when sending: ', erro); // return object error
+      await sendMessageWithTemplate({
+        to,
+        message: 'changeImage',
+        // type: 'borabot',
+        type: 'client',
+      });
       client.stopTyping(phone);
     });
   client.stopTyping(phone);

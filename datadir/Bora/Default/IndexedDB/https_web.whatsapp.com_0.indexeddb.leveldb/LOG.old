@@ -1,29 +1,6 @@
-2023/10/31-21:41:28.813 6707 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
-2023/10/31-21:41:28.832 6707 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2023/10/31-21:50:19.842 9503 Level-0 table #5: started
-2023/10/31-21:50:19.849 9503 Level-0 table #5: 1086 bytes OK
-2023/10/31-21:50:19.870 9503 Delete type=0 #3
-2023/10/31-21:50:19.871 9503 Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/10/31-21:50:19.890 9503 Level-0 table #7: started
-2023/10/31-21:50:19.895 9503 Level-0 table #7: 3453 bytes OK
-2023/10/31-21:50:19.904 9503 Delete type=0 #4
-2023/10/31-21:50:19.904 9503 Manual compaction at level-0 from '\x00\x03\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x04\x00\x00\x00' @ 0 : 0; will stop at (end)
-2023/10/31-21:50:22.046 6707 Level-0 table #9: started
-2023/10/31-21:50:22.052 6707 Level-0 table #9: 38118 bytes OK
-2023/10/31-21:50:22.062 6707 Delete type=0 #6
-2023/10/31-21:50:22.063 6707 Manual compaction at level-0 from (begin) .. (end); will stop at '\x00\x04\x00\x00\xc8\x16\x00v\x00e\x00r\x00i\x00f\x00i\x00e\x00d\x00-\x00b\x00u\x00s\x00i\x00n\x00e\x00s\x00s\x00-\x00n\x00a\x00m\x00e' @ 872 : 1
-2023/10/31-21:50:22.063 6707 Compacting 1@0 + 1@1 files
-2023/10/31-21:50:22.069 6707 Generated table #10@0: 1057 keys, 9346 bytes
-2023/10/31-21:50:22.069 6707 Compacted 1@0 + 1@1 files => 9346 bytes
-2023/10/31-21:50:22.078 6707 compacted to: files[ 0 1 1 0 0 0 0 ]
-2023/10/31-21:50:22.078 6707 Delete type=2 #7
-2023/10/31-21:50:22.078 6707 Delete type=2 #9
-2023/10/31-21:50:22.079 6707 Manual compaction at level-0 from '\x00\x04\x00\x00\xc8\x16\x00v\x00e\x00r\x00i\x00f\x00i\x00e\x00d\x00-\x00b\x00u\x00s\x00i\x00n\x00e\x00s\x00s\x00-\x00n\x00a\x00m\x00e' @ 872 : 1 .. (end); will stop at (end)
-2023/10/31-21:50:22.079 6707 Manual compaction at level-1 from (begin) .. (end); will stop at '\x00\x04\x00\x00\x05' @ 339 : 1
-2023/10/31-21:50:22.079 6707 Compacting 1@1 + 1@2 files
-2023/10/31-21:50:22.084 6707 Generated table #11@1: 84 keys, 1395 bytes
-2023/10/31-21:50:22.084 6707 Compacted 1@1 + 1@2 files => 1395 bytes
-2023/10/31-21:50:22.094 6707 compacted to: files[ 0 0 1 0 0 0 0 ]
-2023/10/31-21:50:22.094 6707 Delete type=2 #10
-2023/10/31-21:50:22.094 6707 Delete type=2 #5
-2023/10/31-21:50:22.094 6707 Manual compaction at level-1 from '\x00\x04\x00\x00\x05' @ 339 : 1 .. (end); will stop at (end)
+2023/11/01-10:27:00.400 6803 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2023/11/01-10:27:00.417 6803 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/11/01-10:27:00.448 9403 Level-0 table #5: started
+2023/11/01-10:27:00.454 9403 Level-0 table #5: 3564 bytes OK
+2023/11/01-10:27:00.466 9403 Delete type=0 #3
+2023/11/01-10:27:00.466 6803 Manual compaction at level-0 from '\x00\x02\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x03\x00\x00\x00' @ 0 : 0; will stop at (end)

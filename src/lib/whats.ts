@@ -449,7 +449,10 @@ export const connectWP = async (_session = 'Bora') => {
 
 export const getGroups = async () => {
   const client: WP = setClient('client');
-  const data = await client.listChats({ onlyGroups: true });
+  const data = (await client.listChats({ onlyGroups: true })) as any;
+  // console.log('data');
+  // console.log(data);
+  // console.log(data[0].id._serialized);
   const linkRegex = /https:\/\/chat\.whatsapp\.com\/[^\s]+/;
   // ULTRA
   // const url = `${WHATS_API_URL}/${WHATS_INSTANCE_ID}/groups?token=${WHATS_API_TOKEN}`;
@@ -461,7 +464,11 @@ export const getGroups = async () => {
   // const { data } = response;
   const filteredData = data
     .filter((item: Item) => {
+      console.log('item.name');
+      console.log(item.name);
       const nameAfterHash = item.name.split('#')[1];
+      console.log('nameAfterHash');
+      console.log(nameAfterHash);
       return nameAfterHash && nameAfterHash.toLowerCase() === 'boraajudar.work';
     })
     // .filter(
@@ -476,6 +483,7 @@ export const getGroups = async () => {
       }) => {
         const linkMatch = item.groupMetadata?.desc?.match(linkRegex);
         const link = linkMatch ? linkMatch[0] : null;
+        console.log(`item.name: ${item.name} | link: ${link}`);
         return {
           id: item.id,
           name: item.name,

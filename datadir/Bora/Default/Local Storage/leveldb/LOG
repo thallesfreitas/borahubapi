@@ -1,3 +1,2 @@
-2023/11/01-10:27:17.975 8103 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb/MANIFEST-000001
-2023/11/01-10:27:17.976 8103 Recovering log #3
-2023/11/01-10:27:17.976 8103 Reusing old log /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb/000003.log 
+2023/11/01-15:32:48.066 8003 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb since it was missing.
+2023/11/01-15:32:48.085 8003 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb/MANIFEST-000001

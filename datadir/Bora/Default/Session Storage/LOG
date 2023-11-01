@@ -1,3 +1,2 @@
-2023/11/01-10:27:19.031 8103 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Session Storage/MANIFEST-000001
-2023/11/01-10:27:19.031 8103 Recovering log #3
-2023/11/01-10:27:19.032 8103 Reusing old log /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Session Storage/000003.log 
+2023/11/01-15:32:49.133 8003 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Session Storage since it was missing.
+2023/11/01-15:32:49.149 8003 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Session Storage/MANIFEST-000001

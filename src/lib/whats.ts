@@ -283,15 +283,16 @@ export async function sendImagemToWhats({
   const client: WP = setClient(type);
   let phone = to.toString().replace('+', '');
   if (!phone.includes('@')) phone = `${phone}@c.us`;
-  client.startTyping(phone);
+
   if (typeWhats === 'image') {
-    sendMessageWithTemplate({
+    await sendMessageWithTemplate({
       to,
       message: 'changeImage',
       // type: 'borabot',
       type: 'client',
     });
   }
+  client.startTyping(phone);
   const response = (await AiService.createImage({
     prompt: message,
     typeWhats,

@@ -12,6 +12,7 @@ export type WhatsType =
   | 'createdUserBoraBot'
   | 'borabotajuda'
   | 'changeImage'
+  | 'ImageError'
   | 'loggedUser'
   | 'START_BORABOT'
   | 'CREDITS_INSUFFICIENT'
@@ -84,6 +85,10 @@ Vamos começar? 🌟`,
   changeImage: {
     message:
       'Legal. Estamos processando sua imagem. Seja um paciente porque é um processo um pouco trabalhoso. :)',
+  },
+  ImageError: {
+    message:
+      'Puts... ocorreu um erro na geração da sua imagem! :/ Desculpe. Tente novamente por favor. :)',
   },
   borabotajuda: {
     message: `Aqui estão alguns comandos úteis que você pode usar ao interagir comigo:

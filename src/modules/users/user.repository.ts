@@ -87,7 +87,10 @@ export const createUser: CreateUser = async ({
       },
     });
     let idTransactionType = 'WELCOME';
-    if (indicatedBy === 'thallesfreitas@gmail.com') {
+    if (
+      indicatedBy === 'thallesfreitas@gmail.com' ||
+      indicatedBy === 'thallesfreitas'
+    ) {
       idTransactionType = 'WELCOME_INDICATEDBY';
     }
 
@@ -134,7 +137,10 @@ export const createUser: CreateUser = async ({
 
     newUser.token = token.token;
 
-    const userIndicatedBy = await getUserByEmail(indicatedBy as string);
+    let userIndicatedBy = await getUserByEmail(indicatedBy as string);
+    if (!userIndicatedBy) {
+      userIndicatedBy = await getUserBySlug(indicatedBy as string);
+    }
     if (userIndicatedBy) {
       const idIndicatedBtTransactionType = 'INDICATEDBY';
       const creditsUserIndicatedBy = await CreditsService.getCostsUsage(

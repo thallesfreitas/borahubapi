@@ -120,30 +120,9 @@ export const createImage = async (req: CreateAiModel) => {
     const imageBuffer = Buffer.from(image as string, 'base64');
     const tempFilePath = 'tempImage.jpg';
     fs.writeFileSync(tempFilePath, imageBuffer);
-    /*
-    sdxl = new Controlnet(apiKey, 'scribble');
-    response = await sdxl.generate({
-      // image: 'tempImage.jpg',
-      image: tempFilePath,
-      negativePrompt: '',
-      prompt: promptRefine,
-      scheduler: 'UniPC',
-      // scheduler: 'DDIM',
-      num_inference_steps: 40,
-      guidance_scale: 10.5,
-      strength: 0.75,
-      seed: 58877465625,
-      // img_width: width || 1024,
-      // img_height: height || 1024,
-      samples: 1,
-      base64: true,
-    });
-*/
+
     url = 'https://api.segmind.com/v1/sd1.5-img2img';
-    // console.log('promptRefine');
-    // console.log(promptRefine);
     data = {
-      //  image: "toB64('/sd-img2img-input.jpeg')",
       image: await toB64('./tempImage.jpg'),
       samples: '1',
       prompt: promptRefine,
@@ -160,8 +139,7 @@ export const createImage = async (req: CreateAiModel) => {
     response = await axios.post(url, data, {
       headers: { 'x-api-key': apiKey },
     });
-    // console.log('response');
-    // console.log(response);
+
     fs.unlinkSync(tempFilePath);
     return `data:image/jpeg;base64,${response.data.image}`;
   } catch (error) {

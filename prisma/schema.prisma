@@ -405,23 +405,22 @@ model Candidate {
   id           Int                     @id @default(autoincrement())
   uuid         String                  @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
+  avatar       String?
+  banner       String?
   link         String?
-  salary       String[]
-  contractMode String[]
   actualRole   String?
-  categories   CategoriesOnCandidate[]
-  tags         TagsOnCandidate[]
-  areas        AreasOnCandidate[]
-  // inclusive           InclusiveOnCandidate[]
   city         String?
   state        String?
   extra        String?
+  salary       String[]
+  contractMode String[]
   workMode     String[]
   seniority    String[]
   travel       String[]
-  affirmative          String[]
+  affirmative   String[]
+  categories   CategoriesOnCandidate[]
+  tags         TagsOnCandidate[]
+  areas        AreasOnCandidate[]
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @default(now()) @map("updated_at")
   deletedAt    DateTime?               @map("deleted_at")

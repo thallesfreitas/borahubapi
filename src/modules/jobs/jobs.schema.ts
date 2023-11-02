@@ -20,9 +20,9 @@ export const jobBody = {
     // company: { type: 'string' },
     // phone: { type: 'string' },
     // email: { type: 'string' },
-    // userId: { type: 'number' },
     // isActive: { type: 'boolean' },
 
+    userId: { type: 'number' },
     title: { type: 'string' },
     slug: { type: 'string' },
     description: { type: 'string' },

@@ -8,11 +8,12 @@ import {
   Tags,
 } from '@prisma/client';
 import dbClient from '../../lib/dbClient';
-import { Utils } from '../../utils/functions';
+// import { Utils } from '../../utils/functions';
 import { updateAreasOnJobs } from '../areas/areas.service';
 import { updateCategoryOnJobs } from '../category/category.service';
 import { updateTagsOnJobs } from '../tags/tags.service';
 // eslint-disable-next-line import/no-cycle
+import * as SlugService from '../slug/slug.service';
 import { UserCandidate } from '../users/user.repository';
 
 export interface CreateJobArgs {
@@ -39,40 +40,8 @@ export interface CreateJobArgs {
 
 export const createJob = async ({ userId, ...rest }: CreateJobArgs) => {
   try {
-    let slug = Utils.generateSlug(`${rest.title}-${rest.company}`);
-    let i = 1;
-    let jobsWithSameSlug = await dbClient.jobs.findFirst({
-      where: {
-        slug,
-      },
-    });
+    const slug = await SlugService.generate(`${rest.title}-${rest.company}`);
 
-    while (jobsWithSameSlug) {
-      slug = `${Utils.generateSlug(`${rest.title}-${rest.company}`)}-${i}`;
-      jobsWithSameSlug = await dbClient.jobs.findFirst({
-        where: {
-          slug,
-        },
-      });
-      i += 1;
-    }
-
-    let userWithSameSlug = await dbClient.user.findFirst({
-      where: {
-        slug,
-      },
-    });
-
-    while (userWithSameSlug) {
-      slug = `${Utils.generateSlug(`${rest.title}-${rest.company}`)}-${i}`;
-      userWithSameSlug = await dbClient.user.findFirst({
-        where: {
-          slug,
-        },
-      });
-      i += 1;
-    }
-    // const data = {
     const data: Prisma.JobsUncheckedCreateInput = {
       ...rest,
       slug,
@@ -82,6 +51,7 @@ export const createJob = async ({ userId, ...rest }: CreateJobArgs) => {
       tags: {},
       areas: {},
     };
+
     delete data.id;
     delete data.categories;
     delete data.tags;
@@ -104,7 +74,6 @@ export const createJob = async ({ userId, ...rest }: CreateJobArgs) => {
       data: rest.areas,
       jobsId: job.id,
     });
-
     return job;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -430,10 +399,11 @@ export const getJobsByUserId = async (
   skip: number,
   isActive: boolean = true
 ) => {
-  return dbClient.jobs.findMany({
+  const jobs = await dbClient.jobs.findMany({
     where: {
       createdBy,
-      deletedAt: null,
+      // createdById: { id: createdBy },
+      // deletedAt: null,
       // isActive,
     },
     include: {
@@ -565,6 +535,13 @@ export const getJobsByUserId = async (
       createdAt: 'desc',
     },
   });
+  console.log('_____________________________');
+  console.log('jobs');
+  console.log('jobs');
+  console.log('jobs');
+  console.log('jobs');
+  console.log(jobs);
+  return jobs;
 };
 
 export const getJobsByUserSlug = async (

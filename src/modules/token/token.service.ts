@@ -36,18 +36,28 @@ export const deleteUserTokens = async (email: string) => {
   return dbClient.token.deleteMany({
     where: {
       email,
+      toLogin: true,
+    },
+  });
+};
+export const deleteUserTokensPhone = async (phone: string) => {
+  console.log('deleteUserTokensPhone: ', phone);
+  return dbClient.token.deleteMany({
+    where: {
+      phone,
+      toLogin: true,
     },
   });
 };
 
 export const createToken = async (
   uuid: string,
-  phone: string,
-  email: string,
+  phone: string = '',
+  email: string = '',
   login: boolean = false,
   page = ''
 ) => {
-  const token = await makeToken(uuid, email, login);
+  const token = await makeToken(uuid, email || phone, login);
 
   return dbClient.token.create({
     data: {
@@ -76,6 +86,29 @@ export const getToken = async ({ email, phone, token, uuid }: TokenProps) => {
   console.log(tokenDB);
   return tokenDB;
 };
+export const getTokenConfirm = async ({
+  email,
+  phone,
+  token,
+  uuid,
+}: TokenProps) => {
+  console.log(`getToken`);
+  console.log('email, phone, token, uuid');
+  console.log(email, phone, token, uuid);
+  const tokenDB = await dbClient.token.findFirst({
+    select: {
+      token: true,
+      page: true,
+    },
+    where: {
+      OR: [{ email }, { phone }, { token }, { uuid }],
+      toLogin: true,
+    },
+  });
+
+  console.log(tokenDB);
+  return tokenDB;
+};
 
 export const changeToken = async ({ email, phone }: TokenProps) => {
   return dbClient.token.updateMany({
@@ -92,6 +125,21 @@ export const changeToken = async ({ email, phone }: TokenProps) => {
           },
         },
       ],
+    },
+    data: {
+      toLogin: true,
+    },
+  });
+};
+
+export const changeTokenPhone = async ({ phone }: TokenProps) => {
+  console.log('changeTokenPhone');
+  console.log('changeTokenPhone');
+  console.log('changeTokenPhone');
+  console.log(phone);
+  return dbClient.token.updateMany({
+    where: {
+      phone,
     },
     data: {
       toLogin: true,

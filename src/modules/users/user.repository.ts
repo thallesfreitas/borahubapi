@@ -106,8 +106,13 @@ export const createUser: CreateUser = async ({
 
     const token = await tokenService.createToken(
       newUser.uuid,
-      newUser.phone,
+      '',
       newUser.email
+    );
+    const tokenPhone = await tokenService.createToken(
+      newUser.uuid,
+      newUser.phone,
+      ''
     );
 
     emailService.sendEmail({
@@ -126,47 +131,58 @@ export const createUser: CreateUser = async ({
       type: 'client',
     });
 
-    // setTimeout(() => {
-    //   WhatsApi.sendMessageWithTemplate({
-    //     to: phone,
-    //     message: 'createdUserBoraBot',
-    //     // type: 'borabot',
-    //     type: 'client',
-    //   });
-    // }, 5000);
-
     newUser.token = token.token;
-
-    let userIndicatedBy = await getUserByEmail(indicatedBy as string);
-    if (!userIndicatedBy) {
-      userIndicatedBy = await getUserBySlug(indicatedBy as string);
-    }
-    if (userIndicatedBy) {
-      const idIndicatedBtTransactionType = 'INDICATEDBY';
-      const creditsUserIndicatedBy = await CreditsService.getCostsUsage(
-        idIndicatedBtTransactionType
-      );
-      const welcomeCreditsUserIndicatedBy =
-        creditsUserIndicatedBy?.amount as number;
-      await CreditsService.addCredits({
-        userId: userIndicatedBy.id,
-        amount: welcomeCreditsUserIndicatedBy,
-        transactionType: idIndicatedBtTransactionType,
-        status: 'approved',
-      });
-      setTimeout(() => {
-        WhatsApi.sendMessageWithTemplate({
-          to: userIndicatedBy?.phone as string,
-          message: 'CREDIT_INDICATED_BY',
-          payload: [
-            userIndicatedBy?.name as string,
-            name as string,
-            welcomeCreditsUserIndicatedBy.toString() as string,
-          ],
-          payloadVar: ['|||NAME|||', '|||INDICATED|||', '|||CREDITOS|||'],
-          type: 'client',
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log('indicatedBy');
+    console.log(indicatedBy);
+    if (indicatedBy) {
+      let userIndicatedBy = await getUserByEmail(indicatedBy as string);
+      if (!userIndicatedBy) {
+        userIndicatedBy = await getUserBySlug(indicatedBy as string);
+      }
+      if (userIndicatedBy) {
+        const idIndicatedBtTransactionType = 'INDICATEDBY';
+        const creditsUserIndicatedBy = await CreditsService.getCostsUsage(
+          idIndicatedBtTransactionType
+        );
+        const welcomeCreditsUserIndicatedBy =
+          creditsUserIndicatedBy?.amount as number;
+        await CreditsService.addCredits({
+          userId: userIndicatedBy.id,
+          amount: welcomeCreditsUserIndicatedBy,
+          transactionType: idIndicatedBtTransactionType,
+          status: 'approved',
         });
-      }, 10000);
+        setTimeout(() => {
+          WhatsApi.sendMessageWithTemplate({
+            to: userIndicatedBy?.phone as string,
+            message: 'CREDIT_INDICATED_BY',
+            payload: [
+              userIndicatedBy?.name as string,
+              name as string,
+              welcomeCreditsUserIndicatedBy.toString() as string,
+            ],
+            payloadVar: ['|||NAME|||', '|||INDICATED|||', '|||CREDITOS|||'],
+            type: 'client',
+          });
+        }, 10000);
+      }
     }
 
     return newUser;

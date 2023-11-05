@@ -132,6 +132,7 @@ export const signinOauth = async (
           page: tokenWS.page,
         });
         // tokenService.deleteUserTokens(email);
+        await tokenService.changeToken({ email });
         return await reply.send(logged);
       }
     } else {

@@ -88,6 +88,7 @@ export default async (fastify: FastifyInstance) => {
         const tableNameMatches = query.match(/"public"."(\w+)"/);
         const tableName = tableNameMatches ? tableNameMatches[1] : null;
         const [isValid, phoneNumber] = JSON.parse(params);
+
         if (tableName === 'token' && email && isUpdate) {
           const user = await dbClient.user.findFirst({
             where: {
@@ -96,14 +97,19 @@ export default async (fastify: FastifyInstance) => {
           });
 
           const userPhone = user?.phone;
+          const userEmail = user?.email;
           if (userPhone) {
             // const token = await dbClient.token.findFirst({
             //   where: {
             //     email,
             //   },
             // });
-            const tokenUser = await tokenService.getToken({ email });
-
+            let tokenUser = await tokenService.getTokenConfirm({ email });
+            if (!tokenUser) {
+              tokenUser = await tokenService.getTokenConfirm({
+                phone: phoneNumber,
+              });
+            }
             const logged = JSON.stringify({
               sucess: true,
               user,
@@ -113,10 +119,14 @@ export default async (fastify: FastifyInstance) => {
 
             const dbPhone = `+${phoneNumber.replace(/[^0-9]/g, '')}`;
 
+            if (isValid && email === userEmail) {
+              connection.socket.send(logged);
+
+              await tokenService.deleteUserTokens(email);
+            }
             if (isValid && dbPhone === userPhone) {
               connection.socket.send(logged);
-              connection.socket.close();
-              tokenService.deleteUserTokens(email);
+              await tokenService.deleteUserTokensPhone(phoneNumber);
             }
           }
         }

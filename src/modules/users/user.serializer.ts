@@ -11,7 +11,6 @@ export const getUserByEmail = async (
 
   return {
     id: user?.id,
-    // stripe_id: user?.stripe_id,
     optin: user?.optin,
     email: user?.email,
     name: user?.name,

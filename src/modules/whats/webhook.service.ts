@@ -85,15 +85,15 @@ export const checkAction = async ({
       const explain = match[3].split('=')[1];
       let messageToAprove;
       switch (status) {
-        case 's':
-          messageToAprove = await approve(id as unknown as number, explain);
-          break;
-        case 'n':
-          messageToAprove = await disapprove(id as unknown as number, explain);
-          break;
+      case 's':
+        messageToAprove = await approve(id as unknown as number, explain);
+        break;
+      case 'n':
+        messageToAprove = await disapprove(id as unknown as number, explain);
+        break;
 
-        default:
-          break;
+      default:
+        break;
       }
       WhatsService.sendMessageToGroups(
         messageToAprove?.message as string,
@@ -107,57 +107,59 @@ export const checkAction = async ({
   }
 
   switch (message) {
-    case 'logar':
-      checkLogin = await tokenService.getToken({ phone: phoneNumber });
-      if (checkLogin != null) {
-        const user = await UserRepository.getUserByPhone(phoneNumber);
-        if (user) {
-          await UserRepository.updateUser(user.id, {
-            isActive: true,
-            isPhoneConfirmed: true,
-          });
-          await tokenService.changeToken({ phone: phoneNumber });
-          WhatsService.sendMessageWithTemplate({
-            to,
-            message: 'loggedUser',
-            type: 'client',
-          });
-        }
+  case 'logar':
+    checkLogin = await tokenService.getToken({ phone: phoneNumber });
+    if (checkLogin != null) {
+      const user = await UserRepository.getUserByPhone(phoneNumber);
+      if (user) {
+        await UserRepository.updateUser(user.id, {
+          isActive: true,
+          isPhoneConfirmed: true,
+        });
+        await tokenService.changeToken({ phone: phoneNumber });
+        WhatsService.sendMessageWithTemplate({
+          to,
+          message: 'loggedUser',
+          type: 'client',
+        });
       }
-      break;
-    case 'confirmo':
-    case 'confirmar':
-    case 'confimar':
-    case 'confimo':
-      checkLogin = await tokenService.getToken({ phone: phoneNumber });
+    }
+    break;
+  case 'confirmo':
+  case 'confirmar':
+  case 'confimar':
+  case 'confimo':
+    console.log('confimo');
+    console.log(phoneNumber);
+    checkLogin = await tokenService.getToken({ phone: phoneNumber });
 
-      if (checkLogin != null) {
-        const user = await UserRepository.getUserByPhone(phoneNumber);
-        if (user) {
-          await UserRepository.updateUser(user.id, {
-            isActive: true,
-            isPhoneConfirmed: true,
-          });
-          await tokenService.changeToken({ phone: phoneNumber });
-          WhatsService.sendMessageWithTemplate({
-            to,
-            message: 'createdUser',
-            type: 'client',
-          });
-        }
+    if (checkLogin != null) {
+      const user = await UserRepository.getUserByPhone(phoneNumber);
+      if (user) {
+        await UserRepository.updateUser(user.id, {
+          isActive: true,
+          isPhoneConfirmed: true,
+        });
+        await tokenService.changeTokenPhone({ phone: phoneNumber });
+        WhatsService.sendMessageWithTemplate({
+          to,
+          message: 'createdUser',
+          type: 'client',
+        });
       }
+    }
 
-      // }
-      break;
+    // }
+    break;
 
-    default:
-      // WhatsService.sendMessageWithTemplate({
-      //   to: to,
-      //   message: 'default',
-      // });
-      // if (idClient === 'borabot') AiService.bot(to, message);
-      AiService.bot(to, message, typeWhats, image);
-      break;
+  default:
+    // WhatsService.sendMessageWithTemplate({
+    //   to: to,
+    //   message: 'default',
+    // });
+    // if (idClient === 'borabot') AiService.bot(to, message);
+    AiService.bot(to, message, typeWhats, image);
+    break;
   }
   return false;
 };

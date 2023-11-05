@@ -1,4 +1,0 @@
-2023/11/02-08:20:46.703 a903 Creating DB /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb since it was missing.
-2023/11/02-08:20:46.728 a903 Reusing MANIFEST /Library/WebServer/Documents/projects/boraajudar.work/site/api/datadir/Bora/Default/Local Storage/leveldb/MANIFEST-000001
-2023/11/02-10:15:47.741 8303 Level-0 table #5: started
-2023/11/02-10:15:47.751 8303 Level-0 table #5: 12770 bytes OK

@@ -75,6 +75,67 @@ export const signin = async (
   }
 };
 
+export const validation = async (
+  request: AuthModel.SigninOauthRequest,
+  reply: FastifyReply
+) => {
+  try {
+    const { token } = request.body;
+    const tokenWS = await tokenService.getToken({ uuid: token });
+    const invalid = JSON.stringify({
+      sucess: false,
+      message: 'invalid token',
+    });
+    if (tokenWS) {
+      const decoded = jwt.verify(
+        tokenWS.token,
+        process.env.JWT_SECRET as string
+      );
+
+      if (!decoded) {
+        return await reply.status(403).send(invalid);
+      }
+
+      if (!decoded.hasOwnProperty('email') || !decoded.hasOwnProperty('exp')) {
+        return await reply.status(403).send(invalid);
+      }
+      const { exp } = decoded as unknown as JwtPayload;
+
+      if (exp instanceof Date && exp < new Date()) {
+        return await reply.status(403).send(invalid);
+      }
+
+      const { email } = decoded as {
+        email: string | undefined;
+      };
+
+      if (!email) {
+        return await reply.status(403).send(invalid);
+      }
+      await UserRepository.updateUserByMail(email, {
+        isActive: true,
+        isEmailConfirmed: true,
+      });
+      const user = await UserService.getUserByEmail(email);
+      if (user) {
+        const logged = JSON.stringify({
+          sucess: true,
+          user,
+          token: tokenWS.token,
+          page: tokenWS.page,
+        });
+
+        await tokenService.changeToken({ email });
+        return await reply.send(logged);
+      }
+    } else {
+      return await reply.status(400).send(invalid);
+    }
+  } catch (error) {
+    return await reply.status(400).send(error);
+  }
+};
+
 export const signinOauth = async (
   request: AuthModel.SigninOauthRequest,
   reply: FastifyReply

@@ -92,6 +92,19 @@ export default async (fastify: FastifyInstance) => {
   );
 
   fastify.post<{
+    Body: AuthModel.SigninOauthBody;
+  }>(
+    '/validation',
+    {
+      schema: {
+        body: AuthSchema.SigninOauthBody,
+      },
+      onSend,
+    },
+    AuthController.validation
+  );
+
+  fastify.post<{
     Body: AuthModel.ForgetPasswordBody;
   }>(
     '/forget-password',

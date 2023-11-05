@@ -14,6 +14,7 @@ export default async (fastify: FastifyInstance) => {
   }
 
   fastify.get('/getLogin', { websocket: true }, async (connection, request) => {
+    console.log('/getLogin');
     const { email } = request.query as RequestGetLoginProps;
 
     const queryEventListener = async (event: any) => {
@@ -25,35 +26,10 @@ export default async (fastify: FastifyInstance) => {
       const [isValid, phoneNumber] = JSON.parse(params);
 
       if (tableName === 'token' && email && isUpdate) {
-        // const user = await dbClient.user.findFirst({
-        //   where: {
-        //     email,
-        //   },
-        //   select: {
-        //     id: true,
-        //     uuid: true,
-        //     // stripe_id: true,
-        //     email: true,
-        //     phone: true,
-        //     optin: true,
-        //     name: true,
-        //     slug: true,
-        //     indicatedBy: true,
-        //     isActive: true,
-        //     isPhoneConfirmed: true,
-        //     isEmailConfirmed: true,
-        //     createdAt: true,
-        //     updatedAt: true,
-        //     deletedAt: true,
-        //     candidate: true,
-        //     // recruiter: true,
-        //     createdJob: true,
-        //     updatedJob: true,
-        //     deletedJob: true,
-        //   },
-        // });
+        console.log('/AGORA FOI');
         const user = await UserService.getUserByEmail(email); // .getUserByPhone();
         const userPhone = user?.phone;
+        const userEmail = user?.email;
         if (userPhone) {
           const token = await tokenService.getToken({ email });
           const logged = JSON.stringify({
@@ -62,14 +38,21 @@ export default async (fastify: FastifyInstance) => {
             token,
           });
           const dbPhone = `+${phoneNumber.replace(/[^0-9]/g, '')}`;
-
+          if (isValid && email === userEmail) {
+            console.log('LOG 1');
+            connection.socket.send(logged);
+            connection.socket.close();
+            await tokenService.deleteUserTokens(email);
+          }
           if (isValid && dbPhone === userPhone) {
+            console.log('LOG 2');
             connection.socket.send(logged);
             connection.socket.close();
             setTimeout(() => {
-              tokenService.deleteUserTokens(email);
+              tokenService.deleteUserTokensPhone(phoneNumber);
             }, 10000);
           }
+          console.log('LOG 3');
         }
       }
     };

@@ -65,3 +65,5 @@ build/
 *.crt
 sslcert/
 tokens/
+datadir/
+out.png

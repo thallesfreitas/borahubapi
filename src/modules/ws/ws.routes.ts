@@ -14,7 +14,6 @@ export default async (fastify: FastifyInstance) => {
   }
 
   fastify.get('/getLogin', { websocket: true }, async (connection, request) => {
-    console.log('/getLogin');
     const { email } = request.query as RequestGetLoginProps;
 
     const queryEventListener = async (event: any) => {
@@ -26,12 +25,12 @@ export default async (fastify: FastifyInstance) => {
       const [isValid, phoneNumber] = JSON.parse(params);
 
       if (tableName === 'token' && email && isUpdate) {
-        console.log('/AGORA FOI');
         const user = await UserService.getUserByEmail(email); // .getUserByPhone();
         const userPhone = user?.phone;
         const userEmail = user?.email;
         if (userPhone) {
           const token = await tokenService.getToken({ email });
+
           const logged = JSON.stringify({
             sucess: true,
             user,
@@ -39,20 +38,17 @@ export default async (fastify: FastifyInstance) => {
           });
           const dbPhone = `+${phoneNumber.replace(/[^0-9]/g, '')}`;
           if (isValid && email === userEmail) {
-            console.log('LOG 1');
             connection.socket.send(logged);
             connection.socket.close();
             await tokenService.deleteUserTokens(email);
           }
           if (isValid && dbPhone === userPhone) {
-            console.log('LOG 2');
             connection.socket.send(logged);
             connection.socket.close();
             setTimeout(() => {
               tokenService.deleteUserTokensPhone(phoneNumber);
             }, 10000);
           }
-          console.log('LOG 3');
         }
       }
     };

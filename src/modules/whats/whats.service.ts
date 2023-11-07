@@ -199,7 +199,7 @@ export const sendMessageToGroups = async (
 
       await setTimeout(async () => {
         const messageFinal = `*#BoraHubJob ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
-        response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);
+
         const typeString = type as string;
         const costsusage = await CostsUsageRepository.getCostsUsage(typeString);
         const amountCost = costsusage?.amount as number;
@@ -210,6 +210,8 @@ export const sendMessageToGroups = async (
           status: 'approved',
           type: typeString,
         });
+
+        response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);
       }, 4000);
     } else if (
       statusMessage.approved === 'DISAPPROVED' &&

@@ -41,7 +41,8 @@ export const createImage = async (req: CreateAI, reply: FastifyReply) => {
 
 export const completion = async (req: CreateAI, reply: FastifyReply) => {
   const response = await openai.completions.create({
-    model: 'gpt-3.5',
+    // model: 'gpt-3.5',
+    model: 'gpt-3.5-turbo-16k',
     prompt: req.body.prompt,
     temperature: req.body.temperature ? req.body.temperature : 0.8,
     max_tokens: 3000,
@@ -78,7 +79,8 @@ export const chat = async (req: CreateAI, reply: FastifyReply) => {
     // model: 'gpt-4',
     // model: 'gpt-3.5-turbo',
     // model: 'gpt-3.5-turbo-16k-0613',
-    model: model || 'gpt-3.5-turbo-16k-0613',
+    // model: model || 'gpt-3.5-turbo-16k-0613',
+    model: model || 'gpt-3.5-turbo-instruct-0914',
     temperature: temperature || 0.6,
     max_tokens: tokens || 1500,
     messages: [

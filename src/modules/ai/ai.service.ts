@@ -14,6 +14,8 @@ import { CreateAiModel } from './ai.model';
 
 const cohere = require('cohere-ai');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 cohere.init(process.env.COHERE_API_KEY_HOMO);
 
@@ -29,9 +31,6 @@ function zeraSession(to: string, contentSystem: string) {
   });
   return 1;
 }
-const fs = require('fs');
-
-const path = require('path');
 
 async function toB64(imgPath: any) {
   const data = fs.readFileSync(path.resolve(imgPath));
@@ -166,7 +165,7 @@ export const bot = async (
     });
     return false;
   }
-  if (promptFinal.length > 15) {
+  if (promptFinal.length > 75) {
     const credits = await verify({
       userId: user.id as number,
       type: 'MESSAGE_BOT',
@@ -467,7 +466,7 @@ Personal marketing is about showcasing your skills, experiences, and values in a
   startTyping(to, 'client');
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4',
+    model: 'gpt-4-1106-preview',
     // model: 'gpt-3.5-turbo',
     temperature: 0.7,
     max_tokens: 500,

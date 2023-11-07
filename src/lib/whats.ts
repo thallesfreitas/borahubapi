@@ -254,7 +254,7 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
       clearInterval(interval);
     }
     groupId += 1;
-  }, 5000);
+  }, 60000);
 
   return true;
 }

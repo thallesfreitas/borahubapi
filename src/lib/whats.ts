@@ -239,6 +239,7 @@ export async function sendProcess(action: string) {
 }
 
 export async function sendToGroups(message: string, approvalSystemId: number) {
+  /* TIMER 1 min POR ENVIO
   let groupId = 0;
   const interval: NodeJS.Timeout = setInterval(async () => {
     // const groupPhone = groupsWhatsTeste[groupId].idWhats;
@@ -255,6 +256,15 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
     }
     groupId += 1;
   }, 60000);
+  */
+  for (let groupId = 0; groupId < groupsWhats.length; groupId += 1) {
+    const groupPhone = groupsWhats[groupId].idWhats;
+    let phone = groupPhone.toString().replace('+', '');
+    if (!phone.includes('@')) phone = `${phone}@g.us`;
+    clientWP.startTyping(phone);
+    const messageFinal = `client#T#T${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
+    Queue.sendMessageToQueue('queueSendWhats', messageFinal);
+  }
 
   return true;
 }

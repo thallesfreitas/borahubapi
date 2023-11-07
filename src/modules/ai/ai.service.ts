@@ -45,8 +45,8 @@ export const createImage = async (req: CreateAiModel) => {
       ? 'Crie um prompt para gerar uma imagem no stable diffuse. Deixe a descrição abaixo perfeita pra enviar ao segmind do stable diffuse. Coloque bastante detalhes para gerar uma imagem muito boa.'
       : 'Explique melhor o pedido feito no prompt em cima da imagem enviada. Deixe a descrição abaixo perfeita pra enviar ao segmind do stable diffuse. Coloque bastante detalhes para gerar uma imagem muito boa.';
   const refinePrompt = await openai.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4',
+    // model: 'gpt-4-1106-preview',
     temperature: 0.9,
     max_tokens: 1000,
     messages: [
@@ -467,8 +467,8 @@ Personal marketing is about showcasing your skills, experiences, and values in a
   startTyping(to, 'client');
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-4-1106-preview',
-    // model: 'gpt-3.5-turbo',
+    // model: 'gpt-4-1106-preview',
+    model: 'gpt-3.5-turbo',
     temperature: 0.7,
     max_tokens: 500,
     messages: [
@@ -536,8 +536,8 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
   // }
 
   const AssessmentCandidateJob = await openai.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4',
+    // model: 'gpt-4-1106-preview',
     temperature: 0.6,
     max_tokens: 1000,
     messages: [
@@ -561,8 +561,8 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
   });
 
   const feedbackCandidateJob = await openai.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4',
+    // model: 'gpt-4-1106-preview',
     temperature: 0.6,
     max_tokens: 1000,
     messages: [
@@ -591,8 +591,8 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
   });
 
   const scoreCandidateJob = await openai.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-4-1106-preview',
+    model: 'gpt-4',
+    // model: 'gpt-4-1106-preview',
     temperature: 0.6,
     max_tokens: 6,
     messages: [

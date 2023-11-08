@@ -258,7 +258,7 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
       clearInterval(interval);
     }
     groupId += 1;
-  }, 5000);
+  }, 30000);
 
   // for (let groupId = 0; groupId < groupsWhats.length; groupId += 1) {
   //   const groupPhone = groupsWhats[groupId].idWhats;

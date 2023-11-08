@@ -209,9 +209,10 @@ export const sendMessageToGroups = async (
         await CreditsService.removeCredits({
           userId,
           amount: amountCost,
-          transactionType: 'REMOVE_CREDITS',
+          // transactionType: 'REMOVE_CREDIT',
+          type: 'SEND_JOB_TO_GROUPS',
           status: 'approved',
-          type: typeString,
+          // type: typeString,
         });
         console.log('sendToGroups');
         response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);

@@ -198,7 +198,7 @@ export const sendMessageToGroups = async (
       }
 
       await setTimeout(async () => {
-        const messageFinal = `*#BoraHubJob ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
+        const messageFinal = `*#BoraHubJob* ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
 
         const typeString = type as string;
         const costsusage = await CostsUsageRepository.getCostsUsage(

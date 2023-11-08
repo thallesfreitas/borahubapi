@@ -250,8 +250,8 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
     // clientWP.startTyping(phone);
     const messageFinal = `client#T#T${phone}&&&@@@${message}&&&@@@${approvalSystemId}#########${groupId}`;
     // await Queue.sendMessageToQueue('queueSendWhats', messageFinal);
-    // await Queue.sendMessageToQueue('queueSendWhats', messageFinal);
-    await sendProcess(messageFinal);
+    await Queue.sendMessageToQueue('queueSendWhats', messageFinal);
+    // await sendProcess(messageFinal);
 
     // if (groupId === groupsWhatsTeste.length - 1) {
     if (groupId === groupsWhats.length - 1) {

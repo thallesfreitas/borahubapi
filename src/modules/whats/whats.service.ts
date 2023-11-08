@@ -202,6 +202,9 @@ export const sendMessageToGroups = async (
 
         const typeString = type as string;
         const costsusage = await CostsUsageRepository.getCostsUsage(typeString);
+        console.log('CostsUsageRepository');
+        console.log(typeString);
+        console.log(costsusage);
         const amountCost = costsusage?.amount as number;
         await CreditsService.removeCredits({
           userId,

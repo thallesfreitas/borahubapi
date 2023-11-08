@@ -166,49 +166,58 @@ export const addCredits = async (data: CreditsType) => {
 
 export const removeCredits = async (data: CreditsType) => {
   // const { userId, amount } = data;
-  const {
-    userId,
-    amount,
-    mp_id_transaction = 0,
-    transactionType = 'REMOVE_CREDIT',
-    status,
-    type,
-  } = data;
-  // const transactionType = 'REMOVE_CREDIT';
-  const userCredits = await db.credits.findFirst({
-    where: {
+  try {
+    const {
       userId,
-    },
-  });
+      amount,
+      mp_id_transaction = 0,
+      transactionType = 'REMOVE_CREDIT',
+      status,
+      type,
+    } = data;
+    // const transactionType = 'REMOVE_CREDIT';
+    const userCredits = await db.credits.findFirst({
+      where: {
+        userId,
+      },
+    });
 
-  if (!userCredits) {
-    throw new Error('Usuário não encontrado');
+    if (!userCredits) {
+      throw new Error('Usuário não encontrado');
+    }
+    const amountUser = userCredits?.amount;
+    console.log('amountUser - amount');
+    console.log(amountUser);
+    console.log(amount);
+    console.log(amountUser - amount);
+    const updatedCredits = await db.credits.update({
+      where: {
+        id: userCredits?.id,
+      },
+      data: {
+        amount: amountUser - amount,
+      },
+    });
+
+    const transaction = {
+      userId,
+      creditId: userCredits.id,
+      amount,
+      transactionType,
+      mp_id_transaction: mp_id_transaction as bigint,
+      status,
+      type,
+    };
+
+    const newTransaction = addCreditsTransaction(transaction);
+
+    return {
+      transaction: newTransaction,
+      credits: updatedCredits,
+    };
+  } catch (e) {
+    console.log('ERRO REMOVE CREDITO');
+    console.log(e);
+    return false;
   }
-  const amountUser = userCredits?.amount;
-
-  const updatedCredits = await db.credits.update({
-    where: {
-      id: userCredits?.id,
-    },
-    data: {
-      amount: amountUser - amount,
-    },
-  });
-
-  const transaction = {
-    userId,
-    creditId: userCredits.id,
-    amount,
-    transactionType,
-    mp_id_transaction: mp_id_transaction as bigint,
-    status,
-    type,
-  };
-
-  const newTransaction = addCreditsTransaction(transaction);
-
-  return {
-    transaction: newTransaction,
-    credits: updatedCredits,
-  };
 };

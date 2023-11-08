@@ -210,7 +210,7 @@ export const sendMessageToGroups = async (
           status: 'approved',
           type: typeString,
         });
-
+        console.log('sendToGroups');
         response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);
       }, 4000);
     } else if (

@@ -242,6 +242,7 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
   // TIMER 1 min POR ENVIO
   let groupId = 0;
   const interval: NodeJS.Timeout = setInterval(async () => {
+    console.log(`SEND JOB TO GROUP: ${groupId} ${groupsWhats[groupId].name}`);
     // const groupPhone = groupsWhatsTeste[groupId].idWhats;
     const groupPhone = groupsWhats[groupId].idWhats;
     let phone = groupPhone.toString().replace('+', '');

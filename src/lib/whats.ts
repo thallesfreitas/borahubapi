@@ -243,8 +243,8 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
   let groupId = 0;
   const interval: NodeJS.Timeout = setInterval(async () => {
     console.log(`SEND JOB TO GROUP: ${groupId} ${groupsWhats[groupId].name}`);
-    // const groupPhone = groupsWhatsTeste[groupId].idWhats;
-    const groupPhone = groupsWhats[groupId].idWhats;
+    const groupPhone = groupsWhatsTeste[groupId].idWhats;
+    // const groupPhone = groupsWhats[groupId].idWhats;
     let phone = groupPhone.toString().replace('+', '');
     if (!phone.includes('@')) phone = `${phone}@g.us`;
     // clientWP.startTyping(phone);
@@ -253,12 +253,12 @@ export async function sendToGroups(message: string, approvalSystemId: number) {
     // await Queue.sendMessageToQueue('queueSendWhats', messageFinal);
     await sendProcess(messageFinal);
 
-    // if (groupId === groupsWhatsTeste.length - 1) {
-    if (groupId === groupsWhats.length - 1) {
+    if (groupId === groupsWhatsTeste.length - 1) {
+      // if (groupId === groupsWhats.length - 1) {
       clearInterval(interval);
     }
     groupId += 1;
-  }, 60000);
+  }, 5000);
 
   // for (let groupId = 0; groupId < groupsWhats.length; groupId += 1) {
   //   const groupPhone = groupsWhats[groupId].idWhats;
@@ -477,11 +477,7 @@ export const getGroups = async () => {
   // const { data } = response;
   const filteredData = data
     .filter((item: Item) => {
-      console.log('item.name');
-      console.log(item.name);
       const nameAfterHash = item.name.split('#')[1];
-      console.log('nameAfterHash');
-      console.log(nameAfterHash);
       return nameAfterHash && nameAfterHash.toLowerCase() === 'boraajudar.work';
     })
     // .filter(
@@ -496,7 +492,7 @@ export const getGroups = async () => {
       }) => {
         const linkMatch = item.groupMetadata?.desc?.match(linkRegex);
         const link = linkMatch ? linkMatch[0] : null;
-        console.log(`item.name: ${item.name} | link: ${link}`);
+        // console.log(`item.name: ${item.name} | link: ${link}`);
         return {
           id: item.id,
           name: item.name,

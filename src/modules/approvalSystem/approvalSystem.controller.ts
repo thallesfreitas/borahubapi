@@ -9,3 +9,7 @@ export const getApprovalSystem = async (req: GetModel, reply: FastifyReply) => {
   const sentToGroups = await ApprovalSystemService.getApprovalSystemById(id);
   return reply.send(sentToGroups);
 };
+export const getApprovalSystemSocket = async (id: number) => {
+  const sentToGroups = await ApprovalSystemService.getApprovalSystemById(id);
+  return sentToGroups;
+};

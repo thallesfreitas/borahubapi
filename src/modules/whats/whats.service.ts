@@ -201,20 +201,19 @@ export const sendMessageToGroups = async (
         const messageFinal = `*#BoraHubJob ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
 
         const typeString = type as string;
-        const costsusage = await CostsUsageRepository.getCostsUsage(typeString);
-        console.log('CostsUsageRepository');
-        console.log(typeString);
-        console.log(costsusage);
+        const costsusage = await CostsUsageRepository.getCostsUsage(
+          'SEND_JOB_TO_GROUPS'
+        );
+
         const amountCost = costsusage?.amount as number;
         await CreditsService.removeCredits({
           userId,
           amount: amountCost,
-          // transactionType: 'REMOVE_CREDIT',
+          transactionType: 'REMOVE_CREDIT',
           type: 'SEND_JOB_TO_GROUPS',
           status: 'approved',
           // type: typeString,
         });
-        console.log('sendToGroups');
         response = await WhatsApi.sendToGroups(messageFinal, statusMessage.id);
       }, 4000);
     } else if (

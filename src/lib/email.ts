@@ -81,8 +81,7 @@ const send = async ({
   };
   const contactEmail = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    // port: 465,
-    port: 587,
+    port: 465,
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,
@@ -128,7 +127,7 @@ export const sendWhatsConection = async (type: string) => {
   };
   const contactEmail = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 587,
+    port: 465,
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,

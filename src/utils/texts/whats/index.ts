@@ -31,13 +31,13 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
     message: '',
   },
   newUser: {
-    message: `Olá, É ótimo tê-lo conosco no BoraHub!! 🤗 \nEstamos animados em ter você como parte da nossa comunidade e queremos ajudá-lo a mudar sua vida! 😎 \nPara oficializar o seu cadastro, por favor, responda com a palavra "*CONFIRMO*" e assim confirmar seu número do WhatsApp.\nAgora você também pode interagir com o nosso BoraBot para dicas e assistência em sua jornada. 🤖 \nJuntos, vamos alcançar nossos objetivos! BoraHub! 💪🏽`,
+    message: `Olá, É ótimo tê-lo conosco no BoraHub!! 🤗 \nEstamos animados em ter você como parte da nossa comunidade e queremos ajudá-lo a mudar sua vida! 😎 \nPara oficializar o seu cadastro, por favor, responda com a palavra *confirmo* e assim confirmar seu número do WhatsApp.\nAgora você também pode interagir com o nosso BoraBot para dicas e assistência em sua jornada. 🤖 \nJuntos, vamos alcançar nossos objetivos! BoraHub! 💪🏽`,
   },
   loginUser: {
     message: `Olá, você quer se logar no BoraHub? Responda apenas *logar* ou *nao logar*`,
   },
   createTokenToValidation: {
-    message: `Para validar seus dados agora envie: *CONFIRMO*`,
+    message: `Para validar seus dados agora envie: *confirmo*`,
   },
   createdUser: {
     message: `Boa! Você confirmou seu WhatsApp. Não esqueça de validar seu email também. 📩📱

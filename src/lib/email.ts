@@ -70,16 +70,19 @@ const send = async ({
   });
   console.log('SEND MAIL');
   console.log(`${email.name} <${email.to}>`);
+
   const compiledTemplate = handlebars.compile(source);
   const mail = {
     from: `${email.name} <${email.to}>`,
-    to: `${nameReceive} <${toReceive}>`,
+    // to: `${nameReceive} <${toReceive}>`,
+    to: toReceive,
     subject,
     html: compiledTemplate(payload),
   };
   const contactEmail = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 465,
+    // port: 465,
+    port: 587,
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,
@@ -92,6 +95,8 @@ const send = async ({
       console.log(error);
     } else {
       contactEmail.sendMail(mail, error => {
+        console.log('SENT mail');
+        console.log(mail);
         if (error) {
           console.log(error);
           console.log({ status: 'ERROR' });
@@ -123,7 +128,7 @@ export const sendWhatsConection = async (type: string) => {
   };
   const contactEmail = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 465,
+    port: 587,
     secure: true,
     auth: {
       user: process.env.MAIL_USERNAME,

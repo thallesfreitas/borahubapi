@@ -68,6 +68,8 @@ const send = async ({
   const source = await readFile(path.join(__dirname, template), {
     encoding: 'utf-8',
   });
+  console.log('SEND MAIL');
+  console.log(`${email.name} <${email.to}>`);
   const compiledTemplate = handlebars.compile(source);
   const mail = {
     from: `${email.name} <${email.to}>`,

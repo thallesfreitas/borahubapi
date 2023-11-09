@@ -89,7 +89,9 @@ export const createUser: CreateUser = async ({
     let idTransactionType = 'WELCOME';
     if (
       indicatedBy === 'thallesfreitas@gmail.com' ||
-      indicatedBy === 'thallesfreitas'
+      indicatedBy === 'thallesfreitas' ||
+      indicatedBy === 'priscila.cotrim@gmail.com' ||
+      indicatedBy === 'priscilacotrim'
     ) {
       idTransactionType = 'WELCOME_INDICATEDBY';
     }

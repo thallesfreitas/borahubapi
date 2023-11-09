@@ -1,7 +1,3 @@
-// NOREPLY_EMAIL_TO = 'noreply@boraajudar.work';
-// CONTACT_EMAIL_TO = 'contato@boraajudar.work';
-// ADMIN_EMAIL_TO = 'admin@boraajudar.work';
-// FINANCEIRO_EMAIL_TO = 'financeiro@boraajudar.work';
 export interface EmailData {
   template: string;
   subject: string;

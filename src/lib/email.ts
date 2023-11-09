@@ -108,7 +108,7 @@ export const sendWhatsConection = async (type: string) => {
   });
   const compiledTemplate = handlebars.compile(source);
   const mail = {
-    from: `contato@boraajudar.work`,
+    from: process.env.MAIL_USERNAME,
     to: `thallesfreitas@yahoo.com.br, thallesfreitas@gmail.com`,
     subject,
     html: compiledTemplate({}),

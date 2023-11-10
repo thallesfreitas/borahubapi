@@ -91,6 +91,7 @@ export const createUser: CreateUser = async ({
       indicatedBy === 'thallesfreitas@gmail.com' ||
       indicatedBy === 'thallesfreitas' ||
       indicatedBy === 'priscila.cotrim@gmail.com' ||
+      indicatedBy === 'mestregp' ||
       indicatedBy === 'priscilacotrim'
     ) {
       idTransactionType = 'WELCOME_INDICATEDBY';

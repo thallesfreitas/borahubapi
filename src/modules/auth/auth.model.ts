@@ -7,6 +7,7 @@ export interface SignupBody {
   indicatedBy: string;
   password: string;
   optin: boolean;
+  avatar?: string;
 }
 
 export type SignupRequest = FastifyRequest<{

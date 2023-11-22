@@ -16,7 +16,13 @@ export { User } from '@prisma/client';
 export interface CreateUserArgs
   extends Pick<
     User,
-    'name' | 'email' | 'phone' | 'password' | 'optin' | 'indicatedBy'
+    | 'name'
+    | 'email'
+    | 'phone'
+    | 'password'
+    | 'optin'
+    | 'indicatedBy'
+    | 'indicatedBy'
   > {}
 
 interface CreateUser {

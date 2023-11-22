@@ -117,24 +117,24 @@ export default async (fastify: FastifyInstance) => {
     AuthController.forgetPassword
   );
 
-  fastify.patch<{
-    Body: AuthModel.ResetPasswordBody;
-  }>(
-    '/reset-password',
-    {
-      preHandler: (request, reply, done) => {
-        const { password } = request.body;
-        // eslint-disable-next-line security/detect-possible-timing-attacks
+  // fastify.patch<{
+  //   Body: AuthModel.ResetPasswordBody;
+  // }>(
+  //   '/reset-password',
+  //   {
+  //     preHandler: (request, reply, done) => {
+  //       const { password } = request.body;
+  //       // eslint-disable-next-line security/detect-possible-timing-attacks
 
-        done();
-      },
-      schema: {
-        body: AuthSchema.resetPasswordBody,
-      },
-      onSend,
-    },
-    AuthController.resetPassword
-  );
+  //       done();
+  //     },
+  //     schema: {
+  //       body: AuthSchema.resetPasswordBody,
+  //     },
+  //     onSend,
+  //   },
+  //   AuthController.resetPassword
+  // );
 
   // Admin
   fastify.post<{

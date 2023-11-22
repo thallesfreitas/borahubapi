@@ -477,7 +477,10 @@ export const getGroups = async () => {
   // const { data } = response;
   const filteredData = data
     .filter((item: Item) => {
+      console.log(`item.name: ${item.name}`);
+      if (item.name === undefined) return false;
       const nameAfterHash = item.name.split('#')[1];
+      console.log(`nameAfterHash: ${nameAfterHash}`);
       return nameAfterHash && nameAfterHash.toLowerCase() === 'boraajudar.work';
     })
     // .filter(

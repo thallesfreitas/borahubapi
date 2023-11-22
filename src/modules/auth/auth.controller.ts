@@ -140,25 +140,17 @@ export const signinOauth = async (
   request: AuthModel.SigninOauthRequest,
   reply: FastifyReply
 ) => {
-  console.log(
-    '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-  );
-  console.log('signinOauth');
-  console.log(
-    '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
-  );
   try {
     const { token } = request.body;
     const tokenWS = await tokenService.getToken({ uuid: token });
+    let decoded;
+    let user;
     const invalid = JSON.stringify({
       sucess: false,
       message: 'invalid token',
     });
     if (tokenWS) {
-      const decoded = jwt.verify(
-        tokenWS.token,
-        process.env.JWT_SECRET as string
-      );
+      decoded = jwt.verify(tokenWS.token, process.env.JWT_SECRET as string);
 
       if (!decoded) {
         return await reply.status(403).send(invalid);
@@ -184,7 +176,7 @@ export const signinOauth = async (
         isActive: true,
         isEmailConfirmed: true,
       });
-      const user = await UserService.getUserByEmail(email);
+      user = await UserService.getUserByEmail(email);
       if (user) {
         const logged = JSON.stringify({
           sucess: true,
@@ -197,7 +189,45 @@ export const signinOauth = async (
         return await reply.send(logged);
       }
     } else {
-      return await reply.status(400).send(invalid);
+      decoded = jwt.decode(token, {});
+
+      if (!decoded) {
+        throw new Error('Invalid token');
+      }
+
+      const { email, name } = decoded as {
+        email: string | undefined;
+        name: string | undefined;
+        picture: string | undefined;
+      };
+
+      if (!email) {
+        throw new Error('Invalid token');
+      }
+
+      user = await UserService.getUserByEmail(email);
+
+      if (!user) {
+        user = await UserService.createUser({
+          email,
+          name: name || '',
+          password: null,
+          phone: '999',
+          indicatedBy: '',
+          optin: true,
+        });
+      }
+
+      const tokenResponse = await AuthService.signinOauth(email);
+      user = await UserService.getUserByEmail(email);
+      const logged = JSON.stringify({
+        sucess: true,
+        user,
+        token: tokenResponse,
+        page: '',
+      });
+      return await reply.send(logged);
+      // return await reply.send({ token: tokenResponse, name: user.name });
     }
   } catch (error) {
     return await reply.status(400).send(error);
@@ -220,19 +250,18 @@ export const forgetPassword = async (
   }
 };
 
-export const resetPassword = async (
-  request: AuthModel.ResetPasswordRequest,
-  reply: FastifyReply
-) => {
-  try {
-    await AuthService.resetPassword(request.body.token, request.body.password);
-    return await reply.send({
-      message: 'Password has been updated',
-    });
-  } catch (error) {
-    return await reply.status(400).send(error);
-  }
-};
+// export const resetPassword = async (
+//   request: AuthModel.ResetPasswordRequest
+// ) => {
+//   try {
+//     await AuthService.resetPassword(request.body.token, request.body.password);
+//     return await reply.send({
+//       message: 'Password has been updated',
+//     });
+//   } catch (error) {
+//     return await reply.status(400).send(error);
+//   }
+// };
 
 // Admin
 type Users = {

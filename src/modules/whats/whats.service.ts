@@ -155,7 +155,7 @@ export const sendMessageToGroups = async (
     const job = await JobService.getJob(idMessage);
 
     if (statusMessage.approved === 'WAITING' && !statusMessage.finished) {
-      const messageToApprove = `*#BoraHubJob*\n${message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
+      const messageToApprove = `*#BoraHubJob*\n${message} \n*## Mensagem enviada por BoraHub.com.br ##*`;
 
       await WhatsApi.send({
         to: '5511945483326',
@@ -198,7 +198,7 @@ export const sendMessageToGroups = async (
       }
 
       await setTimeout(async () => {
-        const messageFinal = `*#BoraHubJob* ${statusMessage.message} \n*## Mensagem enviada pelo BoraHub.com.br ##*`;
+        const messageFinal = `*#BoraHubJob* ${statusMessage.message} \n*## Mensagem enviada por BoraHub.com.br ##*`;
 
         const typeString = type as string;
         const costsusage = await CostsUsageRepository.getCostsUsage(

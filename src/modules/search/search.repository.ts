@@ -60,6 +60,7 @@ const returnJobs = async (data: SearchQuery) => {
   const tagfix = tag?.split(' ').join(' | ');
   const categoryfix = category?.split(' ').join(' | ');
   const areafix = area?.split(' ').join(' | ');
+  console.log();
   let result = await db.jobs.findMany({
     where: {
       title: {
@@ -69,37 +70,37 @@ const returnJobs = async (data: SearchQuery) => {
         contains: keywordfix,
       },
       deletedAt: null,
-      isActive,
+      isActive: true,
 
-      categories: {
-        some: {
-          category: {
-            name: {
-              search: categoryfix,
-            },
-          },
-        },
-      },
+      // categories: {
+      //   some: {
+      //     category: {
+      //       name: {
+      //         search: categoryfix,
+      //       },
+      //     },
+      //   },
+      // },
 
-      tags: {
-        some: {
-          tags: {
-            name: {
-              search: tagfix,
-            },
-          },
-        },
-      },
+      // tags: {
+      //   some: {
+      //     tags: {
+      //       name: {
+      //         search: tagfix,
+      //       },
+      //     },
+      //   },
+      // },
 
-      areas: {
-        some: {
-          areas: {
-            name: {
-              search: areafix,
-            },
-          },
-        },
-      },
+      // areas: {
+      //   some: {
+      //     areas: {
+      //       name: {
+      //         search: areafix,
+      //       },
+      //     },
+      //   },
+      // },
     },
 
     include: {
@@ -144,11 +145,12 @@ const returnJobs = async (data: SearchQuery) => {
     skip,
     take: limit,
     orderBy: {
-      _relevance: {
-        fields: ['title'],
-        search: 'database',
-        sort: 'desc',
-      },
+      createdAt: 'desc',
+      // _relevance: {
+      //   fields: ['title'],
+      //   search: 'database',
+      //   sort: 'asc',
+      // },
     },
   });
 
@@ -211,11 +213,12 @@ const returnJobs = async (data: SearchQuery) => {
       skip,
       take: limit,
       orderBy: {
-        _relevance: {
-          fields: ['title'],
-          search: 'database',
-          sort: 'desc',
-        },
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'desc',
+        // },
       },
     });
   }
@@ -278,11 +281,12 @@ const returnJobs = async (data: SearchQuery) => {
       skip,
       take: limit,
       orderBy: {
-        _relevance: {
-          fields: ['title'],
-          search: 'database',
-          sort: 'desc',
-        },
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'desc',
+        // },
       },
     });
   }
@@ -345,11 +349,12 @@ const returnJobs = async (data: SearchQuery) => {
       skip,
       take: limit,
       orderBy: {
-        _relevance: {
-          fields: ['title'],
-          search: 'database',
-          sort: 'desc',
-        },
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'desc',
+        // },
       },
     });
   }
@@ -412,36 +417,44 @@ const returnCandidates = async (data: SearchQuery) => {
           contains: keywordfix,
         },
 
-        categories: {
-          some: {
-            category: {
-              name: {
-                contains: categoryfix,
-              },
-            },
-          },
-        },
+        // categories: {
+        //   some: {
+        //     category: {
+        //       name: {
+        //         contains: categoryfix,
+        //       },
+        //     },
+        //   },
+        // },
 
-        tags: {
-          some: {
-            tags: {
-              name: {
-                contains: tagfix,
-              },
-            },
-          },
-        },
+        // tags: {
+        //   some: {
+        //     tags: {
+        //       name: {
+        //         contains: tagfix,
+        //       },
+        //     },
+        //   },
+        // },
 
-        areas: {
-          some: {
-            areas: {
-              name: {
-                contains: areafix,
-              },
-            },
-          },
-        },
+        // areas: {
+        //   some: {
+        //     areas: {
+        //       name: {
+        //         contains: areafix,
+        //       },
+        //     },
+        //   },
+        // },
       },
+    },
+    orderBy: {
+      createdAt: 'desc',
+      // _relevance: {
+      //   fields: ['title'],
+      //   search: 'database',
+      //   sort: 'asc',
+      // },
     },
   });
   if (result.length === 0) {
@@ -497,6 +510,14 @@ const returnCandidates = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }
@@ -555,6 +576,14 @@ const returnCandidates = async (data: SearchQuery) => {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
+      },
     });
   }
 
@@ -611,6 +640,14 @@ const returnCandidates = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }
@@ -702,6 +739,14 @@ const returnServiceProvider = async (data: SearchQuery) => {
         },
       },
     },
+    orderBy: {
+      createdAt: 'desc',
+      // _relevance: {
+      //   fields: ['title'],
+      //   search: 'database',
+      //   sort: 'asc',
+      // },
+    },
   });
   if (result.length === 0) {
     result = await db.user.findMany({
@@ -756,6 +801,14 @@ const returnServiceProvider = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }
@@ -814,6 +867,14 @@ const returnServiceProvider = async (data: SearchQuery) => {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
+      },
     });
   }
 
@@ -870,6 +931,14 @@ const returnServiceProvider = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }
@@ -962,6 +1031,14 @@ const returnFreelancer = async (data: SearchQuery) => {
         },
       },
     },
+    orderBy: {
+      createdAt: 'desc',
+      // _relevance: {
+      //   fields: ['title'],
+      //   search: 'database',
+      //   sort: 'asc',
+      // },
+    },
   });
   if (result.length === 0) {
     result = await db.user.findMany({
@@ -1016,6 +1093,14 @@ const returnFreelancer = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }
@@ -1074,6 +1159,14 @@ const returnFreelancer = async (data: SearchQuery) => {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
+      },
     });
   }
 
@@ -1130,6 +1223,14 @@ const returnFreelancer = async (data: SearchQuery) => {
             },
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
+        // _relevance: {
+        //   fields: ['title'],
+        //   search: 'database',
+        //   sort: 'asc',
+        // },
       },
     });
   }

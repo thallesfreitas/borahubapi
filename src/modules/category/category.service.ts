@@ -19,6 +19,10 @@ export interface UpdateCategoryJobArgs {
   data: string[] | undefined;
   jobsId: number;
 }
+export interface UpdateCategoryArticleArgs {
+  data: string[] | undefined;
+  articleId: number;
+}
 
 export const updateCategoryOnCandidate = async (
   params: UpdateCategoryCandidateArgs
@@ -61,6 +65,46 @@ export const updateCategoryOnCandidate = async (
   }
 };
 
+export const updateCategoryOnArticles = async (
+  params: UpdateCategoryArticleArgs
+) => {
+  const { data, articleId } = params;
+
+  if (data) {
+    await dbClient.categoriesOnArticles.deleteMany({
+      where: {
+        articleId,
+      },
+    });
+    for (let index = 0; index < data.length; index += 1) {
+      const element = data[index];
+      const existingCategory = await dbClient.category.findFirst({
+        where: {
+          type: 'ARTICLE',
+          name: element,
+        },
+      });
+      let categoryId = null;
+      if (existingCategory) {
+        categoryId = existingCategory.id;
+      } else {
+        const newcategory = await dbClient.category.create({
+          data: {
+            type: 'ARTICLE',
+            name: element,
+          },
+        });
+        categoryId = newcategory.id;
+      }
+      await dbClient.categoriesOnArticles.create({
+        data: {
+          articleId,
+          categoryId,
+        },
+      });
+    }
+  }
+};
 export const updateCategoryOnJobs = async (params: UpdateCategoryJobArgs) => {
   const { data, jobsId } = params;
 

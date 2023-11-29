@@ -11,7 +11,6 @@ datasource db {
 model User {
   id                     Int                  @id @unique @default(autoincrement())
   uuid                   String               @unique @default(cuid())
-  // stripe_id              String?
   customerMP             String?
   
   email                  String               @unique
@@ -36,15 +35,19 @@ model User {
   serviceProvider      ServiceProvider? 
   freelancer            Freelancer? 
   //
-  // createdSubscription    Subscription[]       @relation("CreatedSubscription")
-  // updatedSubscription    Subscription[]       @relation("UpdatedSubscription")
-  // deletedSubscription    Subscription[]       @relation("DeletedSubscription")
-  //
   createdJobApplication             JobApplication[]               @relation("CreatedJobApplication")
   createdJob             Jobs[]               @relation("CreatedJob")
   updatedJob             Jobs[]               @relation("UpdatedJob")
   deletedJob             Jobs[]               @relation("DeletedJob")
   
+  createdArticles             Articles[]               @relation("CreatedArticles")
+  updatedArticles             Articles[]               @relation("UpdatedArticles")
+  deletedArticles             Articles[]               @relation("DeletedArticles")
+  
+  createdArticleView             ArticleView[]               @relation("createdArticlesView")
+  createdArticleLike             ArticleLike[]               @relation("createdArticlesLike")
+  createdArticleComments             ArticleComments[]               @relation("createdArticlesComments")
+
   messageApprovalSystem MessageApprovalSystem[] @relation("UserApprovalSystem")
   credits Credits[] @relation("UserCredits")
   creditTransaction CreditTransaction[] @relation("UserCreditTransaction")
@@ -138,33 +141,14 @@ model CreditTransaction {
   createdAt DateTime @default(now())
   @@map("CreditTransaction")
 }
-
-// model Subscription {
-//   id             Int       @id @default(autoincrement())
-//   uuid           String    @default(cuid())
-//   type           String
-//   priceId        String
-//   // user_stripe_id String
-//   // stripe_id      String
-//   createdAt      DateTime  @default(now()) @map("created_at")
-//   updatedAt      DateTime  @default(now()) @map("updated_at")
-//   deletedAt      DateTime? @map("deleted_at")
-//   createdById    User?     @relation("CreatedSubscription", fields: [createdBy], references: [id], onDelete: Cascade)
-//   updatedById    User?     @relation("UpdatedSubscription", fields: [updatedBy], references: [id], onDelete: Cascade)
-//   deletedById    User?     @relation("DeletedSubscription", fields: [deletedBy], references: [id], onDelete: Cascade)
-//   createdBy      Int?
-//   updatedBy      Int?
-//   deletedBy      Int?
-
-//   @@map("subscription")
-// }
-
+ 
 enum ProfileType {
   CANDIDATE
   RECRUITER
   JOB
   SERVICE_PROVIDER
   FREELANCER
+  ARTICLE
 }
 
 model Category {
@@ -175,6 +159,7 @@ model Category {
   createdAt DateTime                @default(now()) @map("created_at")
   updatedAt DateTime                @default(now()) @map("updated_at")
   deletedAt DateTime?               @map("deleted_at")
+  article CategoriesOnArticles[]
   candidate CategoriesOnCandidate[]
   jobs      CategoriesOnJobs[]
   recruiter CategoriesOnRecruiter[]
@@ -185,6 +170,16 @@ model Category {
   deletedBy Int?
 
   @@map("category")
+}
+
+model CategoriesOnArticles {
+  article   Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([articleId, categoryId])
 }
 
 model CategoriesOnCandidate {
@@ -245,6 +240,7 @@ model Tags {
   createdAt DateTime                @default(now()) @map("created_at")
   updatedAt DateTime                @default(now()) @map("updated_at")
   deletedAt DateTime?               @map("deleted_at")
+  article TagsOnArticles[]
   candidate TagsOnCandidate[]
   jobs      TagsOnJobs[]
   recruiter TagsOnRecruiter[]
@@ -255,6 +251,17 @@ model Tags {
   deletedBy Int?
 
   @@map("tags")
+}
+
+
+model TagsOnArticles {
+  article   Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int
+  tags    Tags  @relation(fields: [tagsId], references: [id])
+  tagsId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([articleId, tagsId])
 }
 
 model TagsOnCandidate {
@@ -320,41 +327,7 @@ model Areas {
 
   @@map("areas")
 }
-// model Inclusive {
-//   id        Int                     @id @default(autoincrement())
-//   uuid      String                  @default(cuid())
-//   type      ProfileType
-//   name      String
-//   createdAt DateTime                @default(now()) @map("created_at")
-//   updatedAt DateTime                @default(now()) @map("updated_at")
-//   deletedAt DateTime?               @map("deleted_at")
-//   candidate InclusiveOnCandidate[]
-//   jobs      InclusiveOnJobs[]
-//   createdBy Int?
-//   updatedBy Int?
-//   deletedBy Int?
-
-//   @@map("inclusive")
-// }
-
-// model InclusiveOnCandidate {
-//   candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
-//   candidateId Int
-//   inclusive    Inclusive  @relation(fields: [inclusiveId], references: [id], onDelete: Cascade)
-//   inclusiveId  Int
-//   assignedAt  DateTime  @default(now())
-//   @@id([candidateId, inclusiveId])
-// }
-
-// model InclusiveOnJobs {
-//   jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-//   jobsId Int
-//   inclusive    Inclusive  @relation(fields: [inclusiveId], references: [id], onDelete: Cascade)
-//   inclusiveId  Int
-//   assignedAt  DateTime  @default(now())
-//   @@id([jobsId, inclusiveId])
-// }
-
+ 
 model AreasOnCandidate {
   candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
@@ -487,11 +460,12 @@ model Jobs {
   deletedAt DateTime? @map("deleted_at")
 
   createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id], onDelete: Cascade)
-  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
-  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
-
   createdBy Int? @map("created_by")
+
+  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
   updatedBy Int? @map("updated_by")
+ 
+  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
   deletedBy Int? @map("deleted_by")
   
   jobApplication JobApplication[]
@@ -622,4 +596,91 @@ model Freelancer {
   userId       Int                     @unique
 
   @@map("freelancers")
+}
+
+
+model Articles {
+  id                  Int      @id @default(autoincrement())
+  uuid                   String               @unique @default(cuid())  
+  slug                String   @unique
+  title               String
+  text                Json
+  categories          CategoriesOnArticles[]
+  tags                TagsOnArticles[]
+  isPublished         Boolean  @default(false) @map("is_published")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  createdById User? @relation(name: "CreatedArticles", fields: [createdBy], references: [id], onDelete: Cascade)
+  updatedById User? @relation(name: "UpdatedArticles", fields: [updatedBy], references: [id], onDelete: Cascade)
+  deletedById User? @relation(name: "DeletedArticles", fields: [deletedBy], references: [id], onDelete: Cascade)
+  createdBy Int? @map("created_by")
+  updatedBy Int? @map("updated_by")
+  deletedBy Int? @map("deleted_by")
+  articleHistory                ArticleHistory[]          @relation("ArticleHistory")
+  articleView                   ArticleView[]             @relation("ArticleView")
+  articleLike                   ArticleLike[]             @relation("ArticleLike")
+  articleComments               ArticleComments[]         @relation("ArticleComments")
+  viewsCount BigInt @default(0)
+  @@map("articles")
+}
+
+
+model ArticleHistory {
+  id             Int      @id @default(autoincrement())  
+  uuid           String   @unique @default(cuid())
+  slug           String   
+  title          String
+  text           Json
+  article Articles? @relation(name: "ArticleHistory", fields: [articleId], references: [id], onDelete: Cascade)
+  articleId Int? @map("created_by")
+  createdAt      DateTime @default(now())
+  @@map("article_history")
+}
+
+
+model ArticleView {
+  id         Int      @id @default(autoincrement())
+  viewedAt   DateTime @default(now())
+  article    Articles @relation(name:"ArticleView",fields: [articleId], references: [id], onDelete: Cascade)
+  articleId  Int
+  createdById User? @relation(name: "createdArticlesView", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdBy Int? @map("created_by")
+  @@unique([articleId, createdBy])
+}
+
+//Like Type
+// Like (Gostei): Uma reação clássica e universal que expressa aprovação ou concordância com o conteúdo.
+// Amei: Mostra um nível maior de apreciação e entusiasmo pelo artigo.
+// Inspirador: Para artigos que motivam, incentivam ou inspiram os leitores de alguma forma.
+// Útil: Indica que o artigo foi prático e ofereceu informações ou insights valiosos.
+// Pensativo: Para artigos que provocam reflexão, oferecendo uma perspectiva profunda ou desafiadora.
+// Surpreendente: Para conteúdos que trazem novidades ou informações inesperadas.
+// Aprender Mais: Indica um desejo de explorar o tópico mais a fundo, ideal para artigos educativos ou informativos.
+// Para Debater: Usado em artigos que estimulam discussões e troca de ideias.
+// Criativo: Para artigos que se destacam pela originalidade e abordagens inovadoras.
+// Clap (Aplauso): Uma forma mais expressiva de reconhecer o esforço e a qualidade do autor.
+
+model ArticleLike {
+  id         Int      @id @default(autoincrement())
+  type       Int @default(0)
+  viewedAt   DateTime @default(now())
+  article    Articles @relation(name:"ArticleLike",fields: [articleId], references: [id], onDelete: Cascade)
+  articleId  Int
+  createdById User? @relation(name: "createdArticlesLike", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdBy Int? @map("created_by")
+
+  @@unique([articleId, createdBy])
+}
+
+model ArticleComments {
+  id         Int      @id @default(autoincrement())
+  comment   String
+  createdAt DateTime @default(now())
+  article    Articles @relation(name:"ArticleComments",fields: [articleId], references: [id], onDelete: Cascade)
+  articleId  Int
+  createdById User? @relation(name: "createdArticlesComments", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdBy Int? @map("created_by")
+  @@index([articleId, createdBy])
+  // @@map([articleId, createdBy])
 }

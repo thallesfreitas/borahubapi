@@ -41,7 +41,6 @@ export const whatsTemplates: Record<WhatsType, WhatsData> = {
   },
   createdUser: {
     message: `Boa! Você confirmou seu WhatsApp. Não esqueça de validar seu email também. 📩📱
-
 ops... nem me apresentei. 
 Sou o *BoraBot*, seu assistente. 
 Aqui, ofereço insights sobre recrutamento, marketing e tecnologia. 
@@ -53,9 +52,9 @@ Faça perguntas como:
 - Estratégias de marketing digital?
 - Criar um bom portfólio?
 
-Estou à disposição para ajudar no BoraHub. 
-
 Bora!?
+
+*Para suporte do site borahub.com.br mande uma mensagem para - (11)94548-3326*
 
 *IMPORTANTE*
 🎓🌟 Interagir comigo custa *2 créditos do BoraHub! Para gerar imagem o custo é um pouco maior, de 20 créditos* 🚀

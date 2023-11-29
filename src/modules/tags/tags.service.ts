@@ -19,6 +19,10 @@ export interface UpdateJobsArgs {
   data: string[] | undefined;
   jobsId: number;
 }
+export interface UpdateArticlesArgs {
+  data: string[] | undefined;
+  articleId: number;
+}
 
 export const updateTagsOnCandidate = async (params: UpdateCandidateArgs) => {
   const { data, candidateId } = params;
@@ -52,6 +56,44 @@ export const updateTagsOnCandidate = async (params: UpdateCandidateArgs) => {
       await dbClient.tagsOnCandidate.create({
         data: {
           candidateId,
+          tagsId,
+        },
+      });
+    }
+  }
+};
+export const updateTagsOnArticles = async (params: UpdateArticlesArgs) => {
+  const { data, articleId } = params;
+
+  if (data) {
+    await dbClient.tagsOnArticles.deleteMany({
+      where: {
+        articleId,
+      },
+    });
+    for (let index = 0; index < data.length; index += 1) {
+      const element = data[index];
+      const existingCategory = await dbClient.tags.findFirst({
+        where: {
+          type: 'ARTICLE',
+          name: element,
+        },
+      });
+      let tagsId = null;
+      if (existingCategory) {
+        tagsId = existingCategory.id;
+      } else {
+        const newtags = await dbClient.tags.create({
+          data: {
+            type: 'ARTICLE',
+            name: element,
+          },
+        });
+        tagsId = newtags.id;
+      }
+      await dbClient.tagsOnArticles.create({
+        data: {
+          articleId,
           tagsId,
         },
       });

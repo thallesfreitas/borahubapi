@@ -61,6 +61,7 @@ export const getSearch = async (
 
   const jobPayload = array.jobs.map(jobs => ({
     id: jobs.id,
+    avatar: jobs.avatar,
     title: jobs.title,
     slug: jobs.slug,
     description: jobs.description,
@@ -106,6 +107,8 @@ export const getSearch = async (
     workMode: candidates.candidate?.workMode,
     seniority: candidates.candidate?.seniority,
     travel: candidates.candidate?.travel,
+    createdAt: candidates.candidate?.createdAt,
+    updatedAt: candidates.candidate?.updatedAt,
   }));
 
   const serviceProviderPayload = array.serviceProvider.map(serviceProvider => ({
@@ -128,6 +131,8 @@ export const getSearch = async (
     workMode: serviceProvider.serviceProvider?.workMode,
     seniority: serviceProvider.serviceProvider?.seniority,
     travel: serviceProvider.serviceProvider?.travel,
+    createdAt: serviceProvider.serviceProvider?.createdAt,
+    updatedAt: serviceProvider.serviceProvider?.updatedAt,
   }));
 
   const freelancerPayload = array.freelancer.map(freelancer => ({
@@ -150,6 +155,8 @@ export const getSearch = async (
     workMode: freelancer.freelancer?.workMode,
     seniority: freelancer.freelancer?.seniority,
     travel: freelancer.freelancer?.travel,
+    createdAt: freelancer.freelancer?.createdAt,
+    updatedAt: freelancer.freelancer?.updatedAt,
   }));
 
   return {

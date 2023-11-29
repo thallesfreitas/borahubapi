@@ -535,12 +535,6 @@ export const getJobsByUserId = async (
       createdAt: 'desc',
     },
   });
-  console.log('_____________________________');
-  console.log('jobs');
-  console.log('jobs');
-  console.log('jobs');
-  console.log('jobs');
-  console.log(jobs);
   return jobs;
 };
 

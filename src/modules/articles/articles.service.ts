@@ -1,5 +1,6 @@
 import {
   GetArticleBySlugParams,
+  GetFeedQuery,
   ModelCreateArticleBody,
   ModelCreateCommentArticleBody,
   ModelCreateLikeArticleBody,
@@ -10,12 +11,16 @@ import {
   ModelUpdateLikeArticleBody,
 } from './articles.model';
 import {
+  RepositoryArticleGetPriceAndAuthor,
   RepositoryCreateArticle,
   RepositoryCreateCommentArticle,
   RepositoryCreateLikeArticle,
   RepositoryDeleteCommentArticle,
   RepositoryDeleteLikeArticle,
   RepositoryGetArticle,
+  RepositoryGetFeed,
+  RepositoryGetUserPaidArticle,
+  RepositorySetUserPaidArticle,
   RepositoryUpdateArticle,
   RepositoryUpdateCommentArticle,
   RepositoryUpdateLikeArticle,
@@ -26,6 +31,21 @@ export const ServiceCreateArticle = (params: ModelCreateArticleBody) =>
 
 export const ServiceUpdateArticle = (params: ModelUpdateArticleBody) =>
   RepositoryUpdateArticle(params);
+export const ServiceArticleGetPriceAndAuthor = async (id: number) => {
+  const { amountCostArticle, authorArticle } =
+    await RepositoryArticleGetPriceAndAuthor(id);
+
+  return {
+    amountCostArticle: amountCostArticle,
+    authorArticle: authorArticle,
+  };
+};
+
+export const ServiceSetUserPaidArticle = (userId: number, articleId: number) =>
+  RepositorySetUserPaidArticle(userId, articleId);
+
+export const ServiceGetUserPaidArticle = (userId: number, articleId: number) =>
+  RepositoryGetUserPaidArticle(userId, articleId);
 
 export const ServiceCreateCommentArticle = (
   params: ModelCreateCommentArticleBody
@@ -50,3 +70,6 @@ export const ServiceDeleteLikeArticle = (params: ModelDeleteLikeArticleBody) =>
 
 export const ServiceGetArticle = (params: GetArticleBySlugParams) =>
   RepositoryGetArticle(params);
+
+export const ServiceGetFeed = (params: GetFeedQuery) =>
+  RepositoryGetFeed(params);

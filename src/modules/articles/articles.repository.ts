@@ -1,7 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
-import { Prisma } from '@prisma/client';
+import {
+  ArticleComments,
+  ArticleHistory,
+  ArticleLike,
+  ArticleView,
+  Articles,
+  Category,
+  Prisma,
+  Tags,
+  User,
+} from '@prisma/client';
+import { DateTime } from 'aws-sdk/clients/devicefarm';
 import dbClient from '../../lib/dbClient';
 import { updateTagsOnArticles } from '../tags/tags.service';
 
@@ -10,6 +22,7 @@ import { updateCategoryOnArticles } from '../category/category.service';
 // import * as SlugService from '../slug/slug.service';
 import {
   GetArticleBySlugParams,
+  GetFeedQuery,
   ModelCreateArticleBody,
   ModelCreateCommentArticleBody,
   ModelCreateLikeArticleBody,
@@ -21,6 +34,7 @@ import {
 } from './articles.model';
 
 export const RepositoryCreateArticle = async (data: ModelCreateArticleBody) => {
+  console.log(data);
   try {
     // const slug = await SlugService.generate(`${rest.title}`);
     const newUserId = data.userId;
@@ -55,6 +69,7 @@ export const RepositoryCreateArticle = async (data: ModelCreateArticleBody) => {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
+        console.log(error);
         throw new Error('A new article cannot be created');
       }
     }
@@ -62,6 +77,17 @@ export const RepositoryCreateArticle = async (data: ModelCreateArticleBody) => {
   }
 };
 
+export const RepositoryArticleGetPriceAndAuthor = async (id: number) => {
+  const article = await dbClient.articles.findUnique({
+    where: { id },
+  });
+  const amountCostArticle = !article ? 0 : article.price;
+  const authorArticle = !article ? 0 : article.createdBy;
+  return {
+    amountCostArticle: amountCostArticle,
+    authorArticle: authorArticle,
+  };
+};
 export const RepositoryUpdateArticle = async (data: ModelUpdateArticleBody) => {
   try {
     const saveHistory = data.save;
@@ -74,6 +100,8 @@ export const RepositoryUpdateArticle = async (data: ModelUpdateArticleBody) => {
         title: true,
         text: true,
         createdBy: true,
+        paid: true,
+        price: true,
       },
     });
     if (!currentArticle) return false;
@@ -294,30 +322,64 @@ export const RepositoryDeleteLikeArticle = async (
   }
 };
 
-export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
-  let article = await dbClient.articles.findUnique({
-    where: { slug: data.slug },
+export const RepositorySetUserPaidArticle = async (
+  userId: number,
+  articleId: number
+) => {
+  console.log('dbClient.userArticlePaid.create');
+  console.log(userId, articleId);
+  return await dbClient.userArticlePaid.create({
+    data: {
+      articleId: articleId,
+      createdBy: userId,
+    },
   });
+};
+
+export const RepositoryGetUserPaidArticle = (
+  userId: number,
+  articleId: number
+) =>
+  dbClient.userArticlePaid.findFirst({
+    where: {
+      articleId: articleId,
+      createdBy: userId,
+    },
+  });
+
+export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
+  let article = (await dbClient.articles.findUnique({
+    where: { slug: data.slug },
+  })) as any;
   if (!article) return false;
 
   if (data.userId) {
     const existingView = await dbClient.articleView.findFirst({
       where: {
         articleId: article.id,
-        createdBy: data.userId,
+        createdBy: Number(data.userId),
       },
     });
     if (!existingView) {
       await dbClient.articleView.create({
         data: {
           articleId: article.id,
-          createdBy: data.userId,
+          createdBy: Number(data.userId),
         },
       });
     }
   }
+  let userPaid = null;
+  console.log('article.paid');
+  console.log(article.paid);
+  if (article.paid) {
+    userPaid = await RepositoryGetUserPaidArticle(
+      Number(data.userId),
+      article.id
+    );
+  }
   const incrementValue = data.userId !== article.createdBy ? 1 : 0;
-  article = await dbClient.articles.update({
+  article = (await dbClient.articles.update({
     where: {
       slug: data.slug,
       // createdById: { id: createdBy },
@@ -343,6 +405,20 @@ export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
       articleView: {
         select: {
           viewedAt: true,
+          createdById: {
+            select: {
+              id: true,
+              uuid: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      userArticlePaid: {
+        select: {
+          id: true,
+          paidAt: true,
           createdById: {
             select: {
               id: true,
@@ -385,6 +461,7 @@ export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
       createdById: {
         select: {
           id: true,
+          slug: true,
           uuid: true,
           name: true,
           email: true,
@@ -393,6 +470,7 @@ export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
       updatedById: {
         select: {
           id: true,
+          slug: true,
           uuid: true,
           name: true,
           email: true,
@@ -401,6 +479,7 @@ export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
       deletedById: {
         select: {
           id: true,
+          slug: true,
           uuid: true,
           name: true,
           email: true,
@@ -428,87 +507,206 @@ export const RepositoryGetArticle = async (data: GetArticleBySlugParams) => {
         },
       },
     },
-  });
-
+  })) as any;
+  article.userPaid = userPaid;
   return article;
 };
 
-// BUSCA
-export const RepositoryGetArticles = async (data: GetArticleBySlugParams) => {
-  const article = await dbClient.articles.findMany({
-    where: {
-      slug: data.slug,
-      // createdById: { id: createdBy },
-      // deletedAt: null,
-      // isActive,
-    },
-    include: {
-      articleComments: {
-        select: {
-          id: true,
-          comment: true,
-          createdById: {
-            select: {
-              id: true,
-              uuid: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-      },
-      createdById: {
-        select: {
-          id: true,
-          uuid: true,
-          name: true,
-          email: true,
-        },
-      },
-      updatedById: {
-        select: {
-          id: true,
-          uuid: true,
-          name: true,
-          email: true,
-        },
-      },
-      deletedById: {
-        select: {
-          id: true,
-          uuid: true,
-          name: true,
-          email: true,
-        },
-      },
+export interface ArticleComplete extends Articles {
+  categories: Category;
+  tags: Tags;
+  createdById: User;
+  created_by: User;
+  updatedById: User;
+  updated_by: User;
+  deletedById: User;
+  articleHistory: ArticleHistory;
+  article_view: ArticleView;
+  articleView: ArticleView;
+  articleLike: ArticleLike;
+  articleComments: ArticleComments;
+  createdat: DateTime;
+  updatedat: DateTime;
+  is_published: boolean;
+}
+// FEED
+export const RepositoryGetFeed = async (data: GetFeedQuery) => {
+  const { keyword, limit, skip, tag, category, area, isActive = true } = data;
+  const keywordfix = keyword?.split(' ').join(' <-> ');
+  const tagfix = tag?.split(' ').join(' | ');
+  const categoryfix = category?.split(' ').join(' | ');
+  const areafix = area?.split(' ').join(' | ');
+  // const article = await dbClient.articles.findMany({
+  //   where: {
+  //     isPublished: true,
+  //   },
+  //   include: {
+  //     articleView: {
+  //       select: {
+  //         viewedAt: true,
+  //         createdById: {
+  //           select: {
+  //             id: true,
+  //             uuid: true,
+  //             name: true,
+  //             email: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     articleLike: {
+  //       select: {
+  //         id: true,
+  //         type: true,
+  //         viewedAt: true,
+  //         createdById: {
+  //           select: {
+  //             id: true,
+  //             uuid: true,
+  //             name: true,
+  //             email: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     articleComments: {
+  //       select: {
+  //         id: true,
+  //         comment: true,
+  //         createdById: {
+  //           select: {
+  //             id: true,
+  //             uuid: true,
+  //             name: true,
+  //             email: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     createdById: {
+  //       select: {
+  //         id: true,
+  //         uuid: true,
+  //         name: true,
+  //         email: true,
+  //         slug: true,
+  //         candidate: {
+  //           select: {
+  //             avatar: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     updatedById: {
+  //       select: {
+  //         id: true,
+  //         uuid: true,
+  //         name: true,
+  //         email: true,
+  //         slug: true,
+  //         candidate: {
+  //           select: {
+  //             avatar: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     deletedById: {
+  //       select: {
+  //         id: true,
+  //         uuid: true,
+  //         name: true,
+  //         email: true,
+  //         slug: true,
+  //         candidate: {
+  //           select: {
+  //             avatar: true,
+  //           },
+  //         },
+  //       },
+  //     },
 
-      categories: {
-        select: {
-          category: {
-            select: {
-              type: true,
-              name: true,
-            },
-          },
-        },
-      },
-      tags: {
-        select: {
-          tags: {
-            select: {
-              type: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
-    skip: data.skip || 0,
-    take: data.limit || 1,
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+  //     categories: {
+  //       select: {
+  //         category: {
+  //           select: {
+  //             type: true,
+  //             name: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //     tags: {
+  //       select: {
+  //         tags: {
+  //           select: {
+  //             type: true,
+  //             name: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   skip: skip || 0,
+  //   take: limit || 1,
+  //   orderBy: {
+  //     createdAt: 'desc',
+  //   },
+  // });
+
+  const article = await dbClient.$queryRaw`
+    SELECT
+      a.*,
+      a.created_at as createdAt,
+      COUNT(av.id) AS viewCount,
+      COUNT(al.id) AS likeCount,
+      COUNT(ac.id) AS commentCount,
+      (a.views_count + COUNT(av.id) + COUNT(al.id) + COUNT(ac.id)) / (EXTRACT(DAY FROM (CURRENT_DATE - a.created_at)) + 1) AS relevanceScore,
+      json_build_object(
+        'id', u.id,
+        'name', u.name
+      ) as created_by,
+      json_agg(
+        json_build_object(
+          'id', av.id,
+          'created_by', av.created_by,
+          'created_by_id', json_build_object(
+            'id', u.id,
+            'name', u.name
+          )
+        )
+      ) as article_view
+    FROM
+      articles a
+    LEFT JOIN
+      users u ON a.created_by = u.id
+    LEFT JOIN
+      article_view av ON a.id = av.article_id
+    LEFT JOIN
+      article_like al ON a.id = al.article_id
+    LEFT JOIN
+      article_comments ac ON a.id = ac.article_id
+    WHERE
+      a.is_published = true
+    GROUP BY
+      a.id, u.id, av.id
+    ORDER BY
+      relevanceScore DESC
+    LIMIT ${limit} OFFSET ${skip}
+  `;
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log(article);
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
 
   return article;
 };

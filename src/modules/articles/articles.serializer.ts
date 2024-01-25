@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ArticleComplete } from './articles.repository';
 // import { GetJobsQuery } from './jobs.model';
 // import { JobComplete } from './jobs.repository';
 
@@ -52,47 +53,47 @@ export const insertPagination = async (
   };
 };
 
-// export const getJobs = async (
-//   request: FastifyRequest,
-//   reply: FastifyReply,
-//   payload: any
-// ) => {
-//   const { data, ...rest } = payload;
-//   const array: JobComplete[] = data;
+export const getFeed = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+  payload: any
+) => {
+  const { data, ...rest } = payload;
+  const array: ArticleComplete[] = data || [];
+  console.log('___________________');
+  console.log('data');
+  console.log(array);
+  console.log('___________________');
+  console.log('___________________');
+  console.log('___________________');
+  const newPayload = array.map(article => ({
+    id: article.id,
+    uuid: article.uuid,
+    slug: article.slug,
+    paid: article.paid,
+    price: article.price,
+    title: article.title,
+    text: article.text,
+    categories: article.categories,
+    tags: article.tags,
+    isPublished: article.is_published,
+    articleView: article.article_view,
+    articleLike: article.articleLike,
+    articleComments: article.articleComments,
+    viewsCount: article.viewsCount ? article.viewsCount.toString() : 0,
+    createdAt: article.createdat,
+    updatedAt: article.updatedat,
+    createdBy: article.created_by,
+    updatedBy: article.updated_by,
+  }));
 
-//   const newPayload = array.map(jobs => ({
-//     id: jobs.id,
-//     title: jobs.title,
-//     slug: jobs.slug,
-//     description: jobs.description,
-//     descriptionCompany: jobs.descriptionCompany,
-//     modelOfWork: jobs.modelOfWork,
-//     city: jobs.city,
-//     state: jobs.state,
-//     showSalary: jobs.showSalary,
-//     salary: jobs.salary,
-//     experience: jobs.experience,
-//     categories: jobs.categories,
-//     affirmative: jobs.affirmative,
-//     areas: jobs.areas,
-//     tags: jobs.tags,
-//     extra: jobs.extra,
-//     createdAt: jobs.createdAt,
-//     updatedAt: jobs.updatedAt,
-//     company: jobs.company,
-//     phone: jobs.phone,
-//     isActive: jobs.isActive,
-//     email: jobs.email,
-//     jobApplication: jobs.jobApplication,
-//     createdBy: jobs.createdById,
-//     updatedBy: jobs.updatedById,
-//   }));
-
-//   return {
-//     ...rest,
-//     jobs: newPayload,
-//   };
-// };
+  console.log('getFeed');
+  console.log(newPayload);
+  return {
+    ...rest,
+    articles: newPayload,
+  };
+};
 
 export const getArticle = async (
   request: FastifyRequest,
@@ -100,14 +101,16 @@ export const getArticle = async (
   sourcePayload: any
 ) => {
   const article = sourcePayload as any; // JobComplete;
-  console.log('article Serialize');
-  console.log(article);
+  // console.log('article Serialize');
+  // console.log(article);
   // console.log(request);
 
   const newPayload = {
     id: article.id,
     uuid: article.uuid,
     slug: article.slug,
+    paid: article.paid,
+    price: article.price,
     title: article.title,
     text: article.text,
     categories: article.categories,
@@ -117,7 +120,7 @@ export const getArticle = async (
     articleView: article.articleView,
     articleLike: article.articleLike,
     articleComments: article.articleComments,
-    viewsCount: article.viewsCount.toString(),
+    viewsCount: article.viewsCount ? article.viewsCount.toString() : 0,
     createdAt: article.createdAt,
     updatedAt: article.updatedAt,
     createdBy: article.createdById,

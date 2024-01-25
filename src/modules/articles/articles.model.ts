@@ -9,6 +9,8 @@ export type ModelCreateArticleBody = {
   categories: string[];
   tags: string[];
   isPublished: boolean;
+  paid?: boolean;
+  price?: number;
 };
 
 export type CreateArticleBodyRequest = FastifyRequest<{
@@ -99,4 +101,19 @@ export type GetArticleBySlugParams = {
 
 export type GetArticleParamsRequest = FastifyRequest<{
   Querystring: GetArticleBySlugParams;
+}>;
+
+export type GetFeedQuery = {
+  count?: number;
+  limit: number;
+  skip: number;
+  filter?: string;
+  keyword?: string;
+  tag?: string;
+  category?: string;
+  area?: string;
+  isActive?: boolean;
+};
+export type GetFeedRequest = FastifyRequest<{
+  Querystring: GetFeedQuery;
 }>;

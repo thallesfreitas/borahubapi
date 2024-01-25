@@ -9,368 +9,361 @@ datasource db {
 }
 
 model User {
-  id                     Int                  @id @unique @default(autoincrement())
-  uuid                   String               @unique @default(cuid())
-  customerMP             String?
-  
-  email                  String               @unique
-  phone                  String               @unique
-  optin                  Boolean              @default(true) @map("optin")
+  id                     Int                     @id @unique @default(autoincrement())
+  uuid                   String                  @unique @default(cuid())
+  email                  String                  @unique
+  phone                  String                  @unique
+  optin                  Boolean                 @default(true) @map("optin")
   name                   String
-  slug                   String               @unique
+  slug                   String                  @unique
   indicatedBy            String?
-  mainPortfolio          String?
   password               String?
-  isActive               Boolean              @default(false) @map("is_active")
-  isPhoneConfirmed        Boolean              @default(false) @map("is_phone_confirmed")
-  isEmailConfirmed        Boolean              @default(false) @map("is_email_confirmed")
-  
-  createdAt              DateTime             @default(now()) @map("created_at")
-  updatedAt              DateTime             @default(now()) @map("updated_at")
-  deletedAt              DateTime?            @map("deleted_at")
+  isActive               Boolean                 @default(false) @map("is_active")
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @default(now()) @map("updated_at")
+  deletedAt              DateTime?               @map("deleted_at")
+  isEmailConfirmed       Boolean                 @default(false) @map("is_email_confirmed")
+  isPhoneConfirmed       Boolean                 @default(false) @map("is_phone_confirmed")
+  mainPortfolio          String?
+  customerMP             String?
+  creditTransaction      CreditTransaction[]     @relation("UserCreditTransaction")
+  paidArticleUser        UserArticlePaid[]       @relation("paidArticleUser")
+  createdArticleComments ArticleComments[]       @relation("createdArticlesComments")
+  createdArticleLike     ArticleLike[]           @relation("createdArticlesLike")
+  createdArticleView     ArticleView[]           @relation("createdArticlesView")
+  createdArticles        Articles[]              @relation("CreatedArticles")
+  deletedArticles        Articles[]              @relation("DeletedArticles")
+  updatedArticles        Articles[]              @relation("UpdatedArticles")
+  candidate              Candidate?
+  credits                Credits[]               @relation("UserCredits")
+  freelancer             Freelancer?
+  createdJobApplication  JobApplication[]        @relation("CreatedJobApplication")
+  createdJob             Jobs[]                  @relation("CreatedJob")
+  deletedJob             Jobs[]                  @relation("DeletedJob")
+  updatedJob             Jobs[]                  @relation("UpdatedJob")
+  messageApprovalSystem  MessageApprovalSystem[] @relation("UserApprovalSystem")
+  recruiter              Recruiter?
   ResetPasswordToken     ResetPasswordToken[]
-  //
-  candidate             Candidate? 
-  recruiter             Recruiter? 
-  serviceProvider      ServiceProvider? 
-  freelancer            Freelancer? 
-  //
-  createdJobApplication             JobApplication[]               @relation("CreatedJobApplication")
-  createdJob             Jobs[]               @relation("CreatedJob")
-  updatedJob             Jobs[]               @relation("UpdatedJob")
-  deletedJob             Jobs[]               @relation("DeletedJob")
-  
-  createdArticles             Articles[]               @relation("CreatedArticles")
-  updatedArticles             Articles[]               @relation("UpdatedArticles")
-  deletedArticles             Articles[]               @relation("DeletedArticles")
-  
-  createdArticleView             ArticleView[]               @relation("createdArticlesView")
-  createdArticleLike             ArticleLike[]               @relation("createdArticlesLike")
-  createdArticleComments             ArticleComments[]               @relation("createdArticlesComments")
+  serviceProvider        ServiceProvider?
+  usage                  Usage[]                 @relation("UserUsage")
 
-  messageApprovalSystem MessageApprovalSystem[] @relation("UserApprovalSystem")
-  credits Credits[] @relation("UserCredits")
-  creditTransaction CreditTransaction[] @relation("UserCreditTransaction")
-  usage Usage[] @relation("UserUsage")
   @@map("users")
-}
-enum AprovalType {
-  WAITING
-  APPROVED
-  DISAPPROVED
 }
 
 model MessageApprovalSystem {
-  id             Int       @id @default(autoincrement())
-  message        String
-  type           String
-  explain        String?
-  user           User      @relation("UserApprovalSystem", fields: [userId], references: [id], onDelete: Cascade)
-  userId         Int
-  idMessage     Int?
-  approved       AprovalType   @default(WAITING)
-  finished        Boolean   @default(false)
-  status         Boolean[]
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @default(now()) @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
+  id        Int         @id @default(autoincrement())
+  message   String
+  type      String
+  explain   String?
+  userId    Int
+  idMessage Int?
+  approved  AprovalType @default(WAITING)
+  finished  Boolean     @default(false)
+  status    Boolean[]
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @map("updated_at")
+  deletedAt DateTime?   @map("deleted_at")
+  user      User        @relation("UserApprovalSystem", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("messageApprovalSystem")
 }
- 
-
 
 model Packs {
-  id Int @id @default(autoincrement())
-  type String @unique
-  name String
+  id          Int      @id @default(autoincrement())
+  type        String   @unique
+  name        String
+  features    String[]
+  phrases     String
+  credits     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   unit_amount Int
-  features String[]
-  phrases String
-  credits Int
-  isActive               Boolean              @default(true) @map("is_active")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive    Boolean  @default(true) @map("is_active")
+
   @@map("packs")
 }
 
 model CostsUsage {
-  id Int @id @default(autoincrement())
-  type String @unique
-  amount Int
+  id        Int      @id @default(autoincrement())
+  type      String   @unique
+  amount    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("costsusage")
 }
 
 model Credits {
-  id Int @id @default(autoincrement())
-  user User @relation("UserCredits", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  amount Int
-  status String @default("pending")         
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  amount             Int
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  status             String              @default("pending")
   creditTransactions CreditTransaction[]
+  user               User                @relation("UserCredits", fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("credits")
 }
 
 model Usage {
-  id Int @id @default(autoincrement())
-  user User @relation("UserUsage", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  total Int
-  input Int
-  output Int
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  total     Int
+  input     Int
+  output    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation("UserUsage", fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("usage")
 }
 
 model CreditTransaction {
-  id Int @id @default(autoincrement())
-  user User @relation("UserCreditTransaction", fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  credit   Credits? @relation(fields: [creditId], references: [id], onDelete: Cascade)
-  creditId Int? 
-  amount Int
-  type String?
-  transactionType String?
-  mp_id_transaction BigInt @default(0)
-  status String @default("pending")                  
-  createdAt DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  creditId          Int?
+  amount            Int
+  createdAt         DateTime @default(now())
+  transactionType   String?
+  status            String   @default("pending")
+  userId            Int
+  mp_id_transaction BigInt   @default(0)
+  type              String?
+  credit            Credits? @relation(fields: [creditId], references: [id], onDelete: Cascade)
+  user              User     @relation("UserCreditTransaction", fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("CreditTransaction")
-}
- 
-enum ProfileType {
-  CANDIDATE
-  RECRUITER
-  JOB
-  SERVICE_PROVIDER
-  FREELANCER
-  ARTICLE
 }
 
 model Category {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  article CategoriesOnArticles[]
-  candidate CategoriesOnCandidate[]
-  jobs      CategoriesOnJobs[]
-  recruiter CategoriesOnRecruiter[]
+  id              Int                           @id @default(autoincrement())
+  uuid            String                        @default(cuid())
+  name            String
+  createdAt       DateTime                      @default(now()) @map("created_at")
+  updatedAt       DateTime                      @default(now()) @map("updated_at")
+  deletedAt       DateTime?                     @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  type            ProfileType
+  article         CategoriesOnArticles[]
+  candidate       CategoriesOnCandidate[]
+  freelancer      CategoriesOnFreelancer[]
+  jobs            CategoriesOnJobs[]
+  recruiter       CategoriesOnRecruiter[]
   serviceProvider CategoriesOnServiceProvider[]
-  freelancer CategoriesOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("category")
 }
 
 model CategoriesOnArticles {
-  article   Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  articleId  Int
+  categoryId Int
+  assignedAt DateTime @default(now())
+  article    Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id])
 
   @@id([articleId, categoryId])
 }
 
 model CategoriesOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   assignedAt  DateTime  @default(now())
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  category    Category  @relation(fields: [categoryId], references: [id])
 
   @@id([candidateId, categoryId])
 }
 
 model CategoriesOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  categoryId Int
+  assignedAt DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id])
+  jobs       Jobs     @relation(fields: [jobsId], references: [id], onDelete: Cascade)
 
   @@id([jobsId, categoryId])
 }
 
 model CategoriesOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int
   assignedAt  DateTime  @default(now())
+  category    Category  @relation(fields: [categoryId], references: [id])
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
 
   @@id([recruiterId, categoryId])
 }
 
 model CategoriesOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  categoryId        Int
+  assignedAt        DateTime        @default(now())
+  category          Category        @relation(fields: [categoryId], references: [id])
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
 
   @@id([serviceProviderId, categoryId])
 }
 
 model CategoriesOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  assignedAt  DateTime  @default(now())
+  categoryId   Int
+  assignedAt   DateTime   @default(now())
+  category     Category   @relation(fields: [categoryId], references: [id])
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
 
   @@id([freelancerId, categoryId])
 }
 
 model Tags {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  article TagsOnArticles[]
-  candidate TagsOnCandidate[]
-  jobs      TagsOnJobs[]
-  recruiter TagsOnRecruiter[]
+  id              Int                     @id @default(autoincrement())
+  uuid            String                  @default(cuid())
+  type            ProfileType
+  name            String
+  createdAt       DateTime                @default(now()) @map("created_at")
+  updatedAt       DateTime                @default(now()) @map("updated_at")
+  deletedAt       DateTime?               @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  article         TagsOnArticles[]
+  candidate       TagsOnCandidate[]
+  freelancer      TagsOnFreelancer[]
+  jobs            TagsOnJobs[]
+  recruiter       TagsOnRecruiter[]
   serviceProvider TagsOnServiceProvider[]
-  freelancer TagsOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("tags")
 }
 
-
 model TagsOnArticles {
-  article   Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  articleId  Int
+  tagsId     Int
+  assignedAt DateTime @default(now())
+  article    Articles @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tags       Tags     @relation(fields: [tagsId], references: [id])
 
   @@id([articleId, tagsId])
 }
 
 model TagsOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
+  tagsId      Int
   assignedAt  DateTime  @default(now())
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  tags        Tags      @relation(fields: [tagsId], references: [id])
+
   @@id([candidateId, tagsId])
 }
 
 model TagsOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  tagsId     Int
+  assignedAt DateTime @default(now())
+  jobs       Jobs     @relation(fields: [jobsId], references: [id], onDelete: Cascade)
+  tags       Tags     @relation(fields: [tagsId], references: [id])
+
   @@id([jobsId, tagsId])
 }
 
 model TagsOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  tagsId            Int
+  assignedAt        DateTime        @default(now())
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
+  tags              Tags            @relation(fields: [tagsId], references: [id])
+
   @@id([serviceProviderId, tagsId])
 }
+
 model TagsOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
-  assignedAt  DateTime  @default(now())
+  tagsId       Int
+  assignedAt   DateTime   @default(now())
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+  tags         Tags       @relation(fields: [tagsId], references: [id])
+
   @@id([freelancerId, tagsId])
 }
 
 model TagsOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  tags    Tags  @relation(fields: [tagsId], references: [id])
-  tagsId  Int
+  tagsId      Int
   assignedAt  DateTime  @default(now())
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  tags        Tags      @relation(fields: [tagsId], references: [id])
+
   @@id([recruiterId, tagsId])
 }
 
 model Areas {
-  id        Int                     @id @default(autoincrement())
-  uuid      String                  @default(cuid())
-  type      ProfileType
-  name      String
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @default(now()) @map("updated_at")
-  deletedAt DateTime?               @map("deleted_at")
-  candidate AreasOnCandidate[]
-  jobs      AreasOnJobs[]
-  recruiter AreasOnRecruiter[]
+  id              Int                      @id @default(autoincrement())
+  uuid            String                   @default(cuid())
+  type            ProfileType
+  name            String
+  createdAt       DateTime                 @default(now()) @map("created_at")
+  updatedAt       DateTime                 @default(now()) @map("updated_at")
+  deletedAt       DateTime?                @map("deleted_at")
+  createdBy       Int?
+  updatedBy       Int?
+  deletedBy       Int?
+  candidate       AreasOnCandidate[]
+  freelancer      AreasOnFreelancer[]
+  jobs            AreasOnJobs[]
+  recruiter       AreasOnRecruiter[]
   serviceProvider AreasOnServiceProvider[]
-  freelancer AreasOnFreelancer[]
-  createdBy Int?
-  updatedBy Int?
-  deletedBy Int?
 
   @@map("areas")
 }
- 
+
 model AreasOnCandidate {
-  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
   candidateId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
+  areasId     Int
   assignedAt  DateTime  @default(now())
+  areas       Areas     @relation(fields: [areasId], references: [id], onDelete: Cascade)
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
   @@id([candidateId, areasId])
 }
 
 model AreasOnJobs {
-  jobs   Jobs @relation(fields: [jobsId], references: [id], onDelete: Cascade)
-  jobsId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  jobsId     Int
+  areasId    Int
+  assignedAt DateTime @default(now())
+  areas      Areas    @relation(fields: [areasId], references: [id], onDelete: Cascade)
+  jobs       Jobs     @relation(fields: [jobsId], references: [id], onDelete: Cascade)
+
   @@id([jobsId, areasId])
 }
 
 model AreasOnServiceProvider {
-  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
   serviceProviderId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  areasId           Int
+  assignedAt        DateTime        @default(now())
+  areas             Areas           @relation(fields: [areasId], references: [id], onDelete: Cascade)
+  serviceProvider   ServiceProvider @relation(fields: [serviceProviderId], references: [id], onDelete: Cascade)
+
   @@id([serviceProviderId, areasId])
 }
 
 model AreasOnFreelancer {
-  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
   freelancerId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
-  assignedAt  DateTime  @default(now())
+  areasId      Int
+  assignedAt   DateTime   @default(now())
+  areas        Areas      @relation(fields: [areasId], references: [id], onDelete: Cascade)
+  freelancer   Freelancer @relation(fields: [freelancerId], references: [id], onDelete: Cascade)
+
   @@id([freelancerId, areasId])
 }
 
-
 model AreasOnRecruiter {
-  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
   recruiterId Int
-  areas    Areas  @relation(fields: [areasId], references: [id], onDelete: Cascade)
-  areasId  Int
+  areasId     Int
   assignedAt  DateTime  @default(now())
+  areas       Areas     @relation(fields: [areasId], references: [id], onDelete: Cascade)
+  recruiter   Recruiter @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+
   @@id([recruiterId, areasId])
 }
 
@@ -378,110 +371,102 @@ model Candidate {
   id           Int                     @id @default(autoincrement())
   uuid         String                  @default(cuid())
   description  String?
-  avatar       String?
-  banner       String?
   link         String?
+  salary       String[]
+  contractMode String[]
   actualRole   String?
   city         String?
   state        String?
-  extra        String?
-  salary       String[]
-  contractMode String[]
   workMode     String[]
   seniority    String[]
-  travel       String[]
-  affirmative   String[]
-  categories   CategoriesOnCandidate[]
-  tags         TagsOnCandidate[]
-  areas        AreasOnCandidate[]
   createdAt    DateTime                @default(now()) @map("created_at")
   updatedAt    DateTime                @default(now()) @map("updated_at")
   deletedAt    DateTime?               @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  travel       String[]
   userId       Int                     @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  affirmative  String[]
+  areas        AreasOnCandidate[]
+  categories   CategoriesOnCandidate[]
+  tags         TagsOnCandidate[]
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("candidates")
 }
 
 model JobApplication {
-  id                  Int      @id @default(autoincrement())
-  name               String
-  email               String?
-  phone               String?
-  description         String? 
-  terms         Boolean?  @default(true)
-  
-  feedback  String? 
-  feedbackrecruiter  String? 
-  evaluation String? 
-  score Float?
-  
-  createdAt DateTime  @default(now()) @map("created_at")
-  createdById User? @relation(name: "CreatedJobApplication", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
-  
-  job   Jobs @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  jobId Int
-  
+  id                Int      @id @default(autoincrement())
+  name              String
+  email             String?
+  phone             String?
+  description       String?
+  terms             Boolean? @default(true)
+  feedback          String?
+  feedbackrecruiter String?
+  evaluation        String?
+  score             Float?
+  createdAt         DateTime @default(now()) @map("created_at")
+  createdBy         Int?     @map("created_by")
+  jobId             Int
+  createdById       User?    @relation("CreatedJobApplication", fields: [createdBy], references: [id], onDelete: Cascade)
+  job               Jobs     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
   @@map("jobapplication")
 }
 
 model Jobs {
-  id                  Int      @id @default(autoincrement())
-  title               String
-  slug                String   @unique
-  company             String?
-  email               String?
-  phone               String?
-  avatar              String?
-  banner              String?
-  experience          String?
-  description         String? 
-  descriptionCompany  String?
-  modelOfWork         String[]
-  contractMode        String[]
-  city                String?
-  state               String?
-  seniority    String[]
-  travel       String[]
-  showSalary          Boolean  @default(true)
-  salary              String[]
-  affirmative          String[]
-  categories          CategoriesOnJobs[]
-  tags                TagsOnJobs[]
-  areas               AreasOnJobs[]
-  isActive            Boolean  @default(true)
-  isPublished         Boolean  @default(false) @map("is_published")
-  isApproved          Boolean  @default(false) @map("is_approved")
-  
-  extra    String?
+  id                 Int                @id @default(autoincrement())
+  title              String
+  company            String?
+  email              String?
+  phone              String?
+  description        String?
+  slug               String             @unique
+  isPublished        Boolean            @default(false) @map("is_published")
+  isApproved         Boolean            @default(false) @map("is_approved")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @default(now()) @map("updated_at")
+  deletedAt          DateTime?          @map("deleted_at")
+  createdBy          Int?               @map("created_by")
+  updatedBy          Int?               @map("updated_by")
+  deletedBy          Int?               @map("deleted_by")
+  descriptionCompany String?
+  salary             String[]
+  city               String?
+  state              String?
+  isActive           Boolean            @default(true)
+  extra              String?
+  avatar             String?
+  banner             String?
+  experience         String?
+  affirmative        String[]
+  showSalary         Boolean            @default(true)
+  contractMode       String[]
+  seniority          String[]
+  travel             String[]
+  modelOfWork        String[]
+  areas              AreasOnJobs[]
+  categories         CategoriesOnJobs[]
+  tags               TagsOnJobs[]
+  jobApplication     JobApplication[]
+  createdById        User?              @relation("CreatedJob", fields: [createdBy], references: [id], onDelete: Cascade)
+  deletedById        User?              @relation("DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
+  updatedById        User?              @relation("UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-
-  createdById User? @relation(name: "CreatedJob", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
-
-  updatedById User? @relation(name: "UpdatedJob", fields: [updatedBy], references: [id], onDelete: Cascade)
-  updatedBy Int? @map("updated_by")
- 
-  deletedById User? @relation(name: "DeletedJob", fields: [deletedBy], references: [id], onDelete: Cascade)
-  deletedBy Int? @map("deleted_by")
-  
-  jobApplication JobApplication[]
-  
   @@map("jobs")
 }
 
 model Token {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @default(cuid())
   email     String
   phone     String
-  page      String?
   token     String   @unique
   toLogin   Boolean  @default(false)
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(cuid())
   createdAt DateTime @default(now()) @map("created_at")
+  page      String?
 
   @@map("token")
 }
@@ -496,8 +481,6 @@ model ResetPasswordToken {
   @@map("reset_password_tokens")
 }
 
-
-
 model Manage_sessions {
   id         Int       @id @default(autoincrement())
   session_id String
@@ -511,176 +494,193 @@ model Manage_sessions {
 }
 
 model Recruiter {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
+  id           Int                     @id @default(autoincrement())
+  uuid         String                  @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnRecruiter[]
-  tags         TagsOnRecruiter[]
-  areas        AreasOnRecruiter[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime                @default(now()) @map("created_at")
+  updatedAt    DateTime                @default(now()) @map("updated_at")
+  deletedAt    DateTime?               @map("deleted_at")
   userId       Int                     @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnRecruiter[]
+  categories   CategoriesOnRecruiter[]
+  tags         TagsOnRecruiter[]
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("recruiters")
 }
 
 model ServiceProvider {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
-  // title               String
-  // slug                String   @unique
+  id           Int                           @id @default(autoincrement())
+  uuid         String                        @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnServiceProvider[]
-  tags         TagsOnServiceProvider[]
-  areas        AreasOnServiceProvider[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       Int                     @unique
+  createdAt    DateTime                      @default(now()) @map("created_at")
+  updatedAt    DateTime                      @default(now()) @map("updated_at")
+  deletedAt    DateTime?                     @map("deleted_at")
+  userId       Int                           @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnServiceProvider[]
+  categories   CategoriesOnServiceProvider[]
+  tags         TagsOnServiceProvider[]
+  user         User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("serviceproviders")
 }
 
 model Freelancer {
-  id           Int       @id @default(autoincrement())
-  uuid         String    @default(cuid())
-  // title               String
-  // slug                String   @unique
+  id           Int                      @id @default(autoincrement())
+  uuid         String                   @default(cuid())
   description  String?
-  avatar  String?
-  banner  String?
   link         String?
   salary       String[]
   contractMode String[]
   actualRole   String?
-  categories   CategoriesOnFreelancer[]
-  tags         TagsOnFreelancer[]
-  areas        AreasOnFreelancer[]
   city         String?
   state        String?
-  extra        String?
   workMode     String[]
   seniority    String[]
   travel       String[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @default(now()) @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       Int                     @unique
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  updatedAt    DateTime                 @default(now()) @map("updated_at")
+  deletedAt    DateTime?                @map("deleted_at")
+  userId       Int                      @unique
+  extra        String?
+  avatar       String?
+  banner       String?
+  areas        AreasOnFreelancer[]
+  categories   CategoriesOnFreelancer[]
+  tags         TagsOnFreelancer[]
+  user         User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("freelancers")
 }
 
-
 model Articles {
-  id                  Int      @id @default(autoincrement())
-  uuid                   String               @unique @default(cuid())  
-  slug                String   @unique
-  title               String
-  text                Json
-  categories          CategoriesOnArticles[]
-  tags                TagsOnArticles[]
-  isPublished         Boolean  @default(false) @map("is_published")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @default(now()) @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  createdById User? @relation(name: "CreatedArticles", fields: [createdBy], references: [id], onDelete: Cascade)
-  updatedById User? @relation(name: "UpdatedArticles", fields: [updatedBy], references: [id], onDelete: Cascade)
-  deletedById User? @relation(name: "DeletedArticles", fields: [deletedBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
-  updatedBy Int? @map("updated_by")
-  deletedBy Int? @map("deleted_by")
-  articleHistory                ArticleHistory[]          @relation("ArticleHistory")
-  articleView                   ArticleView[]             @relation("ArticleView")
-  articleLike                   ArticleLike[]             @relation("ArticleLike")
-  articleComments               ArticleComments[]         @relation("ArticleComments")
-  viewsCount BigInt @default(0)
+  id              Int                    @id @default(autoincrement())
+  slug            String                 @unique
+  title           String
+  text            Json
+  isPublished     Boolean                @default(false) @map("is_published")
+  createdAt       DateTime               @default(now()) @map("created_at")
+  updatedAt       DateTime               @default(now()) @map("updated_at")
+  deletedAt       DateTime?              @map("deleted_at")
+  createdBy       Int?                   @map("created_by")
+  updatedBy       Int?                   @map("updated_by")
+  deletedBy       Int?                   @map("deleted_by")
+  uuid            String                 @unique @default(cuid())
+  viewsCount      BigInt                 @default(0) @map("views_count")
+  paid            Boolean                @default(false)
+  price           Int                    @default(0)
+  categories      CategoriesOnArticles[]  
+  tags            TagsOnArticles[]  
+  userArticlePaid UserArticlePaid[]      @relation("UserArticlePaid") 
+  articleComments ArticleComments[]      @relation("ArticleComments") 
+  articleHistory  ArticleHistory[]       @relation("ArticleHistory") 
+  articleLike     ArticleLike[]          @relation("ArticleLike") 
+  articleView     ArticleView[]          @relation("ArticleView") 
+  createdById     User?                  @relation("CreatedArticles", fields: [createdBy], references: [id], onDelete: Cascade)
+  deletedById     User?                  @relation("DeletedArticles", fields: [deletedBy], references: [id], onDelete: Cascade)
+  updatedById     User?                  @relation("UpdatedArticles", fields: [updatedBy], references: [id], onDelete: Cascade)
+
   @@map("articles")
 }
 
-
 model ArticleHistory {
-  id             Int      @id @default(autoincrement())  
-  uuid           String   @unique @default(cuid())
-  slug           String   
-  title          String
-  text           Json
-  article Articles? @relation(name: "ArticleHistory", fields: [articleId], references: [id], onDelete: Cascade)
-  articleId Int? @map("created_by")
-  createdAt      DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  slug      String
+  title     String
+  text      Json
+  articleId Int?      @map("article_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  uuid      String    @unique @default(cuid())
+  article   Articles? @relation("ArticleHistory", fields: [articleId], references: [id], onDelete: Cascade)
+
   @@map("article_history")
 }
 
+model UserArticlePaid {
+  id          Int      @id @default(autoincrement())
+  paidAt      DateTime @default(now())
+  articleId   Int      @map("article_id")
+  createdBy   Int?     @map("created_by")
+  article     Articles @relation("UserArticlePaid", fields: [articleId], references: [id], onDelete: Cascade)
+  createdById User?    @relation("paidArticleUser", fields: [createdBy], references: [id], onDelete: Cascade)
 
-model ArticleView {
-  id         Int      @id @default(autoincrement())
-  viewedAt   DateTime @default(now())
-  article    Articles @relation(name:"ArticleView",fields: [articleId], references: [id], onDelete: Cascade)
-  articleId  Int
-  createdById User? @relation(name: "createdArticlesView", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
-  @@unique([articleId, createdBy])
+  @@index([articleId, createdBy])
+  @@map("user_article_paid")
 }
 
-//Like Type
-// Like (Gostei): Uma reação clássica e universal que expressa aprovação ou concordância com o conteúdo.
-// Amei: Mostra um nível maior de apreciação e entusiasmo pelo artigo.
-// Inspirador: Para artigos que motivam, incentivam ou inspiram os leitores de alguma forma.
-// Útil: Indica que o artigo foi prático e ofereceu informações ou insights valiosos.
-// Pensativo: Para artigos que provocam reflexão, oferecendo uma perspectiva profunda ou desafiadora.
-// Surpreendente: Para conteúdos que trazem novidades ou informações inesperadas.
-// Aprender Mais: Indica um desejo de explorar o tópico mais a fundo, ideal para artigos educativos ou informativos.
-// Para Debater: Usado em artigos que estimulam discussões e troca de ideias.
-// Criativo: Para artigos que se destacam pela originalidade e abordagens inovadoras.
-// Clap (Aplauso): Uma forma mais expressiva de reconhecer o esforço e a qualidade do autor.
-
-model ArticleLike {
-  id         Int      @id @default(autoincrement())
-  type       Int @default(0)
-  viewedAt   DateTime @default(now())
-  article    Articles @relation(name:"ArticleLike",fields: [articleId], references: [id], onDelete: Cascade)
-  articleId  Int
-  createdById User? @relation(name: "createdArticlesLike", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
+model ArticleView {
+  id          Int      @id @default(autoincrement())
+  viewedAt    DateTime @default(now())
+  articleId   Int      @map("article_id")
+  createdBy   Int?     @map("created_by")
+  article     Articles @relation("ArticleView", fields: [articleId], references: [id], onDelete: Cascade)
+  createdById User?    @relation("createdArticlesView", fields: [createdBy], references: [id], onDelete: Cascade)
 
   @@unique([articleId, createdBy])
+  @@map("article_view")
+}
+
+model ArticleLike {
+  id          Int      @id @default(autoincrement())
+  type        Int      @default(0)
+  viewedAt    DateTime @default(now())
+  articleId   Int      @map("article_id")
+  createdBy   Int?     @map("created_by")
+  article     Articles @relation("ArticleLike", fields: [articleId], references: [id], onDelete: Cascade)
+  createdById User?    @relation("createdArticlesLike", fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, createdBy])
+  @@map("article_like")
 }
 
 model ArticleComments {
-  id         Int      @id @default(autoincrement())
-  comment   String
-  createdAt DateTime @default(now())
-  article    Articles @relation(name:"ArticleComments",fields: [articleId], references: [id], onDelete: Cascade)
-  articleId  Int
-  createdById User? @relation(name: "createdArticlesComments", fields: [createdBy], references: [id], onDelete: Cascade)
-  createdBy Int? @map("created_by")
+  id          Int      @id @default(autoincrement())
+  comment     String
+  createdAt   DateTime @default(now())
+  articleId   Int      @map("article_id")
+  createdBy   Int?     @map("created_by")
+  article     Articles @relation("ArticleComments", fields: [articleId], references: [id], onDelete: Cascade)
+  createdById User?    @relation("createdArticlesComments", fields: [createdBy], references: [id], onDelete: Cascade)
+
   @@index([articleId, createdBy])
-  // @@map([articleId, createdBy])
+  @@map("article_comments")
+}
+
+enum AprovalType {
+  WAITING
+  APPROVED
+  DISAPPROVED
+}
+
+enum ProfileType {
+  CANDIDATE
+  RECRUITER
+  JOB
+  SERVICE_PROVIDER
+  FREELANCER
+  ARTICLE
 }

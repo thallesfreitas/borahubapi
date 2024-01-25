@@ -8,6 +8,7 @@ import {
   ServiceProvider,
 } from '@prisma/client';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { ArticleComplete } from '../articles/articles.repository';
 import { JobComplete } from '../jobs/jobs.repository';
 import { User } from '../users/user.repository';
 
@@ -24,7 +25,7 @@ interface PayloadGenerate {
 
 interface PayloadType extends User {
   type: string;
-  data: UserComplete | JobComplete;
+  data: UserComplete | JobComplete | ArticleComplete;
   userID?: number;
 }
 
@@ -47,7 +48,8 @@ export const getBySlug = async (
   const payloadType = payload as PayloadType;
   let response;
   let data;
-
+  console.log('payloadType');
+  console.log(payloadType);
   switch (payloadType.type) {
     case 'user':
       data = payloadType.data as UserComplete;
@@ -114,6 +116,32 @@ export const getBySlug = async (
         jobApplied,
       };
       break;
+    case 'article':
+      const article = payloadType.data as any;
+      response = {
+        type: payloadType.type,
+        id: article.id,
+        uuid: article.uuid,
+        slug: article.slug,
+        title: article.title,
+        text: article.text,
+        categories: article.categories,
+        tags: article.tags,
+        isPublished: article.isPublished,
+        articleHistory: article.articleHistory,
+        articleView: article.articleView,
+        articleLike: article.articleLike,
+        articleComments: article.articleComments,
+        userPaid: article.userPaid,
+        price: article.price,
+        paid: article.paid,
+        viewsCount: article.viewsCount ? article.viewsCount.toString() : 0,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+        createdBy: article.createdById,
+        updatedBy: article.updatedById,
+      };
+      break;
 
     default:
       break;
@@ -125,9 +153,6 @@ export const getBySlugApplication = async (
   reply: FastifyReply,
   payload: unknown
 ) => {
-  console.log('getBySlugApplication');
-  console.log('payload');
-  console.log(payload);
   const payloadType = payload as PayloadType;
   let response;
   let data;
@@ -135,9 +160,6 @@ export const getBySlugApplication = async (
   switch (payloadType.type) {
     case 'user':
       data = payloadType.data as UserComplete;
-      console.log('data user');
-      console.log(data);
-      console.log(data?.createdJobApplication);
       response = {
         type: payloadType.type,
         createdJobApplication: data?.createdJobApplication,
@@ -151,7 +173,6 @@ export const getBySlugApplication = async (
         isActive: data?.isActive,
         createdAt: data?.createdAt,
         updatedAt: data?.updatedAt,
-        teste: '3',
         candidate: data?.candidate,
         serviceProvider: data?.serviceProvider,
         freelancer: data?.freelancer,

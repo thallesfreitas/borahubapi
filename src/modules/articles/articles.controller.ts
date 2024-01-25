@@ -7,6 +7,7 @@ import {
   DeleteCommentArticleBodyRequest,
   DeleteLikeArticleBodyRequest,
   GetArticleParamsRequest,
+  GetFeedRequest,
   UpdateArticleBodyRequest,
   UpdateCommentArticleBodyRequest,
   UpdateLikeArticleBodyRequest,
@@ -18,6 +19,7 @@ import {
   ServiceDeleteCommentArticle,
   ServiceDeleteLikeArticle,
   ServiceGetArticle,
+  ServiceGetFeed,
   ServiceUpdateArticle,
   ServiceUpdateCommentArticle,
   ServiceUpdateLikeArticle,
@@ -36,18 +38,17 @@ export const ControllerUpdateArticle = async (
   request: UpdateArticleBodyRequest,
   reply: FastifyReply
 ) => {
-  const jobs = await ServiceUpdateArticle(request.body);
-
-  return reply.send(jobs);
+  const article = await ServiceUpdateArticle(request.body);
+  return reply.send(article);
 };
 
 export const ControllerCreateCommentArticle = async (
   request: CreateCommentArticleBodyRequest,
   reply: FastifyReply
 ) => {
-  const jobs = await ServiceCreateCommentArticle(request.body);
+  const article = await ServiceCreateCommentArticle(request.body);
 
-  return reply.send(jobs);
+  return reply.send(article);
 };
 
 export const ControllerUpdateCommentArticle = async (
@@ -96,4 +97,12 @@ export const ControllerGetArticle = async (
 ) => {
   const article = await ServiceGetArticle(request.query);
   return reply.send(article);
+};
+
+export const ControllerGetFeed = async (
+  request: GetFeedRequest,
+  reply: FastifyReply
+) => {
+  const articles = await ServiceGetFeed(request.query);
+  return reply.send({ data: articles });
 };

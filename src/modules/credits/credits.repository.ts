@@ -186,10 +186,6 @@ export const removeCredits = async (data: CreditsType) => {
       throw new Error('Usuário não encontrado');
     }
     const amountUser = userCredits?.amount;
-    console.log('amountUser - amount');
-    console.log(amountUser);
-    console.log(amount);
-    console.log(amountUser - amount);
     const updatedCredits = await db.credits.update({
       where: {
         id: userCredits?.id,

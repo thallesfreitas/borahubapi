@@ -13,6 +13,7 @@ export type VerifyCreditsType = {
   userId: number;
   type: string;
   withRemove?: boolean;
+  id?: number;
 };
 export type VerifyCreditsParams = {
   Body: VerifyCreditsType;

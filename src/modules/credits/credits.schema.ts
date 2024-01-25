@@ -24,6 +24,7 @@ export const verifyBody = {
     userId: { type: 'number' },
     type: { type: 'string' },
     withRemove: { type: 'boolean' },
+    id: { type: 'number' },
   },
 };
 

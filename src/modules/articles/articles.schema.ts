@@ -10,6 +10,8 @@ export const SchemaCreateArticleBody = {
     categories: { type: 'array' },
     tags: { type: 'array' },
     isPublished: { type: 'boolean' },
+    paid: { type: 'boolean' },
+    price: { type: 'number' },
   },
 };
 export const SchemaUpdateArticleBody = {
@@ -25,6 +27,8 @@ export const SchemaUpdateArticleBody = {
     categories: { type: 'array' },
     tags: { type: 'array' },
     isPublished: { type: 'boolean' },
+    paid: { type: 'boolean' },
+    price: { type: 'number' },
   },
 };
 
@@ -95,5 +99,21 @@ export const SchemaGetArticleBody = {
     skip: { type: 'number' },
     limit: { type: 'number' },
     isPublished: { type: 'boolean' },
+  },
+};
+
+export const SchemaGetFeedBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['limit', 'skip'],
+  properties: {
+    filter: { type: 'string' },
+    keyword: { type: 'string' },
+    tag: { type: 'string' },
+    category: { type: 'string' },
+    area: { type: 'string' },
+    limit: { type: 'number' },
+    skip: { type: 'number' },
+    isActive: { type: 'boolean' },
   },
 };

@@ -1,5 +1,6 @@
 import dbClient from '../../lib/dbClient';
 import { Utils } from '../../utils/functions';
+import { ServiceGetArticle } from '../articles/articles.service';
 import * as JobsService from '../jobs/jobs.service';
 import * as UserService from '../users/user.service';
 
@@ -32,25 +33,33 @@ export const getBySlug = async (slug: string, userID: number) => {
     };
   } else {
     const job = await JobsService.getJobBySlug(slug);
-    response = {
-      type: 'job',
-      data: job,
-      userID,
-    };
+    if (job) {
+      response = {
+        type: 'job',
+        data: job,
+        userID,
+      };
+    } else {
+      const article = await ServiceGetArticle({ slug, userId: userID });
+      response = {
+        type: 'article',
+        data: article,
+        userID,
+      };
+    }
   }
 
   return response;
 };
 
 export const verify = async (slug: string) => {
-  const user = await UserService.getUserBySlug(slug);
   let response = false;
+  const user = await UserService.getUserBySlug(slug);
+  const job = await JobsService.getJobBySlug(slug);
+  const article = await ServiceGetArticle({ slug });
 
-  if (user) {
+  if (user || job || article) {
     response = true;
-  } else {
-    const job = await JobsService.getJobBySlug(slug);
-    if (job) response = true;
   }
 
   return response;
@@ -83,6 +92,21 @@ export const generate = async (slugSuggest: string) => {
     slug = `${Utils.generateSlug(slugSuggest)}-${i}`;
     // eslint-disable-next-line no-await-in-loop
     jobWithSameSlug = await dbClient.jobs.findFirst({
+      where: {
+        slug,
+      },
+    });
+    i += 1;
+  }
+  let articleWithSameSlug = await dbClient.articles.findFirst({
+    where: {
+      slug,
+    },
+  });
+  while (articleWithSameSlug) {
+    slug = `${Utils.generateSlug(slugSuggest)}-${i}`;
+    // eslint-disable-next-line no-await-in-loop
+    articleWithSameSlug = await dbClient.articles.findFirst({
       where: {
         slug,
       },

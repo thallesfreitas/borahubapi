@@ -65,4 +65,12 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
     type: 'DEFAULT_AI',
     amount: 50,
   },
+  {
+    type: 'ARTICLE_VARIABLE',
+    amount: 0,
+  },
+  {
+    type: 'EDUCATION_VARIABLE',
+    amount: 0,
+  },
 ];

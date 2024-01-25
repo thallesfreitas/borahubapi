@@ -612,11 +612,8 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
       },
       {
         role: 'assistant',
-        content: 'Retorne apenas a nota com o exemplo a seguir',
-      },
-      {
-        role: 'assistant',
-        content: '45.12',
+        content:
+          'O Retorno precisa, obrigatoriamente, ser APENAS a nota conforme exemplo: 45.12',
       },
       { role: 'user', content: `Vaga: ${dataJob}` },
       { role: 'user', content: `Candidato: ${dataUser}` },
@@ -630,6 +627,23 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
     feedbackCandidateJob.choices[0].message.content;
 
   const resultscoreCandidateJob = scoreCandidateJob.choices[0].message.content;
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log(resultscoreCandidateJob);
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
+  console.log('resultscoreCandidateJob ');
   return [
     resultAssessmentCandidateJob,
     resultfeedbackCandidateJob,

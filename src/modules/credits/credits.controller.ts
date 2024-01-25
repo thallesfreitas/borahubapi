@@ -12,11 +12,12 @@ import {
 import * as CreditsService from './credits.service';
 
 export const verify = async (req: VerifyCredits, reply: FastifyReply) => {
-  const { userId, type, withRemove } = req.body;
+  const { userId, type, withRemove, id } = req.body;
   const verifyStatus = await CreditsService.verify({
     userId,
     type,
     withRemove,
+    id,
   });
 
   return reply.status(200).send({ status: verifyStatus });

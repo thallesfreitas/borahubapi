@@ -7,12 +7,14 @@ import {
   ControllerDeleteCommentArticle,
   ControllerDeleteLikeArticle,
   ControllerGetArticle,
+  ControllerGetFeed,
   ControllerUpdateArticle,
   ControllerUpdateCommentArticle,
   ControllerUpdateLikeArticle,
 } from './articles.controller';
 import {
   GetArticleBySlugParams,
+  GetFeedQuery,
   ModelCreateArticleBody,
   ModelCreateCommentArticleBody,
   ModelCreateLikeArticleBody,
@@ -29,6 +31,7 @@ import {
   SchemaDeleteCommentArticleBody,
   SchemaDeleteLikeArticleBody,
   SchemaGetArticleBody,
+  SchemaGetFeedBody,
   SchemaUpdateArticleBody,
   SchemaUpdateCommentArticleBody,
   SchemaUpdateLikeArticleBody,
@@ -133,4 +136,13 @@ export default async (fastify: FastifyInstance) => {
   //   },
   //   ControllerGetArticle
   // );
+  fastify.get<{ Querystring: GetFeedQuery }>(
+    '/feed',
+    {
+      schema: { querystring: SchemaGetFeedBody },
+      preSerialization: [Serializer.insertPagination, Serializer.getFeed],
+      onSend,
+    },
+    ControllerGetFeed
+  );
 };

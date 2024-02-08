@@ -31,6 +31,15 @@ export const createAssessmentJobApplicationBody = {
     terms: { type: 'boolean' },
   },
 };
+export const favoriteApplicationBody = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['id'],
+  properties: {
+    id: { type: 'number' },
+  },
+};
+
 export const jobApplicationBody = {
   type: 'object',
   additionalProperties: false,

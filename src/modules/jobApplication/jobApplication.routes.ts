@@ -5,6 +5,15 @@ import * as Model from './jobApplication.model';
 import * as Schema from './jobApplication.schema';
 
 export default async (fastify: FastifyInstance) => {
+  fastify.post<{ Body: Model.FavoriteJobApplicationArgs }>(
+    '/favorite',
+    {
+      schema: { body: Schema.favoriteApplicationBody },
+      onSend,
+    },
+    Controller.favoriteJobApplication
+  );
+
   fastify.post<{ Body: Model.CreateJobApplicationArgs }>(
     '/',
     {

@@ -107,6 +107,7 @@ export type GetFeedQuery = {
   count?: number;
   limit: number;
   skip: number;
+  slug?: string;
   filter?: string;
   keyword?: string;
   tag?: string;

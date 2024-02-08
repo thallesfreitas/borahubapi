@@ -94,11 +94,12 @@ export const createUser: CreateUser = async ({
     });
     let idTransactionType = 'WELCOME';
     if (
-      indicatedBy === 'thallesfreitas@gmail.com' ||
-      indicatedBy === 'thallesfreitas' ||
-      indicatedBy === 'priscila.cotrim@gmail.com' ||
-      indicatedBy === 'mestregp' ||
-      indicatedBy === 'priscilacotrim'
+      indicatedBy?.toLocaleLowerCase() === 'thallesfreitas@gmail.com' ||
+      indicatedBy?.toLocaleLowerCase() === 'thallesfreitas' ||
+      indicatedBy?.toLocaleLowerCase() === 'welcome' ||
+      indicatedBy?.toLocaleLowerCase() === 'priscila.cotrim@gmail.com' ||
+      indicatedBy?.toLocaleLowerCase() === 'mestregp' ||
+      indicatedBy?.toLocaleLowerCase() === 'priscilacotrim'
     ) {
       idTransactionType = 'WELCOME_INDICATEDBY';
     }

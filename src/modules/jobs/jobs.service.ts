@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import * as JobsRepository from './jobs.repository';
 
 export const createJob = (params: JobsRepository.CreateJobArgs) =>

@@ -107,6 +107,7 @@ export const SchemaGetFeedBody = {
   additionalProperties: false,
   required: ['limit', 'skip'],
   properties: {
+    slug: { type: 'string' },
     filter: { type: 'string' },
     keyword: { type: 'string' },
     tag: { type: 'string' },

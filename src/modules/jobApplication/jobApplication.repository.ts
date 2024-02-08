@@ -88,6 +88,9 @@ export const getFeedbackAssessment = async ({
     throw error;
   }
 };
+
+// MELHORAR A AVALIACAO
+// COLOCAR DADOS DO USUÁRIO como localizacao e senioridade
 export const createAssessment = async ({
   id,
   name,
@@ -107,10 +110,7 @@ export const createAssessment = async ({
       },
     });
 
-    const result = await AiService.createAssessment(
-      description,
-      job?.description as string
-    );
+    const result = await AiService.createAssessment(job, user, description);
 
     const scoreCandidateJob = result[2] ? parseFloat(result[2] as string) : 0;
     const jobApplicationUupdated = await dbClient.jobApplication.update({
@@ -219,6 +219,33 @@ export const createJobApplication = async ({
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         throw new Error('A new user cannot be created with this email');
+      }
+    }
+    throw error;
+  }
+};
+export const favoriteJobApplication = async (id: number) => {
+  try {
+    const currentData = await dbClient.jobApplication.findUnique({
+      where: { id },
+    });
+
+    if (!currentData) {
+      throw new Error('Registro não encontrado.');
+    }
+
+    const newFavoriteValue = !currentData.favorite;
+
+    const updatedData = await dbClient.jobApplication.update({
+      where: { id },
+      data: { favorite: newFavoriteValue },
+    });
+
+    return updatedData;
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new Error('Cannot favorite this aplication');
       }
     }
     throw error;

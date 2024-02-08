@@ -1,5 +1,11 @@
 import { FastifyRequest } from 'fastify';
 
+export interface FavoriteJobApplicationArgs {
+  id: number;
+}
+export type FavoriteJobApplicationRequest = FastifyRequest<{
+  Body: FavoriteJobApplicationArgs;
+}>;
 export interface CreateJobApplicationArgs {
   name: string;
   description: string;

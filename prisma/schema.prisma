@@ -406,6 +406,7 @@ model JobApplication {
   feedback          String?
   feedbackrecruiter String?
   evaluation        String?
+  favorite          Boolean                 @default(false) @map("favorite")
   score             Float?
   createdAt         DateTime @default(now()) @map("created_at")
   createdBy         Int?     @map("created_by")

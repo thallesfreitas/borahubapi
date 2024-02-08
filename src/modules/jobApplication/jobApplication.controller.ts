@@ -3,6 +3,7 @@ import {
   CreateAssessmentJobApplicationRequest,
   CreateFeedbackRecruiterRequest,
   CreateJobApplicationRequest,
+  FavoriteJobApplicationRequest,
   GetAssessmentRequest,
 } from './jobApplication.model';
 import * as JobsService from './jobApplication.service';
@@ -37,6 +38,16 @@ export const createJobApplication = async (
   reply: FastifyReply
 ) => {
   const jobs = await JobsService.createJobApplication(request.body);
+
+  return reply.send(jobs);
+};
+
+export const favoriteJobApplication = async (
+  request: FavoriteJobApplicationRequest,
+  reply: FastifyReply
+) => {
+  const { id } = request.body;
+  const jobs = await JobsService.favoriteJobApplication(id);
 
   return reply.send(jobs);
 };

@@ -525,7 +525,14 @@ Personal marketing is about showcasing your skills, experiences, and values in a
   return response.choices[0].message.content;
 };
 
-export const createAssessment = async (dataUser: string, dataJob: string) => {
+export const createAssessment = async (
+  job: any,
+  user: any,
+  descriptionUser: string
+  // dataJob: string
+) => {
+  const dataJob = `${job?.description} Localizacao: ${job?.state} - ${job?.city} - ${job?.modelOfWork} Faixa Salaral ${job?.salary} Senioridade ${job?.seniority} Vaga afirmativa ${job?.affirmative}`;
+  const dataUser = `${descriptionUser}  Localizacao: ${user.candidate?.state} - ${user.candidate?.city} - ${user.candidate?.workMode} Faixa Salaral ${user.candidate?.salary} Senioridade ${user.candidate?.seniority} Vaga afirmativa ${user.candidate?.affirmative}`;
   // let dataUserCohere = dataUser;
   // if (dataUser.length > 250) {
   //   dataUserCohere = await cohere.summarize({
@@ -538,7 +545,7 @@ export const createAssessment = async (dataUser: string, dataJob: string) => {
   const AssessmentCandidateJob = await openai.chat.completions.create({
     model: 'gpt-4',
     // model: 'gpt-4-1106-preview',
-    temperature: 0.6,
+    temperature: 0.7,
     max_tokens: 1000,
     messages: [
       {

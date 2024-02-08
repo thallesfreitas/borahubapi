@@ -531,7 +531,16 @@ export interface ArticleComplete extends Articles {
 }
 // FEED
 export const RepositoryGetFeed = async (data: GetFeedQuery) => {
-  const { keyword, limit, skip, tag, category, area, isActive = true } = data;
+  const {
+    slug,
+    keyword,
+    limit,
+    skip,
+    tag,
+    category,
+    area,
+    isActive = true,
+  } = data;
   const keywordfix = keyword?.split(' ').join(' <-> ');
   const tagfix = tag?.split(' ').join(' | ');
   const categoryfix = category?.split(' ').join(' | ');
@@ -654,17 +663,26 @@ export const RepositoryGetFeed = async (data: GetFeedQuery) => {
   //   },
   // });
 
-  const article = await dbClient.$queryRaw`
+  console.log('+++++++++++');
+  console.log('slug');
+  console.log(slug);
+  console.log('+++++++++++');
+
+  let article;
+  if (!slug) {
+    article = await dbClient.$queryRaw`
     SELECT
       a.*,
       a.created_at as createdAt,
+      a.created_by as createdBy,
       COUNT(av.id) AS viewCount,
       COUNT(al.id) AS likeCount,
       COUNT(ac.id) AS commentCount,
       (a.views_count + COUNT(av.id) + COUNT(al.id) + COUNT(ac.id)) / (EXTRACT(DAY FROM (CURRENT_DATE - a.created_at)) + 1) AS relevanceScore,
       json_build_object(
         'id', u.id,
-        'name', u.name
+        'name', u.name,
+        'slug', u.slug
       ) as created_by,
       json_agg(
         json_build_object(
@@ -672,7 +690,8 @@ export const RepositoryGetFeed = async (data: GetFeedQuery) => {
           'created_by', av.created_by,
           'created_by_id', json_build_object(
             'id', u.id,
-            'name', u.name
+            'name', u.name,
+            'slug', u.slug
           )
         )
       ) as article_view
@@ -694,7 +713,64 @@ export const RepositoryGetFeed = async (data: GetFeedQuery) => {
       relevanceScore DESC
     LIMIT ${limit} OFFSET ${skip}
   `;
+  } else {
+    // let whereClause = ``;
+    // let parameters = []; // Array para armazenar parâmetros
+
+    // if (slug) {
+    //   whereClause += ' AND u.slug = ?';
+    //   parameters.push(slug);
+    // }
+    article = await dbClient.$queryRaw`
+    SELECT
+      a.*,
+      a.created_at as createdAt,
+      a.created_by as createdBy,
+      COUNT(av.id) AS viewCount,
+      COUNT(al.id) AS likeCount,
+      COUNT(ac.id) AS commentCount,
+      (a.views_count + COUNT(av.id) + COUNT(al.id) + COUNT(ac.id)) / (EXTRACT(DAY FROM (CURRENT_DATE - a.created_at)) + 1) AS relevanceScore,
+      json_build_object(
+        'id', u.id,
+        'name', u.name,
+        'slug', u.slug
+      ) as created_by,
+      json_agg(
+        json_build_object(
+          'id', av.id,
+          'created_by', av.created_by,
+          'created_by_id', json_build_object(
+            'id', u.id,
+            'name', u.name,
+            'slug', u.slug
+          )
+        )
+      ) as article_view
+    FROM
+      articles a
+    LEFT JOIN
+      users u ON a.created_by = u.id
+    LEFT JOIN
+      article_view av ON a.id = av.article_id
+    LEFT JOIN
+      article_like al ON a.id = al.article_id
+    LEFT JOIN
+      article_comments ac ON a.id = ac.article_id
+    WHERE a.is_published = true AND u.slug = ${slug}
+    GROUP BY
+      a.id, u.id, av.id
+    ORDER BY
+      a.created_at DESC
+    LIMIT ${limit} OFFSET ${skip}
+  `;
+  }
   console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('+++++++++++');
+  console.log('slug');
+  console.log(slug);
   console.log('+++++++++++');
   console.log('+++++++++++');
   console.log('+++++++++++');

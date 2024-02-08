@@ -11,7 +11,7 @@ export const defaultCosts: Prisma.CostsUsageCreateInput[] = [
   },
   {
     type: 'WELCOME',
-    amount: 500,
+    amount: 0,
   },
   {
     type: 'CREATE_PROFILE_CANDIDATE',

@@ -297,6 +297,7 @@ export const getJobBySlug = async (slug: string) =>
           phone: true,
           description: true,
           createdBy: true,
+          favorite: true,
           score: true,
           createdById: {
             select: {

@@ -19,6 +19,9 @@ export const createAssessment = (params: CreateAssessmentJobApplicationArgs) =>
 export const createJobApplication = (params: CreateJobApplicationArgs) =>
   JobsApplicationRepository.createJobApplication(params);
 
+export const favoriteJobApplication = (id: number) =>
+  JobsApplicationRepository.favoriteJobApplication(id);
+
 export const getJobs = (limit: number, skip: number) =>
   JobsApplicationRepository.getJobs(limit, skip);
 
